@@ -1,0 +1,26 @@
+apply plugin: 'java'
+
+apply plugin: 'jacoco'
+
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation "junit:junit:4.12"
+    testImplementation "chao.android.tools:testsuit:0.0.1.dev1"
+    implementation "chao.android.tools:interceptor:0.0.1.dev1"
+    implementation "net.bytebuddy:byte-buddy:1.9.6"
+}
+
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+check.dependsOn jacocoTestReport

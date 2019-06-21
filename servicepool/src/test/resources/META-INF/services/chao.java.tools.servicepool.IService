@@ -1,0 +1,6 @@
+chao.test.servicepool.test.noop.test.service.TestService
+chao.test.servicepool.test.noop.test.service.TestService2
+chao.test.servicepool.test.noop.test.service.TestLazyService
+chao.test.servicepool.test.noop.test.service.NoPublicService
+chao.test.servicepool.test.noop.test.service.TestAbsImplService
+
