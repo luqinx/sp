@@ -19,5 +19,6 @@ public class AndroidServicePool extends ServicePool {
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
+        loadServices();
     }
 }

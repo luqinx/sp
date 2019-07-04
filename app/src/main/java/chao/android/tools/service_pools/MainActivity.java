@@ -1,6 +1,7 @@
 package chao.android.tools.service_pools;
 
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import chao.java.tools.servicepool.ServicePool;
@@ -18,8 +19,6 @@ public class MainActivity extends AppCompatActivity {
         AppLibService appLibService = ServicePool.getService(AppLibService.class);
         appLibService.appPrint();
 
-        App app = ServicePool.getService(App.class);
-        app.getTag();
-
+        Debug.stopMethodTracing();
     }
 }

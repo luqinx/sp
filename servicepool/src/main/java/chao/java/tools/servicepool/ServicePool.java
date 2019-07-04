@@ -16,6 +16,10 @@ public class ServicePool {
 
     private volatile static boolean loaded = false;
 
+    public static boolean isLoaded() {
+        return loaded;
+    }
+
     public static synchronized void loadServices() {
         if (loaded) {
             return;
@@ -37,19 +41,45 @@ public class ServicePool {
         controller.loadFinished();
     }
 
+    /**
+     * 获取service实例对象
+     *
+     * @param serviceClass  可以是interface，也可以是class
+     * @param <T>   service实例对象类型
+     * @return  service实例对象, 如果没有获取到具体的实现，
+     *          会通过 {@link NoOpInstanceFactory} 返回一个 {@link NoOpInstance} Mock实例
+     */
     public static <T extends IService> T getService(Class<T> serviceClass) {
         checkLoader();
         return controller.getServiceByClass(serviceClass, serviceClass);
     }
 
+    /**
+     * 指定返回service对象类型, 获取service实例对象
+     * 说明: 在一个接口有多个实现类的场景下, 通过指定tClass来明确使用哪个实现
+     *
+     * @param serviceClass  可以是interface，也可以是class
+     * @param <T>   service实例对象类型
+     * @return  service实例对象, 如果没有获取到具体的实现，会返回一个 {@link NoOpInstance}实例
+     */
     public static <T extends IService> T getService(Class serviceClass, Class<T> tClass) {
         checkLoader();
         return controller.getServiceByClass(serviceClass, tClass);
     }
 
-    public static <T extends IService> T getService(Class serviceClass, Class<T> tClass, T service) {
+
+    /**
+     * 指定返回service对象类型, 获取service实例对象
+     * 说明: 在一个接口有多个实现类的场景下, 通过指定tClass来明确使用哪个实现
+     *
+     * @param serviceClass  可以是interface，也可以是class
+     * @param defaultService 如果没有获取到实现类返回defaultService
+     * @param <T>   service实例对象类型
+     * @return  service实例对象
+     */
+    public static <T extends IService> T getService(Class serviceClass, Class<T> tClass, T defaultService) {
         checkLoader();
-        return controller.getServiceByClass(serviceClass, tClass, service);
+        return controller.getServiceByClass(serviceClass, tClass, defaultService);
     }
 
 //    public static <T extends IService> T newService(Class<T> serviceClass) {
@@ -57,9 +87,13 @@ public class ServicePool {
 //        return controller.newService(serviceClass);
 //    }
 
-    private static synchronized void checkLoader() {
+    private static void checkLoader() {
         if (controller == null) {
-            loadServices();
+            synchronized (ServicePool.class) {
+                if (controller == null) {
+                    loadServices();
+                }
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ import net.bytebuddy.matcher.ElementMatchers;
  * @author qinchao
  * @since 2019/6/19
  */
-public class DefaultNoOpInstantiator implements NoOpInstantiator {
+public class DefaultNoOpInstantiator extends DefaultService implements NoOpInstantiator {
     @Override
     public <T> Class<?> make(Class<T> clazz, Constructor<?> constructor, Object[] params, AtomicInteger noOpCount) {
         return new ByteBuddy()

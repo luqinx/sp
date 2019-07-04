@@ -9,4 +9,14 @@ public class DefaultService implements IService {
     public String getTag() {
         return getClass().getName();
     }
+
+    @Override
+    public int priority() {
+        return Priority.NORMAL_PRIORITY;
+    }
+
+    @Override
+    public int scope() {
+        return Scope.global;
+    }
 }

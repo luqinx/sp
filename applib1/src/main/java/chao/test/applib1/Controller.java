@@ -12,5 +12,7 @@ public class Controller {
     public void control() {
         IJavaLib javaLib = ServicePool.getService(IJavaLib.class);
         javaLib.javaPrint();
+
+        System.out.println();
     }
 }

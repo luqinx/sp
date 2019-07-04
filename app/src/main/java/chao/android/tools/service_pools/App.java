@@ -1,29 +1,27 @@
 package chao.android.tools.service_pools;
 
 import android.app.Application;
+import android.os.Debug;
+import android.os.SystemClock;
 import chao.android.tools.servicepool.AndroidServicePool;
-import chao.java.tools.servicepool.IService;
-import chao.java.tools.servicepool.ServicePool;
 
 /**
  * @author qinchao
  * @since 2019/4/30
  */
-public class App extends Application implements IService {
+public class App extends Application {
 
     public App() {
-
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Debug.startMethodTracing("App.OnCreate." + SystemClock.elapsedRealtime(), 80 * 1024 * 1024);
         AndroidServicePool.init(this);
-        ServicePool.loadServices();
+
+        System.out.println();
+
     }
 
-    @Override
-    public String getTag() {
-        return null;
-    }
 }

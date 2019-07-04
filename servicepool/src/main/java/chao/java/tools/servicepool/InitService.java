@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qinchao
  * @since 2019/4/30
  */
-public class InitService implements IInitService {
+public class InitService extends DefaultService implements IInitService {
 
     private IInitService delegate;
 

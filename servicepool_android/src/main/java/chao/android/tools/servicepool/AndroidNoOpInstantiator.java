@@ -1,5 +1,6 @@
 package chao.android.tools.servicepool;
 
+import chao.java.tools.servicepool.DefaultService;
 import chao.java.tools.servicepool.NoOpConstructorArg;
 import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.NoOpInstantiator;
@@ -17,7 +18,7 @@ import net.bytebuddy.matcher.ElementMatchers;
  * @author qinchao
  * @since 2019/6/19
  */
-public class AndroidNoOpInstantiator implements NoOpInstantiator {
+public class AndroidNoOpInstantiator extends DefaultService implements NoOpInstantiator {
 
 
     @Override
@@ -35,8 +36,4 @@ public class AndroidNoOpInstantiator implements NoOpInstantiator {
             .getLoaded();
     }
 
-    @Override
-    public String getTag() {
-        return null;
-    }
 }

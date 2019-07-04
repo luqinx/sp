@@ -36,19 +36,24 @@ public class DefaultServiceController implements ServiceController {
             proxy = new ServiceProxy(serviceClass);
         }
 
-        IService service = proxy.getService();
+        cacheService(proxy, serviceClass);
 
-        if (!serviceCache.containsKey(serviceClass.hashCode())) {
-            serviceCache.put(serviceClass.hashCode(), proxy);
-        }
         cacheSubClasses(serviceClass, proxy);
-        if (service != null) {
-            cacheSubClasses(service.getClass(), proxy);
-        }
 
-        if (service instanceof IInitService) {
-            IInitService initService = (IInitService) service;
+        if (IInitService.class.isAssignableFrom(serviceClass)) {
+            IInitService initService = (IInitService) proxy.getService();
             dependencyManager.addService(initService);
+        }
+    }
+
+    private void cacheService(ServiceProxy proxy, Class<?> serviceClass) {
+        ServiceProxy oldProxy = serviceCache.get(serviceClass.hashCode());
+        //1. service还不存在
+        //2. 申请的serviceClass和缓存key一致时，属于第一优先级
+        //3. service已存在，但是当前的service优先级更高
+        if (oldProxy == null || (!oldProxy.getServiceClass().equals(serviceClass)
+            && proxy.priority() > oldProxy.priority())) {
+            serviceCache.put(serviceClass.hashCode(), proxy);
         }
     }
 
@@ -60,15 +65,11 @@ public class DefaultServiceController implements ServiceController {
             if (IInitService.class.equals(subInterface)) {
                 continue;
             }
-            if (!serviceCache.containsKey(subInterface.hashCode())) {
-                serviceCache.put(subInterface.hashCode(), serviceProxy);
-            }
+            cacheService(serviceProxy, subInterface);
         }
         Class superClass = clazz;
         while (superClass != null) {
-            if (!serviceCache.containsKey(superClass.hashCode())) {
-                serviceCache.put(superClass.hashCode(), serviceProxy);
-            }
+            cacheService(serviceProxy, superClass);
             superClass = superClass.getSuperclass();
         }
     }
@@ -98,11 +99,11 @@ public class DefaultServiceController implements ServiceController {
         dependencyManager.servicesInit();
     }
 
-    public <T extends IService> T getServiceByClass(Class serviceClass, Class<T> tClass, T service) {
+    public <T extends IService> T getServiceByClass(Class serviceClass, Class<T> tClass, T defaultService) {
         ServiceProxy serviceProxy = getService(serviceClass);
         if (serviceProxy != null) {
             return tClass.cast(serviceProxy.getService());
         }
-        return service;
+        return defaultService;
     }
 }
