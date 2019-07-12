@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  * @since 2019/6/21
  */
 @Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface Service {
 
     /**
@@ -40,7 +40,9 @@ public @interface Service {
      */
     int scope() default IService.Scope.global;
 
-    String value();
+    String tag() default "";
+
+    String value() default "";
 
 
 }

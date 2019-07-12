@@ -12,6 +12,14 @@ dependencies {
     implementation "net.bytebuddy:byte-buddy:1.9.6"
 }
 
+abkit {
+    maven {
+        artifactId 'servicepool'
+        groupId 'chao.java.tools'
+        versionName '0.0.1'
+    }
+}
+
 
 sourceCompatibility = "7"
 targetCompatibility = "7"

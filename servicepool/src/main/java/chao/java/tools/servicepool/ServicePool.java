@@ -49,7 +49,7 @@ public class ServicePool {
      * @return  service实例对象, 如果没有获取到具体的实现，
      *          会通过 {@link NoOpInstanceFactory} 返回一个 {@link NoOpInstance} Mock实例
      */
-    public static <T extends IService> T getService(Class<T> serviceClass) {
+    public static <T> T getService(Class<T> serviceClass) {
         checkLoader();
         return controller.getServiceByClass(serviceClass, serviceClass);
     }
@@ -62,7 +62,7 @@ public class ServicePool {
      * @param <T>   service实例对象类型
      * @return  service实例对象, 如果没有获取到具体的实现，会返回一个 {@link NoOpInstance}实例
      */
-    public static <T extends IService> T getService(Class serviceClass, Class<T> tClass) {
+    public static <T> T getService(Class serviceClass, Class<T> tClass) {
         checkLoader();
         return controller.getServiceByClass(serviceClass, tClass);
     }

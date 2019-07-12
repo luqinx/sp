@@ -9,7 +9,7 @@ import chao.java.tools.servicepool.IService;
  */
 public class MyService2 extends DefaultService implements IService {
     @Override
-    public String getTag() {
+    public String tag() {
         return "MyService2";
     }
 }

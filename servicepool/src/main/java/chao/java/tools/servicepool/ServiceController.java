@@ -8,7 +8,7 @@ public interface ServiceController {
 
     void addService(Class<? extends IService> serviceClass);
 
-    <T extends IService> T getServiceByClass(Class clazz, Class<T> t);
+    <T> T getServiceByClass(Class clazz, Class<T> t);
 
     void loadFinished();
 

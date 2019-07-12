@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'autoservice'
+apply plugin: 'sp.autoservice'
 
 android {
     compileSdkVersion 28
@@ -12,10 +12,18 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+
+        debug {
+            minifyEnabled false
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
 }
 
@@ -30,4 +38,5 @@ dependencies {
     implementation project(":servicepool")
     implementation project(":applib1")
 //    implementation project(":lib1")
+    implementation project(":testpluginlib")
 }

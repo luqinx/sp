@@ -11,7 +11,7 @@ class NoPublicService implements IService {
 //    public NoPublicService() {}
 
     @Override
-    public String getTag() {
+    public String tag() {
         return null;
     }
 }

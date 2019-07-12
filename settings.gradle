@@ -1,1 +1,2 @@
-include ':app', ':servicepool', ':lib1', ':applib1', ':appservice', ':servicepool_android'
+include ':app', ':servicepool', ':lib1', ':applib1', ':appservice', ':servicepool_android', ':testpluginlib'
+include ':buildSrc'

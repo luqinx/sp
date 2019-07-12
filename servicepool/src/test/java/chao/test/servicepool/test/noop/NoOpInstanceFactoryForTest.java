@@ -1,5 +1,6 @@
 package chao.test.servicepool.test.noop;
 
+
 import chao.java.tools.servicepool.NoOpInstanceFactory;
 
 /**

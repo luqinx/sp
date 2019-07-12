@@ -86,7 +86,7 @@ public class DefaultServiceController implements ServiceController {
     }
 
     @Override
-    public <T extends IService> T getServiceByClass(Class clazz, Class<T> t) {
+    public <T> T getServiceByClass(Class clazz, Class<T> t) {
         ServiceProxy serviceProxy = getService(clazz);
         if (serviceProxy != null) {
             return t.cast(serviceProxy.getService());

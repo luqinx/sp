@@ -22,7 +22,7 @@ public class Printer implements IPrinter {
     }
 
     @Override
-    public String getTag() {
+    public String tag() {
         return null;
     }
 

@@ -30,7 +30,7 @@ public class DefaultNoOpInstantiator extends DefaultService implements NoOpInsta
     }
 
     @Override
-    public String getTag() {
+    public String tag() {
         return null;
     }
 }

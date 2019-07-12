@@ -13,6 +13,6 @@ class AutoServicePlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         AppExtension android = project.extensions.getByName("android")
-        android.registerTransform(new AutoServiceTransform())
+        android.registerTransform(new AutoServiceTransform(project))
     }
 }

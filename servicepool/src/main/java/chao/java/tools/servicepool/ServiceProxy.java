@@ -60,7 +60,7 @@ public class ServiceProxy implements IService {
      * @return
      */
     @Override
-    public String getTag() {
+    public String tag() {
         return tag;
     }
 

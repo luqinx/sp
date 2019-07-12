@@ -28,8 +28,8 @@ public class InitService extends DefaultService implements IInitService {
 
 
     @Override
-    public String getTag() {
-        return delegate.getTag();
+    public String tag() {
+        return delegate.tag();
     }
 
     @Override

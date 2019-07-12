@@ -5,4 +5,8 @@ package chao.android.tools.service_pools;
  * @since 2019/6/25
  */
 public class A {
+
+    public int getInt() {
+        return 10086;
+    }
 }

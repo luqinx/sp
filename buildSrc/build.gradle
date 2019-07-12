@@ -3,10 +3,14 @@ apply plugin: 'groovy'
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    implementation 'com.android.tools.build:gradle:3.2.1'
+    implementation 'com.android.tools.build:gradle:3.3.2'
     implementation 'com.android.tools.build:gradle-api:3.2.1'
+    implementation 'org.ow2.asm:asm:5.1'
+    implementation 'org.ow2.asm:asm-util:5.1'
+    implementation 'org.ow2.asm:asm-commons:5.1'
 
 }
+
 
 repositories {
     google()
@@ -14,5 +18,5 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = "7"
-targetCompatibility = "7"
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'

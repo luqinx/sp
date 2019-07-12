@@ -8,7 +8,7 @@ import chao.java.tools.servicepool.IService;
  */
 public class TestLazyService1 implements IService{
     @Override
-    public String getTag() {
+    public String tag() {
         return null;
     }
 }

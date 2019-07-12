@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qinchao
  * @since 2019/5/1
  */
-class NoOpInstanceFactory {
+public class NoOpInstanceFactory {
 
     private static final NoOpConstructorArg sConstructorArg = new NoOpConstructorArg();
 
@@ -17,7 +17,7 @@ class NoOpInstanceFactory {
 
     private NoOpInstantiator mInstantiator = null;
 
-    <T> T newInstance(Class<T> clazz) {
+    public <T> T newInstance(Class<T> clazz) {
         //如果是接口
         if (clazz.isInterface()) {
             return Interceptor.of(null, clazz).interfaces(NoOpInstance.class).newInstance();

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
 import chao.java.tools.servicepool.ServicePool;
 import chao.test.applib1.AppLibService;
 
@@ -19,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
         AppLibService appLibService = ServicePool.getService(AppLibService.class);
         appLibService.appPrint();
 
-        Debug.stopMethodTracing();
+        TestPluginService pluginService = ServicePool.getService(TestPluginService.class);
+        pluginService.print();
+
+        Log.e("qinchao", "onCreate");
     }
 }

@@ -13,6 +13,8 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
         classpath "chao.android.gradle:abkit:0.0.1.dev"
+//        classpath 'chao.android.gradle:autoservice:0.0.2.dev'
+
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

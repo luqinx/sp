@@ -25,7 +25,7 @@ public class NoOpTest extends SampleCase {
 
         assertEquals(ServicePool.getService(TestNoOpService.class).hashCode(), 0);
         assertEquals(ServicePool.getService(TestNoOpService.class).getInteger(), new Integer(0));
-        assertNull(ServicePool.getService(TestNoOpService.class).getTag());
+        assertNull(ServicePool.getService(TestNoOpService.class).tag());
         assertFalse(ServicePool.getService(TestNoOpService.class).equals(ServicePool.getService(TestNoOpService.class)));
     }
 
@@ -36,7 +36,7 @@ public class NoOpTest extends SampleCase {
 
         assertEquals(ServicePool.getService(TestNoOpService.class).hashCode(), 0);
         assertEquals(ServicePool.getService(TestNoOpService.class).getInteger(), new Integer(0));
-        assertNull(ServicePool.getService(TestNoOpService.class).getTag());
+        assertNull(ServicePool.getService(TestNoOpService.class).tag());
         assertFalse(ServicePool.getService(TestNoOpService.class).equals(ServicePool.getService(TestNoOpService.class)));
 
     }

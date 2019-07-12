@@ -8,7 +8,7 @@ import chao.java.tools.servicepool.IService;
  */
 public class TestNoOpService implements NoOp, IService {
     @Override
-    public String getTag() {
+    public String tag() {
         return "no op";
     }
 

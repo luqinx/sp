@@ -12,7 +12,7 @@ public class AppLibService extends DefaultInitService implements IAppLib {
 
     @Override
     public void appPrint() {
-        Log.i("qinchao", "app lib service");
+        Log.e("qinchao", "app lib service");
 
         new Controller().control();
     }
