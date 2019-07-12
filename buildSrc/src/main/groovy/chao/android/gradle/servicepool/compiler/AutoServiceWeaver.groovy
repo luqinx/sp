@@ -73,7 +73,7 @@ class AutoServiceWeaver extends BaseWeaver {
                 }
             }
         }
-        classReader.accept(visitor, ClassWriter.COMPUTE_FRAMES)
+        classReader.accept(visitor, ClassReader.EXPAND_FRAMES)
         return classWriter.toByteArray()
 //        return super.weaveSingleClassToByteArray(jarId, inputStream)
     }
