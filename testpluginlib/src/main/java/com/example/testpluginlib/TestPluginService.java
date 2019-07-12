@@ -10,4 +10,7 @@ import chao.java.tools.servicepool.annotation.Service;
  */
 @Service
 public class TestPluginService {
+    public void print() {
+        System.out.println("I'm a test service.");
+    }
 }

@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'sp.autoservice'
+//apply plugin: 'sp.autoservice'
 
 android {
     compileSdkVersion 28
@@ -37,6 +37,6 @@ dependencies {
     implementation project(":servicepool_android")
     implementation project(":servicepool")
     implementation project(":applib1")
-//    implementation project(":lib1")
+    implementation project(":lib1")
     implementation project(":testpluginlib")
 }
