@@ -64,7 +64,7 @@ public abstract class BaseWeaver implements IWeaver{
             outputZip.write(newEntryContent);
             outputZip.closeEntry();
         }
-//        weaveJarFinished(outputZip.hashCode(), outputZip);
+        weaveJarFinished(outputZip.hashCode(), outputZip);
         outputZip.flush();
         outputZip.close();
     }

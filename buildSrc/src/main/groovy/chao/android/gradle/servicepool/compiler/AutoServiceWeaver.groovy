@@ -69,13 +69,13 @@ class AutoServiceWeaver extends BaseWeaver {
                     for (int i = 0; i < values.length; i=i+2) {
                         values.put(node.values[i], node.values[i+1])
                     }
-//                    visitor = new AutoServiceVisitor(classWriter, values)
+                    visitor = new AutoServiceVisitor(classWriter, values)
                 }
             }
         }
         classReader.accept(visitor, ClassWriter.COMPUTE_FRAMES)
-//        return super.weaveSingleClassToByteArray(jarId, inputStream)
         return classWriter.toByteArray()
+//        return super.weaveSingleClassToByteArray(jarId, inputStream)
     }
 
     @Override
