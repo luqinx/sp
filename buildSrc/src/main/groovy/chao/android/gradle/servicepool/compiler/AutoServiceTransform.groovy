@@ -9,11 +9,17 @@ import org.gradle.api.Project
  */
 class AutoServiceTransform extends HunterTransform {
 
+    private AutoServiceWeaver autoServiceWeaver
+
 
     AutoServiceTransform(Project project) {
         super(project)
-        this.bytecodeWeaver = new AutoServiceWeaver()
+        autoServiceWeaver = new AutoServiceWeaver()
+        this.bytecodeWeaver = autoServiceWeaver
     }
 
-
+    @Override
+    protected void transformFinished(File destJar) {
+//        autoServiceWeaver.transformFinished(destJar)
+    }
 }

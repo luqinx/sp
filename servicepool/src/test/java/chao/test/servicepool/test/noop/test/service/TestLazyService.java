@@ -11,4 +11,14 @@ public class TestLazyService implements IService {
     public String tag() {
         return null;
     }
+
+    @Override
+    public int priority() {
+        return 0;
+    }
+
+    @Override
+    public int scope() {
+        return 0;
+    }
 }

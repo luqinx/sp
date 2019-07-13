@@ -1,10 +1,13 @@
 package chao.android.tools.servicepool;
 
 import chao.java.tools.servicepool.DefaultService;
+import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.NoOpConstructorArg;
 import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.NoOpInstantiator;
 import chao.java.tools.servicepool.NoOpInterceptor;
+import chao.java.tools.servicepool.annotation.Service;
+
 import java.lang.reflect.Constructor;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.bytebuddy.ByteBuddy;
@@ -18,6 +21,7 @@ import net.bytebuddy.matcher.ElementMatchers;
  * @author qinchao
  * @since 2019/6/19
  */
+@Service
 public class AndroidNoOpInstantiator extends DefaultService implements NoOpInstantiator {
 
 

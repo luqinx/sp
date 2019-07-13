@@ -42,7 +42,7 @@ public class DefaultServiceController implements ServiceController {
 
         if (IInitService.class.isAssignableFrom(serviceClass)) {
             IInitService initService = (IInitService) proxy.getService();
-            dependencyManager.addService(initService);
+//            dependencyManager.addService(initService);
         }
     }
 

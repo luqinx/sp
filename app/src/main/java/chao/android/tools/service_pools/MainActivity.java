@@ -6,6 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.example.testpluginlib.TestPluginService;
+
+import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.ServicePool;
 import chao.test.applib1.AppLibService;
 
@@ -23,6 +26,10 @@ public class MainActivity extends AppCompatActivity {
 
         TestPluginService pluginService = ServicePool.getService(TestPluginService.class);
         pluginService.print();
+
+
+        TestPluginService service = new TestPluginService();
+        Log.e("qinchao", String.valueOf(service instanceof IService));
 
         Log.e("qinchao", "onCreate");
     }

@@ -11,6 +11,14 @@ dependencies {
 
 }
 
+//abkit {
+//    maven {
+//        groupId "chao.android.gradle"
+//        artifactId "autoservice"
+//        versionName "0.0.2.dev2"
+//    }
+//}
+
 
 repositories {
     google()

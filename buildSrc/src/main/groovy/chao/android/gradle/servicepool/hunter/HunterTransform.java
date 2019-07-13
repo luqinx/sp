@@ -29,6 +29,12 @@ import java.util.Set;
 import chao.android.gradle.servicepool.hunter.asm.BaseWeaver;
 import chao.android.gradle.servicepool.hunter.asm.ClassLoaderHelper;
 
+import static com.android.build.api.transform.QualifiedContent.DefaultContentType.CLASSES;
+import static com.android.build.api.transform.QualifiedContent.DefaultContentType.RESOURCES;
+import static com.android.build.api.transform.QualifiedContent.Scope.EXTERNAL_LIBRARIES;
+import static com.android.build.api.transform.QualifiedContent.Scope.PROJECT;
+import static com.android.build.api.transform.QualifiedContent.Scope.SUB_PROJECTS;
+
 /**
  * Created by Quinn on 26/02/2017.
  * Transform to modify bytecode
@@ -99,6 +105,7 @@ public class HunterTransform extends Transform {
         URLClassLoader urlClassLoader = ClassLoaderHelper.getClassLoader(inputs, referencedInputs, project);
         this.bytecodeWeaver.setClassLoader(urlClassLoader);
         boolean flagForCleanDexBuilderFolder = false;
+        transformStart();
         for(TransformInput input : inputs) {
             for(JarInput jarInput : input.getJarInputs()) {
                 Status status = jarInput.getStatus();
@@ -173,10 +180,34 @@ public class HunterTransform extends Transform {
             }
 
         }
+        Set<QualifiedContent.ContentType> contentTypes = new HashSet<>();
+        contentTypes.add(CLASSES);
+        contentTypes.add(RESOURCES);
+
+        Set<QualifiedContent.Scope> scopes = new HashSet<>();
+        scopes.add(EXTERNAL_LIBRARIES);
+        scopes.add(PROJECT);
+        scopes.add(SUB_PROJECTS);
+
+        File dest = outputProvider.getContentLocation(
+                "sp$$autoservice.jar",
+                contentTypes,
+                scopes,
+                Format.JAR);
+
 
         waitableExecutor.waitForTasksWithQuickFail(true);
+        transformFinished(dest);
         long costTime = System.currentTimeMillis() - startTime;
         logger.warn((getName() + " costed " + costTime + "ms"));
+    }
+
+    protected void transformFinished(File destJar) {
+
+    }
+
+    private void transformStart() {
+
     }
 
     private void transformSingleFile(final File inputFile, final File outputFile, final String srcBaseDir) {

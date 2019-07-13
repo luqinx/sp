@@ -5,6 +5,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.ModuleVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import chao.android.gradle.servicepool.Logger;
@@ -37,9 +38,11 @@ class AutoServiceVisitor extends ClassVisitor {
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+
         String[] addInterfaces = new String[interfaces.length + 1];
-        addInterfaces[interfaces.length] = IService.class.getName().replaceAll("\\.", "/");
-//        Logger.log("visit", name, signature, Arrays.toString(addInterfaces), superName);
+        System.arraycopy(interfaces, 0, addInterfaces, 0, interfaces.length);
+        addInterfaces[addInterfaces.length - 1] = IService.class.getName().replaceAll("\\.", "/");
+//        Logger.log("visit", name, Arrays.toString(interfaces), Arrays.toString(addInterfaces));
 
         MethodVisitor methodValue = visitMethod(Opcodes.ACC_PUBLIC, "sp$$" + METHOD_VALUE, "()Ljava/lang/String;", null, null);
         if (methodValue != null) {
@@ -133,8 +136,7 @@ class AutoServiceVisitor extends ClassVisitor {
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
             super.visitMethodInsn(opcode, owner, name, desc, itf);
-            Logger.log("visitMethodInsn", name, owner, desc);
-
+//            Logger.log("visitMethodInsn", name, owner, desc);
         }
 
         @Override

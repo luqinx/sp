@@ -1,6 +1,6 @@
 package chao.android.gradle.servicepool.compiler
 
-
+import chao.android.gradle.servicepool.Logger
 import chao.android.gradle.servicepool.hunter.asm.BaseWeaver
 import chao.android.gradle.servicepool.hunter.asm.ExtendClassWriter
 import chao.java.tools.servicepool.IService
@@ -11,8 +11,10 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.tree.AnnotationNode
 import org.objectweb.asm.tree.ClassNode
 
+import java.nio.file.Files
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
 /**
@@ -28,9 +30,13 @@ class AutoServiceWeaver extends BaseWeaver {
 
     private static final String SERVICES_DIRECTORY = "META-INF/services/"
 
+    private static final String MANIFEST_MF = "META-INF/MANIFEST.MF"
+
     private static final String ISERVICE_NAME = IService.class.name
 
     private Map<Integer, List<String>> serviceConfigMap = new HashMap<>()
+
+    private List<String> services = new ArrayList<>()
 
     @Override
     protected void weaveJarStarted(int jarId) {
@@ -60,6 +66,7 @@ class AutoServiceWeaver extends BaseWeaver {
                     }
                     list.add(classNode.name.replaceAll("/", "."))
 
+                    services.add(classNode.name.replaceAll("/", "."))
                     int count = 0
                     if (node.values != null) {
                         count = node.values.size() / 2
@@ -75,7 +82,6 @@ class AutoServiceWeaver extends BaseWeaver {
         }
         classReader.accept(visitor, ClassReader.EXPAND_FRAMES)
         return classWriter.toByteArray()
-//        return super.weaveSingleClassToByteArray(jarId, inputStream)
     }
 
     @Override
@@ -84,12 +90,52 @@ class AutoServiceWeaver extends BaseWeaver {
     }
 
     @Override
-    protected void weaveJarFinished(int jarId, ZipOutputStream outputZip) {
-        super.weaveJarFinished(jarId, outputZip)
+    protected void weaveJarFinished(int jarId, ZipFile inputZip, ZipOutputStream outputZip) {
+        super.weaveJarFinished(jarId, inputZip, outputZip)
         List<String> services = serviceConfigMap.get(jarId)
         if (services == null) {
             return
         }
+        if (inputZip.getEntry(SERVICES_DIRECTORY) == null) {
+            writeZipEntry(SERVICES_DIRECTORY, "", outputZip)
+        }
+
+        StringBuilder buffer = new StringBuilder()
+        services.each { service->
+            buffer.append(service).append("\n")
+        }
+//        ZipEntry entry = inputZip.getEntry(SERVICES_DIRECTORY + ISERVICE_NAME)
+        writeZipEntry(SERVICES_DIRECTORY + ISERVICE_NAME, buffer.toString(), outputZip)
+
+        if (inputZip.getEntry(MANIFEST_MF) == null) {
+            writeZipEntry(MANIFEST_MF, "Manifest-Version: 1.0", outputZip)
+        }
+
+    }
+
+    private static void writeZipEntry(String entryName, String content, ZipOutputStream outputZip) {
+        ZipEntry zipEntry = new ZipEntry(entryName)
+        byte[] newEntryContent = content.getBytes()
+        CRC32 crc32 = new CRC32()
+        crc32.update(newEntryContent)
+        zipEntry.setCrc(crc32.getValue())
+        zipEntry.setMethod(ZipEntry.STORED)
+        zipEntry.setSize(newEntryContent.length)
+        zipEntry.setCompressedSize(newEntryContent.length)
+        zipEntry.setLastAccessTime(ZERO)
+        zipEntry.setLastModifiedTime(ZERO)
+        zipEntry.setCreationTime(ZERO)
+        outputZip.putNextEntry(zipEntry)
+        outputZip.write(newEntryContent)
+        outputZip.closeEntry()
+    }
+
+    void transformFinished(File destJar) {
+
+        ZipOutputStream outputZip = new ZipOutputStream(new BufferedOutputStream(
+                Files.newOutputStream(destJar.toPath())))
+
+
         ZipEntry parent = new ZipEntry(SERVICES_DIRECTORY)
         CRC32 crc32 = new CRC32()
         crc32.update()
@@ -102,7 +148,6 @@ class AutoServiceWeaver extends BaseWeaver {
         outputZip.putNextEntry(parent)
         outputZip.closeEntry()
 
-
         File serviceConfigFile = File.createTempFile(ISERVICE_NAME, "")
         FileWriter fileWriter = new FileWriter(serviceConfigFile)
         for (String service : services) {
@@ -112,20 +157,28 @@ class AutoServiceWeaver extends BaseWeaver {
         fileWriter.flush()
         fileWriter.close()
 
-        ZipEntry serviceConfig = new ZipEntry(SERVICES_DIRECTORY + ISERVICE_NAME)
+        System.out.println("--------> " + destJar.absolutePath)
+
+        ZipEntry outEntry = new ZipEntry(SERVICES_DIRECTORY + ISERVICE_NAME)
+
         byte[] newEntryContent = IOUtils.toByteArray(new FileInputStream(serviceConfigFile))
+
         crc32 = new CRC32()
         crc32.update(newEntryContent)
-        serviceConfig.setCrc(crc32.getValue())
-        serviceConfig.setMethod(ZipEntry.STORED)
-        serviceConfig.setSize(newEntryContent.length)
-        serviceConfig.setCompressedSize(newEntryContent.length)
-        serviceConfig.setLastAccessTime(ZERO)
-        serviceConfig.setLastModifiedTime(ZERO)
-        serviceConfig.setCreationTime(ZERO)
-        outputZip.putNextEntry(serviceConfig)
+        outEntry.setCrc(crc32.getValue())
+        outEntry.setMethod(ZipEntry.STORED)
+        outEntry.setSize(newEntryContent.length)
+        outEntry.setCompressedSize(newEntryContent.length)
+        outEntry.setLastAccessTime(ZERO)
+        outEntry.setLastModifiedTime(ZERO)
+        outEntry.setCreationTime(ZERO)
+        outputZip.putNextEntry(outEntry)
         outputZip.write(newEntryContent)
         outputZip.closeEntry()
+
+        outputZip.flush()
+        outputZip.close()
+
     }
 
     @Override

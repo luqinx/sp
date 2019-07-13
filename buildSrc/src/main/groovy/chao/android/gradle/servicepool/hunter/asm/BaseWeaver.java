@@ -19,6 +19,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import chao.android.gradle.servicepool.Logger;
+
 /**
  * Created by quinn on 07/09/2018
  */
@@ -38,9 +40,13 @@ public abstract class BaseWeaver implements IWeaver{
         ZipOutputStream outputZip = new ZipOutputStream(new BufferedOutputStream(
                 java.nio.file.Files.newOutputStream(outputJar.toPath())));
         Enumeration<? extends ZipEntry> inEntries = inputZip.entries();
-//        weaveJarStarted(outputZip.hashCode());
+        weaveJarStarted(outputZip.hashCode());
+
         while (inEntries.hasMoreElements()) {
             ZipEntry entry = inEntries.nextElement();
+            if (entry.getName().endsWith("META-INF/services/chao.java.tools.servicepool.IService")) {
+                continue;
+            }
             InputStream originalFile =
                     new BufferedInputStream(inputZip.getInputStream(entry));
             ZipEntry outEntry = new ZipEntry(entry.getName());
@@ -64,7 +70,7 @@ public abstract class BaseWeaver implements IWeaver{
             outputZip.write(newEntryContent);
             outputZip.closeEntry();
         }
-        weaveJarFinished(outputZip.hashCode(), outputZip);
+        weaveJarFinished(outputZip.hashCode(), inputZip, outputZip);
         outputZip.flush();
         outputZip.close();
     }
@@ -80,9 +86,10 @@ public abstract class BaseWeaver implements IWeaver{
     /**
      * 收尾
      * @param jarId  jar识别id
+     * @param inputZip
      * @param outputZip  输出zip
      */
-    protected void weaveJarFinished(int jarId, ZipOutputStream outputZip) {
+    protected void weaveJarFinished(int jarId, ZipFile inputZip, ZipOutputStream outputZip) {
 
     }
 
