@@ -13,11 +13,15 @@ import java.lang.annotation.Target;
  * 通过 {@link chao.java.tools.servicepool.ServiceLoader} 加载,
  * 并通过 {@link chao.java.tools.servicepool.ServiceController} 缓存。
  *
+ * RetentionPolicy.RUNTIME 说明:
+ * 在和AutoService配合使用时，Service使用RetentionPolicy.Class就够了
+ * 在不适用AutoService时,需要使用RetentionPolicy.RUNTIME来获取priority, scope, tag等信息
+ *
  * @author qinchao
  * @since 2019/6/21
  */
 @Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Service {
 
     /**

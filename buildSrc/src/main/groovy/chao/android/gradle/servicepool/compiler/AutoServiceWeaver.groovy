@@ -8,6 +8,10 @@ import org.apache.commons.io.IOUtils
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Label
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.Type
 import org.objectweb.asm.tree.AnnotationNode
 import org.objectweb.asm.tree.ClassNode
 
@@ -32,11 +36,14 @@ class AutoServiceWeaver extends BaseWeaver {
 
     private static final String MANIFEST_MF = "META-INF/MANIFEST.MF"
 
-    private static final String ISERVICE_NAME = IService.class.name
 
     private Map<Integer, List<String>> serviceConfigMap = new HashMap<>()
 
     private List<String> services = new ArrayList<>()
+
+    private Map<String, List<ServiceInfo>> serviceInfoMap = new HashMap<>()
+
+    private AutoServiceExtension extension
 
     @Override
     protected void weaveJarStarted(int jarId) {
@@ -72,6 +79,15 @@ class AutoServiceWeaver extends BaseWeaver {
                         count = node.values.size() / 2
                     }
 
+                    ServiceInfo serviceInfo = new ServiceInfo(classNode.name)
+                    List<ServiceInfo> infos = serviceInfoMap.get(serviceInfo.getPkgName())
+                    if (infos == null) {
+                        infos = new ArrayList<>()
+                        serviceInfoMap.put(serviceInfo.getPkgName(), infos)
+                    }
+                    infos.add(serviceInfo)
+                    serviceInfo.parse(node.values)
+
                     Map<String, Object> values = new HashMap<>(count)
                     for (int i = 0; i < values.length; i=i+2) {
                         values.put(node.values[i], node.values[i+1])
@@ -92,41 +108,21 @@ class AutoServiceWeaver extends BaseWeaver {
     @Override
     protected void weaveJarFinished(int jarId, ZipFile inputZip, ZipOutputStream outputZip) {
         super.weaveJarFinished(jarId, inputZip, outputZip)
-        List<String> services = serviceConfigMap.get(jarId)
-        if (services == null) {
-            return
-        }
-        if (inputZip.getEntry(SERVICES_DIRECTORY) == null) {
-            writeZipEntry(SERVICES_DIRECTORY, "", outputZip)
-        }
-
-        StringBuilder buffer = new StringBuilder()
-        services.each { service->
-            buffer.append(service).append("\n")
-        }
-//        ZipEntry entry = inputZip.getEntry(SERVICES_DIRECTORY + ISERVICE_NAME)
-        writeZipEntry(SERVICES_DIRECTORY + ISERVICE_NAME, buffer.toString(), outputZip)
-
-        if (inputZip.getEntry(MANIFEST_MF) == null) {
-            writeZipEntry(MANIFEST_MF, "Manifest-Version: 1.0", outputZip)
-        }
-
     }
 
-    private static void writeZipEntry(String entryName, String content, ZipOutputStream outputZip) {
+    private static void writeZipEntry(String entryName, byte[] content, ZipOutputStream outputZip) {
         ZipEntry zipEntry = new ZipEntry(entryName)
-        byte[] newEntryContent = content.getBytes()
         CRC32 crc32 = new CRC32()
-        crc32.update(newEntryContent)
+        crc32.update(content)
         zipEntry.setCrc(crc32.getValue())
         zipEntry.setMethod(ZipEntry.STORED)
-        zipEntry.setSize(newEntryContent.length)
-        zipEntry.setCompressedSize(newEntryContent.length)
+        zipEntry.setSize(content.length)
+        zipEntry.setCompressedSize(content.length)
         zipEntry.setLastAccessTime(ZERO)
         zipEntry.setLastModifiedTime(ZERO)
         zipEntry.setCreationTime(ZERO)
         outputZip.putNextEntry(zipEntry)
-        outputZip.write(newEntryContent)
+        outputZip.write(content)
         outputZip.closeEntry()
     }
 
@@ -135,50 +131,145 @@ class AutoServiceWeaver extends BaseWeaver {
         ZipOutputStream outputZip = new ZipOutputStream(new BufferedOutputStream(
                 Files.newOutputStream(destJar.toPath())))
 
+        writeGenerateServiceFactories(outputZip)
 
-        ZipEntry parent = new ZipEntry(SERVICES_DIRECTORY)
-        CRC32 crc32 = new CRC32()
-        crc32.update()
-        parent.setCrc(crc32.getValue())
-        parent.setMethod(ZipEntry.STORED)
-        parent.setSize(0)
-        parent.setLastAccessTime(ZERO)
-        parent.setLastModifiedTime(ZERO)
-        parent.setCreationTime(ZERO)
-        outputZip.putNextEntry(parent)
-        outputZip.closeEntry()
+        for (String pkgName: serviceInfoMap.keySet()) {
+            List<ServiceInfo> infoList = serviceInfoMap.get(pkgName)
 
-        File serviceConfigFile = File.createTempFile(ISERVICE_NAME, "")
-        FileWriter fileWriter = new FileWriter(serviceConfigFile)
-        for (String service : services) {
-            fileWriter.write(service)
-            fileWriter.write("\n")
+            writeGenerateFactories(outputZip, pkgName, infoList)
         }
-        fileWriter.flush()
-        fileWriter.close()
-
-        System.out.println("--------> " + destJar.absolutePath)
-
-        ZipEntry outEntry = new ZipEntry(SERVICES_DIRECTORY + ISERVICE_NAME)
-
-        byte[] newEntryContent = IOUtils.toByteArray(new FileInputStream(serviceConfigFile))
-
-        crc32 = new CRC32()
-        crc32.update(newEntryContent)
-        outEntry.setCrc(crc32.getValue())
-        outEntry.setMethod(ZipEntry.STORED)
-        outEntry.setSize(newEntryContent.length)
-        outEntry.setCompressedSize(newEntryContent.length)
-        outEntry.setLastAccessTime(ZERO)
-        outEntry.setLastModifiedTime(ZERO)
-        outEntry.setCreationTime(ZERO)
-        outputZip.putNextEntry(outEntry)
-        outputZip.write(newEntryContent)
-        outputZip.closeEntry()
 
         outputZip.flush()
         outputZip.close()
 
+    }
+
+    private void writeGenerateServiceFactories(ZipOutputStream outputZip) {
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
+
+        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, null, Constant.SERVICE_FACTORIES_ASM_NAME)
+        classWriter.visitSource("sp\$\$ServiceFactories.java", null)
+
+        MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
+        methodVisitor.visitCode()
+        methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, Constant.SERVICE_FACTORIES_ASM_NAME, "<init>", "()V", false)
+
+        for (String pkgName: serviceInfoMap.keySet()) {
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+            methodVisitor.visitLdcInsn(pkgName)
+            String serviceFactory = Constant.GENERATE_SERVICE_PACKAGE_NAME + pkgName.replaceAll("\\.", "_") + Constant.GENERATE_SERVICE_SUFFIX
+            methodVisitor.visitTypeInsn(Opcodes.NEW, serviceFactory)
+            methodVisitor.visitInsn(Opcodes.DUP)
+            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, serviceFactory, "<init>", "()V", false)
+            methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, "addFactory", "(Ljava/lang/String;Lchao/java/tools/servicepool/IServiceFactory;)V", false)
+        }
+        methodVisitor.visitInsn(Opcodes.RETURN)
+        methodVisitor.visitMaxs(4, 1)
+        methodVisitor.visitEnd()
+        classWriter.visitEnd()
+
+        writeZipEntry(Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME + Constant.GENERATE_FILE_NAME_SUFFIX, classWriter.toByteArray(), outputZip)
+    }
+
+    /**
+     * 自动生成方法 xxx_ServiceFactory#createServiceProxy
+     * @param classWriter
+     * @param infoList
+     */
+    private static void generateServiceProxy(ClassWriter classWriter, List<ServiceInfo> infoList) {
+        MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "createServiceProxy", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/ServiceProxy;", null, null)
+        methodVisitor.visitCode()
+
+        Label goEnd = new Label()
+        for (ServiceInfo info: infoList) {
+            Label li = new Label()
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 1)
+            methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
+            methodVisitor.visitJumpInsn(Opcodes.IF_ACMPNE, li)
+            methodVisitor.visitTypeInsn(Opcodes.NEW, "chao/java/tools/servicepool/ServiceProxy")
+            methodVisitor.visitInsn(Opcodes.DUP)
+            methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+            methodVisitor.visitInsn(info.getPriority() + 3)
+            methodVisitor.visitInsn(info.getScope() + 3)
+            methodVisitor.visitLdcInsn(info.getTag())
+
+            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;)V", false)
+            methodVisitor.visitInsn(Opcodes.ARETURN)
+            methodVisitor.visitLabel(li)
+        }
+        methodVisitor.visitLabel(goEnd)
+        methodVisitor.visitInsn(Opcodes.ACONST_NULL)
+        methodVisitor.visitInsn(Opcodes.ARETURN)
+        methodVisitor.visitMaxs(7, 3)
+        methodVisitor.visitEnd()
+    }
+
+    private static void generateCreateInstance(ClassWriter classWriter, List<ServiceInfo> infoList) {
+        MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "createInstance", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/IService;", "(Ljava/lang/Class<*>;)Lchao/java/tools/servicepool/IService;", null)
+        methodVisitor.visitCode()
+
+        Label goEnd = new Label()
+        for (ServiceInfo info: infoList) {
+            Label li = new Label()
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 1)
+            methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
+            methodVisitor.visitJumpInsn(Opcodes.IF_ACMPNE, li)
+            methodVisitor.visitTypeInsn(Opcodes.NEW, info.getAsmName())
+            methodVisitor.visitInsn(Opcodes.DUP)
+            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, info.getAsmName(), "<init>", "()V", false)
+            methodVisitor.visitInsn(Opcodes.ARETURN)
+            methodVisitor.visitLabel(li)
+        }
+
+        methodVisitor.visitLabel(goEnd)
+        methodVisitor.visitInsn(Opcodes.ACONST_NULL)
+        methodVisitor.visitInsn(Opcodes.ARETURN)
+        methodVisitor.visitMaxs(2, 2)
+        methodVisitor.visitEnd()
+    }
+
+    /**
+     * 自动生成 chao/java/tools/servicepool/gen/(xxx_xxx_xxx)_ServiceFactory.class
+     * xxx_xxx_xxx是被@Service注解的类的包名pkgName;
+     * 同时通过 {@link #generateServiceProxy}生成serviceProxy(Class)和 通过{@link #generateCreateInstance}
+     * 生成createInstance(Class)两个方法
+     *
+     *     @see #generateServiceProxy
+     * @param outputZip zip输出
+     * @param pkgName   被@Service注解的类的包名pkgName
+     * @param infoList  同pkgName下所有的类信息列表
+     */
+    private static void writeGenerateFactories(ZipOutputStream outputZip, String pkgName, List<ServiceInfo> infoList) {
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
+
+        String className = Constant.GENERATE_SERVICE_PACKAGE_NAME + pkgName.replaceAll("\\.", "_") + Constant.GENERATE_SERVICE_SUFFIX
+        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", Constant.SERVICE_FACTORY_ASM_NAME)
+
+        generateServiceProxy(classWriter, infoList)
+
+        generateCreateInstance(classWriter, infoList)
+
+        classWriter.visitEnd()
+
+        writeZipEntry(className + Constant.GENERATE_FILE_NAME_SUFFIX, classWriter.toByteArray(), outputZip)
+    }
+
+    @Override
+    void setExtension(Object extension) {
+        this.extension = extension
+    }
+
+    @Override
+    boolean weaverJarExcluded(String jarName) {
+        List<String> excludes = extension.excludes()
+        for (String exclude: excludes) {
+            if (jarName.startsWith(exclude)) {
+                return true
+            }
+        }
+        return false
     }
 
     @Override

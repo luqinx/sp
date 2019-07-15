@@ -6,7 +6,7 @@ import chao.java.tools.servicepool.annotation.Service;
  * @author qinchao
  * @since 2019/5/5
  */
-public class ServiceProxy implements IService {
+public class ServiceProxy {
 
     private Class<? extends IService> serviceClass;
 
@@ -18,10 +18,12 @@ public class ServiceProxy implements IService {
 
     private String tag;
 
+    private IServiceFactory serviceFactory;
+
     ServiceProxy(Class<? extends IService> clazz) {
         serviceClass = clazz;
-        priority = Priority.NORMAL_PRIORITY;
-        scope = Scope.global;
+        priority = IService.Priority.NORMAL_PRIORITY;
+        scope = IService.Scope.global;
 
         Service service = serviceClass.getAnnotation(Service.class);
         if (service != null) {
@@ -31,54 +33,52 @@ public class ServiceProxy implements IService {
         }
     }
 
+    public ServiceProxy(Class<? extends IService> clazz, IServiceFactory serviceFactory, int priority, int scope, String tag) {
+        this.serviceClass = clazz;
+        this.serviceFactory = serviceFactory;
+        this.priority = priority;
+        this.scope = scope;
+        this.tag = tag;
+    }
+
     IService getService() {
         if (strategy == null) {
             switch (scope()) {
-                case Scope.global:
-                    strategy = new ServiceCacheStrategy.Global();
+                case IService.Scope.global:
+                    strategy = new ServiceCacheStrategy.Global(serviceFactory);
                     break;
-                case Scope.once:
-                    strategy = new ServiceCacheStrategy.Once();
+                case IService.Scope.once:
+                    strategy = new ServiceCacheStrategy.Once(serviceFactory);
                     break;
-                case Scope.temp:
-                    strategy = new ServiceCacheStrategy.Temp();
+                case IService.Scope.temp:
+                    strategy = new ServiceCacheStrategy.Temp(serviceFactory);
                     break;
                 default:
-                    strategy = new ServiceCacheStrategy.Global();
+                    strategy = new ServiceCacheStrategy.Global(serviceFactory);
                     break;
             }
         }
         return strategy.getService(serviceClass);
     }
 
-    Class<?> getServiceClass() {
+    Class<? extends IService> getServiceClass() {
         return serviceClass;
     }
 
     /**
-     * todo
-     * @return
      */
-    @Override
     public String tag() {
         return tag;
     }
 
     /**
-     * todo
-     * @return
      */
-    @Override
     public int priority() {
         return priority;
     }
 
     /**
-     * todo
-     *
-     * @return
      */
-    @Override
     public int scope() {
         return scope;
     }

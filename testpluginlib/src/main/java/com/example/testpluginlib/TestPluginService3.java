@@ -1,5 +1,6 @@
 package com.example.testpluginlib;
 
+import chao.java.tools.servicepool.DefaultService;
 import chao.java.tools.servicepool.IService;
 
 /**
@@ -8,7 +9,7 @@ import chao.java.tools.servicepool.IService;
  * @description:
  * @date 2019-07-09
  */
-public class TestPluginService3 implements IService {
+public class TestPluginService3 extends DefaultService implements IService {
 
     @Override
     public String tag() {

@@ -120,7 +120,7 @@ public class HunterTransform extends Transform {
                             break;
                         case ADDED:
                         case CHANGED:
-                            transformJar(jarInput.getFile(), dest, status);
+                            transformJar(jarInput, dest, status);
                             break;
                         case REMOVED:
                             if (dest.exists()) {
@@ -134,7 +134,7 @@ public class HunterTransform extends Transform {
                         cleanDexBuilderFolder(dest);
                         flagForCleanDexBuilderFolder = true;
                     }
-                    transformJar(jarInput.getFile(), dest, status);
+                    transformJar(jarInput, dest, status);
                 }
             }
 
@@ -236,16 +236,24 @@ public class HunterTransform extends Transform {
         }
     }
 
-    private void transformJar(final File srcJar, final File destJar, Status status) {
+    private void transformJar(final JarInput srcInput, final File destJar, Status status) {
+
         waitableExecutor.execute(() -> {
-            if(emptyRun) {
+            File srcJar = srcInput.getFile();
+            if(emptyRun || weaverJarExcluded(srcInput.getName())) {
                 FileUtils.copyFile(srcJar, destJar);
                 return null;
             }
+            chao.android.gradle.servicepool.Logger.log("qinchao", srcInput.getName(), srcInput.getClass(), srcInput.getContentTypes());
             bytecodeWeaver.weaveJar(srcJar, destJar);
             return null;
         });
     }
+
+    private boolean weaverJarExcluded(String jarName) {
+        return bytecodeWeaver.weaverJarExcluded(jarName);
+    }
+
 
     private void cleanDexBuilderFolder(File dest) {
         waitableExecutor.execute(() -> {

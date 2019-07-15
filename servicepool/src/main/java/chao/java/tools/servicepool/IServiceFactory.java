@@ -8,6 +8,7 @@ package chao.java.tools.servicepool;
  */
 public interface IServiceFactory {
 
-    Iterable<Class<? extends IService>> createServices();
+    ServiceProxy createServiceProxy(Class<?> clazz);
 
+    IService createInstance(Class<?> clazz);
 }

@@ -1,6 +1,8 @@
 package chao.java.tools.servicepool;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -15,6 +17,8 @@ public class DefaultServiceController implements ServiceController {
     private DependencyManager dependencyManager;
 
     private NoOpInstanceFactory noOpFactory;
+
+    private List<ServiceFactories> factoriesList = new ArrayList<>(1);
 
 
     public DefaultServiceController() {
@@ -47,6 +51,9 @@ public class DefaultServiceController implements ServiceController {
     }
 
     private void cacheService(ServiceProxy proxy, Class<?> serviceClass) {
+        if (serviceClass == Object.class) {
+            return;
+        }
         ServiceProxy oldProxy = serviceCache.get(serviceClass.hashCode());
         //1. service还不存在
         //2. 申请的serviceClass和缓存key一致时，属于第一优先级
@@ -58,6 +65,9 @@ public class DefaultServiceController implements ServiceController {
     }
 
     private void cacheSubClasses(Class<?> clazz, ServiceProxy serviceProxy) {
+        if (clazz == Object.class) {
+            return;
+        }
         for (Class<?> subInterface: clazz.getInterfaces()) {
             if (IService.class.equals(subInterface)) {
                 continue;
@@ -68,14 +78,37 @@ public class DefaultServiceController implements ServiceController {
             cacheService(serviceProxy, subInterface);
         }
         Class superClass = clazz;
-        while (superClass != null) {
+        while (superClass != Object.class) {
             cacheService(serviceProxy, superClass);
             superClass = superClass.getSuperclass();
         }
     }
 
     private ServiceProxy getService(Class<?> serviceClass) {
-        return serviceCache.get(serviceClass.hashCode());
+        ServiceProxy proxy = serviceCache.get(serviceClass.hashCode());
+        if (proxy == null) {
+            for (ServiceFactories factories: factoriesList) {
+                String name = serviceClass.getName();
+                int last = name.lastIndexOf('.');
+                if (last == -1) {
+                    continue;
+                }
+                String pkgName = name.substring(0, last);
+                IServiceFactory factory = factories.getServiceFactory(pkgName);
+                if (factory == null) {
+                    continue;
+                }
+                ServiceProxy service = factory.createServiceProxy(serviceClass);
+                if (service != null) {
+                    cacheService(service, service.getServiceClass());
+                    addService(service.getServiceClass());
+                    proxy = serviceCache.get(service.getServiceClass().hashCode());
+
+                    break;
+                }
+            }
+        }
+        return proxy;
     }
 
 
@@ -105,5 +138,9 @@ public class DefaultServiceController implements ServiceController {
             return tClass.cast(serviceProxy.getService());
         }
         return defaultService;
+    }
+
+    public void addFactories(ServiceFactories factories) {
+        factoriesList.add(factories);
     }
 }

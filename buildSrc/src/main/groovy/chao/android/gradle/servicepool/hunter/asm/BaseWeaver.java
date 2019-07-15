@@ -1,6 +1,7 @@
 package chao.android.gradle.servicepool.hunter.asm;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -20,6 +21,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import chao.android.gradle.servicepool.Logger;
+import chao.android.gradle.servicepool.compiler.Constant;
 
 /**
  * Created by quinn on 07/09/2018
@@ -36,6 +38,7 @@ public abstract class BaseWeaver implements IWeaver{
     }
 
     public final void weaveJar(File inputJar, File outputJar) throws IOException {
+
         ZipFile inputZip = new ZipFile(inputJar);
         ZipOutputStream outputZip = new ZipOutputStream(new BufferedOutputStream(
                 java.nio.file.Files.newOutputStream(outputJar.toPath())));
@@ -45,6 +48,10 @@ public abstract class BaseWeaver implements IWeaver{
         while (inEntries.hasMoreElements()) {
             ZipEntry entry = inEntries.nextElement();
             if (entry.getName().endsWith("META-INF/services/chao.java.tools.servicepool.IService")) {
+                continue;
+            }
+            //不重复生成代码
+            if (entry.getName() != null && entry.getName().startsWith(Constant.GENERATE_SERVICE_PACKAGE_NAME)) {
                 continue;
             }
             InputStream originalFile =
@@ -137,4 +144,7 @@ public abstract class BaseWeaver implements IWeaver{
         return fullQualifiedClassName.endsWith(".class") && !fullQualifiedClassName.contains("R$") && !fullQualifiedClassName.contains("R.class") && !fullQualifiedClassName.contains("BuildConfig.class");
     }
 
+    public boolean weaverJarExcluded(String jarName) {
+        return false;
+    }
 }

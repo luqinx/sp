@@ -29,7 +29,7 @@ public class InitService extends DefaultService implements IInitService {
 
     @Override
     public String tag() {
-        return delegate.tag();
+        return null;
     }
 
     @Override

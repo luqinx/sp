@@ -29,15 +29,11 @@ public class ServicePool {
         ServiceLoader<IService> loader = ServiceLoader.load(IService.class);
         controller.addServices(loader.getServices());
 
-        ServiceLoader<IServiceFactory> lazyFactories = ServiceLoader.load(IServiceFactory.class);
-        for (Class<? extends IServiceFactory> factoryClass: lazyFactories) {
-            try {
-                IServiceFactory serviceFactory = factoryClass.newInstance();
-                controller.addServices(serviceFactory.createServices());
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+        ServiceFactories factories = controller.getServiceByClass(ServiceFactories.class, ServiceFactories.class);
+        if (factories == null) {
+            throw new ServicePoolException("sp internal err.");
         }
+        controller.addFactories(factories);
         controller.loadFinished();
     }
 

@@ -37,6 +37,5 @@ dependencies {
     implementation project(":servicepool_android")
     implementation project(":servicepool")
     implementation project(":applib1")
-    implementation project(":lib1")
     implementation project(":testpluginlib")
 }

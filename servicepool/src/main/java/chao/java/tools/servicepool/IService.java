@@ -6,11 +6,11 @@ package chao.java.tools.servicepool;
  */
 public interface IService {
 
-    String tag();
-
-    int priority();
-
-    int scope();
+//    String tag();
+//
+//    int priority();
+//
+//    int scope();
 
 
     /**

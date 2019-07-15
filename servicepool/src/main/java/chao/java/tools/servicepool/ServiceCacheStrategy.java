@@ -19,12 +19,22 @@ public interface ServiceCacheStrategy {
 
         private IService service;
 
+        private IServiceFactory factory;
+
+        public Global(IServiceFactory factory) {
+            this.factory = factory;
+        }
+
         @Override
         public IService getService(Class<? extends IService> serviceClass) {
             if (service == null) {
                 synchronized (this) {
                     if (service == null) {
-                        service = ReflectUtil.newInstance(serviceClass);
+                        if (factory != null) {
+                            service = factory.createInstance(serviceClass);
+                        } else {
+                            service = ReflectUtil.newInstance(serviceClass);
+                        }
                     }
                 }
             }
@@ -37,14 +47,25 @@ public interface ServiceCacheStrategy {
      */
     class Temp implements ServiceCacheStrategy {
 
+        private IServiceFactory factory;
+
         private WeakReference<? extends IService> weakService;
+
+        public Temp(IServiceFactory factory) {
+            this.factory = factory;
+        }
 
         @Override
         public IService getService(Class<? extends IService> serviceClass) {
             if (weakService == null || weakService.get() == null) {
                 synchronized (this) {
                     if (weakService == null || weakService.get() == null) {
-                        weakService = new WeakReference<>(ReflectUtil.newInstance(serviceClass));
+
+                        if (factory != null) {
+                            weakService = new WeakReference<>(factory.createInstance(serviceClass));
+                        } else {
+                            weakService = new WeakReference<>(ReflectUtil.newInstance(serviceClass));
+                        }
                     }
                 }
             }
@@ -57,8 +78,17 @@ public interface ServiceCacheStrategy {
      */
     class Once implements ServiceCacheStrategy {
 
+        private final IServiceFactory factory;
+
+        public Once(IServiceFactory factory) {
+            this.factory = factory;
+        }
+
         @Override
         public IService getService(Class<? extends IService> serviceClass) {
+            if (factory != null) {
+                return factory.createInstance(serviceClass);
+            }
             return ReflectUtil.newInstance(serviceClass);
         }
     }
