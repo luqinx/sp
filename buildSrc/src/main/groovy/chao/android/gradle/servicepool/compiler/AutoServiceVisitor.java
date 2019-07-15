@@ -17,11 +17,8 @@ import chao.java.tools.servicepool.IService;
 class AutoServiceVisitor extends ClassVisitor implements Constant{
 
 
-    private Map<String, Object> values;
-
-    AutoServiceVisitor(ClassVisitor cv, Map<String, Object> values) {
+    AutoServiceVisitor(ClassVisitor cv) {
         super(Opcodes.ASM6, cv);
-        this.values = values;
     }
 
     @Override

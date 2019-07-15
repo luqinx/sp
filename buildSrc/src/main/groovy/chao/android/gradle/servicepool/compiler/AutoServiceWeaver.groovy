@@ -1,6 +1,6 @@
 package chao.android.gradle.servicepool.compiler
 
-import chao.android.gradle.servicepool.Logger
+
 import chao.android.gradle.servicepool.hunter.asm.BaseWeaver
 import chao.android.gradle.servicepool.hunter.asm.ExtendClassWriter
 import chao.java.tools.servicepool.IService
@@ -36,11 +36,6 @@ class AutoServiceWeaver extends BaseWeaver {
 
     private static final String MANIFEST_MF = "META-INF/MANIFEST.MF"
 
-
-    private Map<Integer, List<String>> serviceConfigMap = new HashMap<>()
-
-    private List<String> services = new ArrayList<>()
-
     private Map<String, List<ServiceInfo>> serviceInfoMap = new HashMap<>()
 
     private AutoServiceExtension extension
@@ -63,41 +58,31 @@ class AutoServiceWeaver extends BaseWeaver {
         classReader.accept(classNode, 0)
         //RetentionPolicy.RUNTIME是可见， 其他为不可见
         if (classNode.invisibleAnnotations != null) {
-            for (AnnotationNode node : classNode.invisibleAnnotations) {
-                if (SERVICE_DESC == node.desc) {
-//                    Logger.log("SERVICE_DESC == node.desc", node.desc, node.values, classNode.name.replaceAll("/", "."))
-                    List<String> list = serviceConfigMap.get(jarId)
-                    if (list == null) {
-                        list = new ArrayList<>()
-                        serviceConfigMap.put(jarId, list)
-                    }
-                    list.add(classNode.name.replaceAll("/", "."))
-
-                    services.add(classNode.name.replaceAll("/", "."))
-                    int count = 0
-                    if (node.values != null) {
-                        count = node.values.size() / 2
-                    }
-
-                    ServiceInfo serviceInfo = new ServiceInfo(classNode.name)
-                    List<ServiceInfo> infos = serviceInfoMap.get(serviceInfo.getPkgName())
-                    if (infos == null) {
-                        infos = new ArrayList<>()
-                        serviceInfoMap.put(serviceInfo.getPkgName(), infos)
-                    }
-                    infos.add(serviceInfo)
-                    serviceInfo.parse(node.values)
-
-                    Map<String, Object> values = new HashMap<>(count)
-                    for (int i = 0; i < values.length; i=i+2) {
-                        values.put(node.values[i], node.values[i+1])
-                    }
-                    visitor = new AutoServiceVisitor(classWriter, values)
-                }
-            }
+            visitor = collectServiceInfo(classWriter, classNode, classNode.invisibleAnnotations)
+        }
+        if (classNode.visibleAnnotations != null) {
+            visitor = collectServiceInfo(classWriter, classNode, classNode.visibleAnnotations)
         }
         classReader.accept(visitor, ClassReader.EXPAND_FRAMES)
         return classWriter.toByteArray()
+    }
+
+    private ClassVisitor collectServiceInfo(ClassWriter classWriter, ClassNode classNode, List<AnnotationNode> nodes) {
+        for (AnnotationNode node : nodes) {
+            if (SERVICE_DESC == node.desc) {
+//                    Logger.log("SERVICE_DESC == node.desc", node.desc, node.values, classNode.name.replaceAll("/", "."))
+                ServiceInfo serviceInfo = new ServiceInfo(classNode.name)
+                List<ServiceInfo> infos = serviceInfoMap.get(serviceInfo.getPkgName())
+                if (infos == null) {
+                    infos = new ArrayList<>()
+                    serviceInfoMap.put(serviceInfo.getPkgName(), infos)
+                }
+                infos.add(serviceInfo)
+                serviceInfo.parse(node.values)
+                return new AutoServiceVisitor(classWriter)
+            }
+        }
+        return classWriter
     }
 
     @Override
@@ -177,7 +162,7 @@ class AutoServiceWeaver extends BaseWeaver {
      * @param classWriter
      * @param infoList
      */
-    private static void generateServiceProxy(ClassWriter classWriter, List<ServiceInfo> infoList) {
+    private static void generateCreateServiceProxy(ClassWriter classWriter, List<ServiceInfo> infoList) {
         MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "createServiceProxy", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/ServiceProxy;", null, null)
         methodVisitor.visitCode()
 
@@ -233,10 +218,10 @@ class AutoServiceWeaver extends BaseWeaver {
     /**
      * 自动生成 chao/java/tools/servicepool/gen/(xxx_xxx_xxx)_ServiceFactory.class
      * xxx_xxx_xxx是被@Service注解的类的包名pkgName;
-     * 同时通过 {@link #generateServiceProxy}生成serviceProxy(Class)和 通过{@link #generateCreateInstance}
+     * 同时通过 {@link #generateCreateServiceProxy}生成serviceProxy(Class)和 通过{@link #generateCreateInstance}
      * 生成createInstance(Class)两个方法
      *
-     *     @see #generateServiceProxy
+     *     @see #generateCreateServiceProxy
      * @param outputZip zip输出
      * @param pkgName   被@Service注解的类的包名pkgName
      * @param infoList  同pkgName下所有的类信息列表
@@ -247,7 +232,7 @@ class AutoServiceWeaver extends BaseWeaver {
         String className = Constant.GENERATE_SERVICE_PACKAGE_NAME + pkgName.replaceAll("\\.", "_") + Constant.GENERATE_SERVICE_SUFFIX
         classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", Constant.SERVICE_FACTORY_ASM_NAME)
 
-        generateServiceProxy(classWriter, infoList)
+        generateCreateServiceProxy(classWriter, infoList)
 
         generateCreateInstance(classWriter, infoList)
 
