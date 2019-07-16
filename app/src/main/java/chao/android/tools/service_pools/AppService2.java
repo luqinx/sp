@@ -8,7 +8,7 @@ import chao.java.tools.servicepool.annotation.Service;
  * @since 2019/4/29
  */
 @Service(priority = IService.Priority.MAX_PRIORITY, scope = IService.Scope.once)
-public class AppService implements Printer {
+public class AppService2 implements Printer2 {
 
     @Override
     public void print() {
