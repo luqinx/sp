@@ -1,10 +1,8 @@
 package chao.android.gradle.servicepool;
 
 /**
- * @author luqin  qinchao@mochongsoft.com
- * @project: zmjx-sp
- * @description:
- * @date 2019-07-09
+ * @author luqin
+ * @since  2019-07-09
  */
 public class Logger {
 

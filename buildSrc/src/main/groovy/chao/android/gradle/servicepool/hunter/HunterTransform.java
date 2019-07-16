@@ -244,7 +244,7 @@ public class HunterTransform extends Transform {
                 FileUtils.copyFile(srcJar, destJar);
                 return null;
             }
-            chao.android.gradle.servicepool.Logger.log("qinchao", srcInput.getName(), srcInput.getClass(), srcInput.getContentTypes());
+//            chao.android.gradle.servicepool.Logger.log("qinchao", srcInput.getName(), srcInput.getClass(), srcInput.getContentTypes());
             bytecodeWeaver.weaveJar(srcJar, destJar);
             return null;
         });

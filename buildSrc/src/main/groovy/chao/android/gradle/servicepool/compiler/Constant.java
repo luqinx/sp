@@ -1,10 +1,12 @@
 package chao.android.gradle.servicepool.compiler;
 
+import org.objectweb.asm.Opcodes;
+
 /**
  * @author luqin
  * @since  2019-07-13
  */
-public interface Constant {
+public interface Constant extends Opcodes {
     String SERVICE_FULL_NAME = "chao.java.tools.servicepool.IService";
 
     String SERVICE_ASM_NAME = SERVICE_FULL_NAME.replaceAll("\\.", "/");
@@ -34,5 +36,7 @@ public interface Constant {
     String METHOD_VALUE = "value";
 
     String EXTENSION_NAME = "autoservice";
+
+    String SERVICE_DESC = "Lchao/java/tools/servicepool/annotation/Service;";
 
 }

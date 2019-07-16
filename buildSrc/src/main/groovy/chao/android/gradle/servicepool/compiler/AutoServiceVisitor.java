@@ -11,7 +11,9 @@ import chao.java.tools.servicepool.IService;
 
 /**
  *
- * @author luqin  qinchao@mochongsoft.com
+ *
+ *
+ * @author luqin
  * @since 2019-07-09
  */
 class AutoServiceVisitor extends ClassVisitor implements Constant{
@@ -33,59 +35,6 @@ class AutoServiceVisitor extends ClassVisitor implements Constant{
         String[] addInterfaces = new String[interfaces.length + 1];
         System.arraycopy(interfaces, 0, addInterfaces, 0, interfaces.length);
         addInterfaces[addInterfaces.length - 1] = IService.class.getName().replaceAll("\\.", "/");
-//        Logger.log("visit", name, Arrays.toString(interfaces), Arrays.toString(addInterfaces));
         super.visit(version, access, name, signature, superName, addInterfaces);
-    }
-
-    @Override
-    public ModuleVisitor visitModule(String name, int access, String version) {
-        return super.visitModule(name, access, version);
-    }
-
-    @Override
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-        MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        return new MethodWrapper(mv);
-    }
-
-
-    @Override
-    public void visitEnd() {
-//        增加scope, priority, tag三个方法
-//        MethodVisitor method = cv.visitMethod(Opcodes.ACC_PUBLIC, "scope", "", null, null);
-        super.visitEnd();
-    }
-
-    @Override
-    public void visitSource(String source, String debug) {
-        super.visitSource(source, debug);
-    }
-
-    private class MethodWrapper extends MethodVisitor {
-
-        public MethodWrapper(MethodVisitor mv) {
-            super(Opcodes.ASM6, mv);
-        }
-
-        @Override
-        public void visitCode() {
-            super.visitCode();
-        }
-
-        @Override
-        public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-            super.visitMethodInsn(opcode, owner, name, desc, itf);
-//            Logger.log("visitMethodInsn", name, owner, desc);
-        }
-
-        @Override
-        public void visitEnd() {
-            super.visitEnd();
-        }
-
-        @Override
-        public void visitIntInsn(int opcode, int operand) {
-            super.visitIntInsn(opcode, operand);
-        }
     }
 }

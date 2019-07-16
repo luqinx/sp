@@ -5,15 +5,7 @@ import chao.android.gradle.servicepool.hunter.asm.BaseWeaver
 import chao.android.gradle.servicepool.hunter.asm.ExtendClassWriter
 import chao.java.tools.servicepool.IService
 import org.apache.commons.io.IOUtils
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.Label
-import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.Opcodes
-import org.objectweb.asm.Type
-import org.objectweb.asm.tree.AnnotationNode
-import org.objectweb.asm.tree.ClassNode
+import org.objectweb.asm.*
 
 import java.nio.file.Files
 import java.util.zip.CRC32
@@ -23,18 +15,10 @@ import java.util.zip.ZipOutputStream
 
 /**
  *
- * @project: zmjx-sp
- * @description:
- *  @author luqin  qinchao@mochongsoft.com
- * @date 2019-07-09
+ *  @author luqin
+ *  @since 2019-07-09
  */
 class AutoServiceWeaver extends BaseWeaver {
-
-    private static final String SERVICE_DESC = "Lchao/java/tools/servicepool/annotation/Service;"
-
-    private static final String SERVICES_DIRECTORY = "META-INF/services/"
-
-    private static final String MANIFEST_MF = "META-INF/MANIFEST.MF"
 
     private Map<String, List<ServiceInfo>> serviceInfoMap = new HashMap<>()
 
@@ -54,35 +38,32 @@ class AutoServiceWeaver extends BaseWeaver {
         ClassWriter classWriter = new ExtendClassWriter(classLoader, ClassWriter.COMPUTE_MAXS)
         ClassVisitor visitor = classWriter
 
-        ClassNode classNode = new ClassNode()
-        classReader.accept(classNode, 0)
+//        ClassNode classNode = new ClassNode()
+        AutoServiceAnnotationDetect detect = new AutoServiceAnnotationDetect()
+        classReader.accept(detect, 0)
         //RetentionPolicy.RUNTIME是可见， 其他为不可见
-        if (classNode.invisibleAnnotations != null) {
-            visitor = collectServiceInfo(classWriter, classNode, classNode.invisibleAnnotations)
+        if (detect.typeServiceAnnotation != null) {
+            visitor = collectServiceInfo(classWriter, detect)
         }
-        if (classNode.visibleAnnotations != null) {
-            visitor = collectServiceInfo(classWriter, classNode, classNode.visibleAnnotations)
+
+        if(detect.fieldServiceAnnotations.size() > 0) {
+            visitor = new AutoServiceFieldClassVisitor(visitor, detect.fieldServiceAnnotations)
         }
+
         classReader.accept(visitor, ClassReader.EXPAND_FRAMES)
         return classWriter.toByteArray()
     }
 
-    private ClassVisitor collectServiceInfo(ClassWriter classWriter, ClassNode classNode, List<AnnotationNode> nodes) {
-        for (AnnotationNode node : nodes) {
-            if (SERVICE_DESC == node.desc) {
-//                    Logger.log("SERVICE_DESC == node.desc", node.desc, node.values, classNode.name.replaceAll("/", "."))
-                ServiceInfo serviceInfo = new ServiceInfo(classNode.name)
-                List<ServiceInfo> infos = serviceInfoMap.get(serviceInfo.getPkgName())
-                if (infos == null) {
-                    infos = new ArrayList<>()
-                    serviceInfoMap.put(serviceInfo.getPkgName(), infos)
-                }
-                infos.add(serviceInfo)
-                serviceInfo.parse(node.values)
-                return new AutoServiceVisitor(classWriter)
-            }
+    private ClassVisitor collectServiceInfo(ClassWriter classWriter, AutoServiceAnnotationDetect classNode) {
+        ServiceInfo serviceInfo = new ServiceInfo(classNode.className)
+        List<ServiceInfo> infos = serviceInfoMap.get(serviceInfo.getPkgName())
+        if (infos == null) {
+            infos = new ArrayList<>()
+            serviceInfoMap.put(serviceInfo.getPkgName(), infos)
         }
-        return classWriter
+        infos.add(serviceInfo)
+        serviceInfo.parse(classNode.typeServiceAnnotation)
+        return new AutoServiceVisitor(classWriter)
     }
 
     @Override
@@ -118,7 +99,7 @@ class AutoServiceWeaver extends BaseWeaver {
 
         writeGenerateServiceFactories(outputZip)
 
-        for (String pkgName: serviceInfoMap.keySet()) {
+        for (String pkgName : serviceInfoMap.keySet()) {
             List<ServiceInfo> infoList = serviceInfoMap.get(pkgName)
 
             writeGenerateFactories(outputZip, pkgName, infoList)
@@ -140,7 +121,7 @@ class AutoServiceWeaver extends BaseWeaver {
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, Constant.SERVICE_FACTORIES_ASM_NAME, "<init>", "()V", false)
 
-        for (String pkgName: serviceInfoMap.keySet()) {
+        for (String pkgName : serviceInfoMap.keySet()) {
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
             methodVisitor.visitLdcInsn(pkgName)
             String serviceFactory = Constant.GENERATE_SERVICE_PACKAGE_NAME + pkgName.replaceAll("\\.", "_") + Constant.GENERATE_SERVICE_SUFFIX
@@ -167,7 +148,7 @@ class AutoServiceWeaver extends BaseWeaver {
         methodVisitor.visitCode()
 
         Label goEnd = new Label()
-        for (ServiceInfo info: infoList) {
+        for (ServiceInfo info : infoList) {
             Label li = new Label()
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 1)
             methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
@@ -196,7 +177,7 @@ class AutoServiceWeaver extends BaseWeaver {
         methodVisitor.visitCode()
 
         Label goEnd = new Label()
-        for (ServiceInfo info: infoList) {
+        for (ServiceInfo info : infoList) {
             Label li = new Label()
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 1)
             methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
@@ -221,10 +202,10 @@ class AutoServiceWeaver extends BaseWeaver {
      * 同时通过 {@link #generateCreateServiceProxy}生成serviceProxy(Class)和 通过{@link #generateCreateInstance}
      * 生成createInstance(Class)两个方法
      *
-     *     @see #generateCreateServiceProxy
+     * @see #generateCreateServiceProxy
      * @param outputZip zip输出
-     * @param pkgName   被@Service注解的类的包名pkgName
-     * @param infoList  同pkgName下所有的类信息列表
+     * @param pkgName 被@Service注解的类的包名pkgName
+     * @param infoList 同pkgName下所有的类信息列表
      */
     private static void writeGenerateFactories(ZipOutputStream outputZip, String pkgName, List<ServiceInfo> infoList) {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
@@ -249,7 +230,7 @@ class AutoServiceWeaver extends BaseWeaver {
     @Override
     boolean weaverJarExcluded(String jarName) {
         List<String> excludes = extension.excludes()
-        for (String exclude: excludes) {
+        for (String exclude : excludes) {
             if (jarName.startsWith(exclude)) {
                 return true
             }

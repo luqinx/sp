@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
  * @author qinchao
  * @since 2019/6/21
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Service {
 
