@@ -4,10 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-
 import com.example.testpluginlib.TestPluginService;
 
-import chao.java.tools.servicepool.ServicePool;
+import chao.android.tools.service_pools.test.Haha;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -19,13 +18,16 @@ public class MainActivity extends AppCompatActivity {
     @Service
     private Printer appService;
 
+    @Service(CommonPrinter.class)
+    private Printer commonService;
+
+    @Service(Haha.class)
+    private Printer haha;
+
     @Service
     private TestPluginService testPluginService;
 
     {
-//        if (Printer.class.isAssignableFrom(AppService.class)) {
-//            appService = ServicePool.getService(AppService.class);
-//        }
 //        appService = ServicePool.getService(AppService.class);
     }
 
@@ -39,12 +41,15 @@ public class MainActivity extends AppCompatActivity {
         testPluginService.print();
 
 
+        commonService.print();
 
 //        TestPluginService service = new TestPluginService();
 //        Log.e("System.out", String.valueOf(service instanceof IService));
 
 //        appService = ServicePool.getService(AppService.class);
         appService.print();
+
+        haha.print();
 
     }
 }

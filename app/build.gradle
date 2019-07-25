@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'sp.autoservice'
+//apply plugin: 'sp.autoservice'
 
 android {
     compileSdkVersion 28

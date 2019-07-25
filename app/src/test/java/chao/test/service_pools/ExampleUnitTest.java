@@ -7,24 +7,27 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
+
+    private ArrayList<String> strings = new ArrayList<>();
     @Test
-    public void addition_isCorrect() throws InstantiationException, IllegalAccessException {
-        long start = System.currentTimeMillis();
-        TestPluginService pluginService = new TestPluginService();
-        pluginService.print();
-        long mid = System.currentTimeMillis();
+    public void addition_isCorrect() {
 
-        pluginService = TestPluginService.class.newInstance();
-        pluginService.print();
-        long end = System.currentTimeMillis();
+        test((Class<ArrayList<String>>) strings.getClass());
+    }
 
-        System.out.println(mid - start);
-        System.out.println(end - mid);
+    private void test(Class<ArrayList<String>> clazz) {
+        System.out.println(clazz.getComponentType());
+        System.out.println(Arrays.toString(clazz.getClasses()));
+        System.out.println(clazz.getName());
+        System.out.println(clazz.getGenericSuperclass());
     }
 }

@@ -46,7 +46,7 @@ public class NoOpInstanceFactory {
                 constructor.setAccessible(true); //没什么卵用
 
                 if (mInstantiator == null) {
-                    mInstantiator = ServicePool.getService(NoOpInstantiator.class, NoOpInstantiator.class, new DefaultNoOpInstantiator());
+                    mInstantiator = ServicePool.getService(NoOpInstantiator.class, new DefaultNoOpInstantiator());
                 }
                 Class<?> noOp = mInstantiator.make(clazz, constructor, params,noOpCount);
                 return clazz.cast(noOp.getConstructor(NoOpConstructorArg.class).newInstance(sConstructorArg));

@@ -29,7 +29,7 @@ public class ServicePool {
         ServiceLoader<IService> loader = ServiceLoader.load(IService.class);
         controller.addServices(loader.getServices());
 
-        ServiceFactories factories = controller.getServiceByClass(ServiceFactories.class, ServiceFactories.class);
+        ServiceFactories factories = controller.getServiceByClass(ServiceFactories.class);
         if (factories == null) {
             throw new ServicePoolException("sp internal err.");
         }
@@ -47,35 +47,20 @@ public class ServicePool {
      */
     public static <T> T getService(Class<T> serviceClass) {
         checkLoader();
-        return controller.getServiceByClass(serviceClass, serviceClass);
+        return controller.getServiceByClass(serviceClass);
     }
 
     /**
      * 指定返回service对象类型, 获取service实例对象
      * 说明: 在一个接口有多个实现类的场景下, 通过指定tClass来明确使用哪个实现
      *
-     * @param serviceClass  可以是interface，也可以是class
-     * @param <T>   service实例对象类型
-     * @return  service实例对象, 如果没有获取到具体的实现，会返回一个 {@link NoOpInstance}实例
-     */
-    public static <T> T getService(Class serviceClass, Class<T> tClass) {
-        checkLoader();
-        return controller.getServiceByClass(serviceClass, tClass);
-    }
-
-
-    /**
-     * 指定返回service对象类型, 获取service实例对象
-     * 说明: 在一个接口有多个实现类的场景下, 通过指定tClass来明确使用哪个实现
-     *
-     * @param serviceClass  可以是interface，也可以是class
      * @param defaultService 如果没有获取到实现类返回defaultService
      * @param <T>   service实例对象类型
      * @return  service实例对象
      */
-    public static <T extends IService> T getService(Class serviceClass, Class<T> tClass, T defaultService) {
+    public static <T extends IService> T getService(Class<T> tClass, T defaultService) {
         checkLoader();
-        return controller.getServiceByClass(serviceClass, tClass, defaultService);
+        return controller.getServiceByClass(tClass, defaultService);
     }
 
 //    public static <T extends IService> T newService(Class<T> serviceClass) {

@@ -29,7 +29,7 @@ public class ServiceProxy {
         if (service != null) {
             priority = service.priority();
             scope = service.scope();
-            tag = service.value();
+            tag = service.tag();
         }
     }
 

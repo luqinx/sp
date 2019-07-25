@@ -85,28 +85,34 @@ public class DefaultServiceController implements ServiceController {
     }
 
     private ServiceProxy getService(Class<?> serviceClass) {
-        ServiceProxy proxy = serviceCache.get(serviceClass.hashCode());
-        if (proxy == null) {
-            for (ServiceFactories factories: factoriesList) {
-                String name = serviceClass.getName();
-                int last = name.lastIndexOf('.');
-                if (last == -1) {
-                    continue;
-                }
-                String pkgName = name.substring(0, last);
-                IServiceFactory factory = factories.getServiceFactory(pkgName);
-                if (factory == null) {
-                    continue;
-                }
-                ServiceProxy service = factory.createServiceProxy(serviceClass);
-                if (service != null) {
-                    cacheService(service, service.getServiceClass());
-                    addService(service.getServiceClass());
-                    proxy = serviceCache.get(service.getServiceClass().hashCode());
-
-                    break;
-                }
+        ServiceProxy cachedProxy = serviceCache.get(serviceClass.hashCode());
+        //申请的Service和缓存的Service同类型，属于最高优先级，直接返回
+        if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass
+                || cachedProxy.priority() == IService.Priority.MAX_PRIORITY)) {
+            return cachedProxy;
+        }
+        ServiceProxy proxy = null;
+        //目前只有一个ServiceFactories
+        for (ServiceFactories factories: factoriesList) {
+            String name = serviceClass.getName();
+            int last = name.lastIndexOf('.');
+            if (last == -1) {
+                continue;
             }
+            String pkgName = name.substring(0, last);
+            IServiceFactory factory = factories.getServiceFactory(pkgName);
+            if (factory == null) {
+                continue;
+            }
+            proxy = factory.createServiceProxy(serviceClass);
+            if (proxy != null) {
+                cacheService(proxy, proxy.getServiceClass());
+                addService(proxy.getServiceClass());
+                proxy = serviceCache.get(proxy.getServiceClass().hashCode());
+            }
+        }
+        if (proxy == null) {
+            proxy = cachedProxy;
         }
         return proxy;
     }
@@ -119,8 +125,8 @@ public class DefaultServiceController implements ServiceController {
     }
 
     @Override
-    public <T> T getServiceByClass(Class clazz, Class<T> t) {
-        ServiceProxy serviceProxy = getService(clazz);
+    public <T> T getServiceByClass(Class<T> t) {
+        ServiceProxy serviceProxy = getService(t);
         if (serviceProxy != null) {
             return t.cast(serviceProxy.getService());
         }
@@ -132,8 +138,8 @@ public class DefaultServiceController implements ServiceController {
         dependencyManager.servicesInit();
     }
 
-    public <T extends IService> T getServiceByClass(Class serviceClass, Class<T> tClass, T defaultService) {
-        ServiceProxy serviceProxy = getService(serviceClass);
+    public <T extends IService> T getServiceByClass(Class<T> tClass, T defaultService) {
+        ServiceProxy serviceProxy = getService(tClass);
         if (serviceProxy != null) {
             return tClass.cast(serviceProxy.getService());
         }

@@ -1,6 +1,8 @@
 package chao.java.tools.servicepool.annotation;
 
 import chao.java.tools.servicepool.IService;
+import chao.java.tools.servicepool.NoOpInstance;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -46,7 +48,7 @@ public @interface Service {
 
     String tag() default "";
 
-    String value() default "";
+    Class<?> value() default Void.class;
 
 
 }
