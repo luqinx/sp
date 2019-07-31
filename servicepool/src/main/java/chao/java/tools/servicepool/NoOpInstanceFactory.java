@@ -1,9 +1,10 @@
 package chao.java.tools.servicepool;
 
-import chao.app.interceptor.Interceptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import chao.android.tools.interceptor.Interceptor;
 
 /**
  * @author qinchao
