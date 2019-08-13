@@ -13,14 +13,4 @@ public class DefaultInitService extends DefaultService implements IInitService {
 
     }
 
-    @Override
-    public boolean async() {
-        return false;
-    }
-
-    @Override
-    public List<IInitService> dependencies() {
-        return null;
-    }
-
 }

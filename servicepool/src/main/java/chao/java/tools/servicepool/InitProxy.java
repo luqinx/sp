@@ -5,25 +5,36 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import chao.java.tools.servicepool.annotation.Service;
+
 /**
  * @author qinchao
  * @since 2019/4/30
  */
-public class InitService extends DefaultService implements IInitService {
+public class InitProxy extends DefaultService implements IInitService {
 
     private IInitService delegate;
 
-    volatile AtomicInteger initState;
+    public volatile AtomicInteger initState;
 
     private boolean forceSync; // for android
 
-    List<IInitService> dependents;
+    private List<InitProxy> dependents;
+
+    private List<Class<? extends IInitService>> dependencies;
+
+    private boolean async;
+
+    @Service
+    private ILogger logger;
 
 
-    public InitService(IInitService service) {
+    public InitProxy(IInitService service, List<Class<? extends IInitService>> dependencies, boolean async) {
         delegate = service;
         initState = new AtomicInteger(Constant.initState.UNINIT);
         dependents = new ArrayList<>();
+        this.dependencies = dependencies;
+        this.async = async;
     }
 
 
@@ -34,33 +45,42 @@ public class InitService extends DefaultService implements IInitService {
 
     @Override
     public void onInit() {
-        initState.set(Constant.initState.INITING);
-        delegate.onInit();
+        initState.compareAndSet(Constant.initState.UNINIT, Constant.initState.INITING);
+        try {
+            long timeMillis = System.currentTimeMillis();
+            delegate.onInit();
+            logger.log(delegate.getClass().getSimpleName() + " init spent: " + (System.currentTimeMillis() - timeMillis));
+        } catch (Throwable e) {
+            e.printStackTrace();
+            initState.getAndSet(Constant.initState.FAILED);
+        }
+        initState.compareAndSet(Constant.initState.INITING, Constant.initState.INITED);
     }
 
-    @Override
     public boolean async() {
         if (forceSync) {
             return false;
         }
-        return delegate.async();
+        return async;
     }
 
     void forceSync() {
         forceSync = true;
     }
 
-    @Override
-    public List<IInitService> dependencies() {
-        List<IInitService> dependencies = delegate.dependencies();
+    public List<Class<? extends IInitService>> dependencies() {
         if (dependencies != null) {
             return Collections.unmodifiableList(dependencies);
         }
         return new ArrayList<>();
     }
 
-    IInitService getDelegate() {
+    public IInitService getDelegate() {
         return delegate;
+    }
+
+    public List<InitProxy> getDependents() {
+        return dependents;
     }
 
     @Override
@@ -72,7 +92,7 @@ public class InitService extends DefaultService implements IInitService {
             return false;
         }
 
-        InitService wrapper = (InitService) object;
+        InitProxy wrapper = (InitProxy) object;
 
         return delegate != null ? delegate.equals(wrapper.delegate) : wrapper.delegate == null;
     }

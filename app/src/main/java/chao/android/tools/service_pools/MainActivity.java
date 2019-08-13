@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.testpluginlib.TestPluginService;
 
 import chao.android.tools.service_pools.test.Haha;
+import chao.android.tools.service_pools.test.InitService5;
+import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -23,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Service(Haha.class)
     private Printer haha;
+
+//    @Service
+//    private InitService5 initService5;
 
     @Service
     private TestPluginService testPluginService;
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         commonService.print();
+
+        System.out.println(commonService);
 
 //        TestPluginService service = new TestPluginService();
 //        Log.e("System.out", String.valueOf(service instanceof IService));

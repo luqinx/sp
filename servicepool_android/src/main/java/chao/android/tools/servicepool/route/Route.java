@@ -15,6 +15,8 @@ import chao.android.tools.servicepool.AndroidServicePool;
  */
 public class Route implements IRoute {
 
+    private static final int ROUTE_DEFAULT_REQUEST_CODE = 0xff000000;
+
     private Bundle args;
 
     private int flags;
@@ -35,11 +37,18 @@ public class Route implements IRoute {
 
     @Override
     public void navigation(Context context) {
-
+        _navigation(context, ROUTE_DEFAULT_REQUEST_CODE);
     }
 
     @Override
     public void navigation(Activity activity, int requestCode) {
+        if (requestCode == ROUTE_DEFAULT_REQUEST_CODE) {
+            throw new IllegalArgumentException(ROUTE_DEFAULT_REQUEST_CODE + " is route inner request code.");
+        }
+        _navigation(activity, requestCode);
+    }
+
+    private void _navigation(Context context, int requestCode) {
 
     }
 

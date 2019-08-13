@@ -49,7 +49,7 @@ public enum AndroidLazyStrategy implements TypeResolutionStrategy, TypeResolutio
                                                                              ClassLoadingStrategy<? super S> classLoadingStrategy) {
         makeDexDir();
         if (loadingStrategy == null) {
-            loadingStrategy = new AndroidClassLoadingStrategy.Injecting(NO_OP_DEX_DIR);
+            loadingStrategy = new AndroidClassLoadingStrategy.Wrapping(NO_OP_DEX_DIR);
         }
         return loadingStrategy.load(classLoader, dynamicType.getAllTypes());
     }

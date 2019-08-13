@@ -19,6 +19,9 @@ public class AndroidServicePool extends ServicePool {
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
+        long start = System.currentTimeMillis();
         loadServices();
+        long end = System.currentTimeMillis();
+        System.out.println("load init services, spent:" + (end - start));
     }
 }

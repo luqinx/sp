@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 /**
  * @author qinchao
@@ -12,9 +11,9 @@ import java.util.ServiceLoader;
  */
 public class DefaultServiceController implements ServiceController {
 
-    private Map<Integer, ServiceProxy> serviceCache = new HashMap<>();
+    private Map<String, ServiceProxy> serviceCache = new HashMap<>();
 
-    private DependencyManager dependencyManager;
+    private Map<String, ServiceProxy> historyCache = new HashMap<>();
 
     private NoOpInstanceFactory noOpFactory;
 
@@ -23,19 +22,12 @@ public class DefaultServiceController implements ServiceController {
 
     public DefaultServiceController() {
         noOpFactory = new NoOpInstanceFactory();
-        ServiceLoader<DependencyManager> dependencyManagers = ServiceLoader.load(DependencyManager.class);
-        for (DependencyManager dependencyManager: dependencyManagers) {
-            this.dependencyManager = dependencyManager;
-        }
-        if (dependencyManager == null) {
-            this.dependencyManager = new DefaultDependencyManager();
-        }
     }
 
     @Override
     public void addService(Class<? extends IService> serviceClass) {
 
-        ServiceProxy proxy = serviceCache.get(serviceClass.hashCode());
+        ServiceProxy proxy = serviceCache.get(serviceClass.getName());
         if (proxy == null) {
             proxy = new ServiceProxy(serviceClass);
         }
@@ -44,23 +36,19 @@ public class DefaultServiceController implements ServiceController {
 
         cacheSubClasses(serviceClass, proxy);
 
-        if (IInitService.class.isAssignableFrom(serviceClass)) {
-            IInitService initService = (IInitService) proxy.getService();
-//            dependencyManager.addService(initService);
-        }
     }
 
     private void cacheService(ServiceProxy proxy, Class<?> serviceClass) {
         if (serviceClass == Object.class) {
             return;
         }
-        ServiceProxy oldProxy = serviceCache.get(serviceClass.hashCode());
+        ServiceProxy oldProxy = serviceCache.get(serviceClass.getName());
         //1. service还不存在
         //2. 申请的serviceClass和缓存key一致时，属于第一优先级
         //3. service已存在，但是当前的service优先级更高
         if (oldProxy == null || (!oldProxy.getServiceClass().equals(serviceClass)
-            && proxy.priority() > oldProxy.priority())) {
-            serviceCache.put(serviceClass.hashCode(), proxy);
+            && (proxy.priority() > oldProxy.priority()) || proxy.getServiceClass().equals(serviceClass))) {
+            serviceCache.put(serviceClass.getName(), proxy);
         }
     }
 
@@ -85,10 +73,18 @@ public class DefaultServiceController implements ServiceController {
     }
 
     private ServiceProxy getService(Class<?> serviceClass) {
-        ServiceProxy cachedProxy = serviceCache.get(serviceClass.hashCode());
+
+        long getServiceStart = System.currentTimeMillis();
+
+        ServiceProxy record = historyCache.get(serviceClass.getName());
+        if (record != null) {
+            return record;
+        }
+
+
+        ServiceProxy cachedProxy = serviceCache.get(serviceClass.getName());
         //申请的Service和缓存的Service同类型，属于最高优先级，直接返回
-        if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass
-                || cachedProxy.priority() == IService.Priority.MAX_PRIORITY)) {
+        if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass)) {
             return cachedProxy;
         }
         ServiceProxy proxy = null;
@@ -108,12 +104,17 @@ public class DefaultServiceController implements ServiceController {
             if (proxy != null) {
                 cacheService(proxy, proxy.getServiceClass());
                 addService(proxy.getServiceClass());
-                proxy = serviceCache.get(proxy.getServiceClass().hashCode());
+                proxy = serviceCache.get(proxy.getServiceClass().getName());
             }
         }
         if (proxy == null) {
             proxy = cachedProxy;
         }
+        long getServiceEnd = System.currentTimeMillis();
+        if (proxy != null) {
+            System.out.println("get service " + proxy.getServiceClass() + " spent:" + (getServiceEnd - getServiceStart));
+        }
+        historyCache.put(serviceClass.getName(), proxy);
         return proxy;
     }
 
@@ -135,7 +136,7 @@ public class DefaultServiceController implements ServiceController {
 
     @Override
     public void loadFinished() {
-        dependencyManager.servicesInit();
+
     }
 
     public <T extends IService> T getServiceByClass(Class<T> tClass, T defaultService) {
@@ -148,5 +149,10 @@ public class DefaultServiceController implements ServiceController {
 
     public void addFactories(ServiceFactories factories) {
         factoriesList.add(factories);
+    }
+
+    @Override
+    public ServiceProxy getProxy(Class<?> clazz) {
+        return getService(clazz);
     }
 }

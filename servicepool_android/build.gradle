@@ -28,7 +28,7 @@ abkit {
     maven {
         artifactId 'servicepool-android'
         groupId 'chao.java.tools'
-        versionName '0.0.2.dev5'
+        versionName '0.0.3.dev1'
     }
 }
 
@@ -39,7 +39,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation project(":servicepool")
-//    implementation 'chao.java.tools:servicepool:0.0.2.dev5'
-    implementation "net.bytebuddy:byte-buddy-android:1.9.6"
+//    implementation project(":servicepool")
+//    implementation 'chao.java.tools:servicepool:0.0.3.dev1'
+    implementation servicepool
+    implementation "net.bytebuddy:byte-buddy-android:1.10.1"
+//    implementation "net.bytebuddy:byte-buddy-android:1.9.6"
 }

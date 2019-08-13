@@ -9,14 +9,15 @@ dependencies {
     testImplementation "junit:junit:4.12"
     testImplementation "chao.android.tools:testsuit:0.0.1.dev1"
     implementation "chao.android.tools:interceptor:0.0.1.dev2"
-    implementation "net.bytebuddy:byte-buddy:1.9.6"
+    implementation "net.bytebuddy:byte-buddy:1.10.1"
+//    implementation "net.bytebuddy:byte-buddy:1.9.6"
 }
 
 abkit {
     maven {
         artifactId 'servicepool'
         groupId 'chao.java.tools'
-        versionName '0.0.2.dev5'
+        versionName '0.0.3.dev1'
     }
 }
 

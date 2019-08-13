@@ -1,5 +1,7 @@
 package chao.java.tools.servicepool;
 
+import chao.java.tools.servicepool.annotation.Service;
+
 /**
  * todo 初始化 & 初始化优先级
  * todo 懒加载 lazy load
@@ -16,6 +18,7 @@ public class ServicePool {
 
     private volatile static boolean loaded = false;
 
+
     public static boolean isLoaded() {
         return loaded;
     }
@@ -26,9 +29,12 @@ public class ServicePool {
         }
         loaded = true;
         controller = new DefaultServiceController();
+        long start = System.currentTimeMillis();
         ServiceLoader<IService> loader = ServiceLoader.load(IService.class);
-        controller.addServices(loader.getServices());
+        long end = System.currentTimeMillis();
 
+        System.out.println("service loader spent:" + (end - start));
+        controller.addServices(loader.getServices());
         ServiceFactories factories = controller.getServiceByClass(ServiceFactories.class);
         if (factories == null) {
             throw new ServicePoolException("sp internal err.");
@@ -72,9 +78,17 @@ public class ServicePool {
         if (controller == null) {
             synchronized (ServicePool.class) {
                 if (controller == null) {
+                    long start = System.currentTimeMillis();
                     loadServices();
+                    long end = System.currentTimeMillis();
+                    System.out.println("load init services, spent:" + (end - start));
                 }
             }
         }
+    }
+
+    public static ServiceProxy getProxy(Class<?> clazz) {
+        checkLoader();
+        return controller.getProxy(clazz);
     }
 }
