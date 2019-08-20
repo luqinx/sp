@@ -12,7 +12,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.2'
-        classpath "chao.android.gradle:abkit:0.0.1.dev"
+//        classpath "chao.android.gradle:abkit:0.0.2.dev1"
         classpath 'chao.android.gradle:autoservice:0.0.3.dev1'
 
 

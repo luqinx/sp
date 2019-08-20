@@ -27,12 +27,20 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
         return services;
     }
 
+    private Logger logger = new Logger();
+
     private ServiceLoader(Class<T> service, ClassLoader classLoader) {
         this.services = new ArrayList<>();
         try {
+            long start = System.currentTimeMillis();
             Enumeration<URL> configs = classLoader.getResources(PREFIX + service.getName());
+            long mid = System.currentTimeMillis();
+            logger.log("classLoader.getResources spent:" + (mid - start));
             while (configs.hasMoreElements()) {
+                start = System.currentTimeMillis();
                 List<String> names = parse(service, configs.nextElement());
+                long end = System.currentTimeMillis();
+                logger.log("parse spent:" + (end - start));
                 for (String name: names) {
                     try {
                         services.add(Class.forName(name, true, classLoader).asSubclass(service));

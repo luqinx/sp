@@ -81,7 +81,6 @@ public class DefaultServiceController implements ServiceController {
             return record;
         }
 
-
         ServiceProxy cachedProxy = serviceCache.get(serviceClass.getName());
         //申请的Service和缓存的Service同类型，属于最高优先级，直接返回
         if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass)) {
@@ -112,9 +111,9 @@ public class DefaultServiceController implements ServiceController {
         }
         long getServiceEnd = System.currentTimeMillis();
         if (proxy != null) {
+            historyCache.put(serviceClass.getName(), proxy);
             System.out.println("get service " + proxy.getServiceClass() + " spent:" + (getServiceEnd - getServiceStart));
         }
-        historyCache.put(serviceClass.getName(), proxy);
         return proxy;
     }
 

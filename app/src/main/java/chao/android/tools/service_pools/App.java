@@ -1,12 +1,13 @@
 package chao.android.tools.service_pools;
 
 import android.app.Application;
-import android.os.Bundle;
-import android.os.SystemClock;
 
+import com.example.testpluginlib.TestPluginService;
+
+import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.test.InitService3;
 import chao.android.tools.servicepool.AndroidServicePool;
-import chao.android.tools.servicepool.route.Route;
+import chao.java.tools.servicepool.ILogger;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -19,11 +20,27 @@ import chao.java.tools.servicepool.annotation.Service;
  */
 public class App extends Application {
 
-//    @Service(tag="/activity/1")
-//    private Route route;
+    @Service
+    private Printer appService;
+
+    @Service(CommonPrinter.class)
+    private Printer commonService;
+
+    @Service(Haha.class)
+    private Printer haha;
 
 //    @Service
-//    private InitService3 initService3;
+//    private InitService5 initService5;
+
+    @Service
+    private TestPluginService testPluginService;
+
+
+    @Service
+    private InitService3 initService3;
+
+    @Service
+    private ILogger logger;
 
     public App() {
 
@@ -33,8 +50,14 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         AndroidServicePool.init(this);
+        AndroidServicePool.setExceptionHandler((e, service) -> {
+            logger.log(service);
+        });
 
+        commonService.print();
 
+        haha.print();
+
+        appService.print();
     }
-
 }

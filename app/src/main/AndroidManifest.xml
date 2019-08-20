@@ -23,5 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.openinstall.APP_KEY"
+            android:value="y60srl"/>
     </application>
 </manifest>

@@ -1,12 +1,6 @@
 package chao.java.tools.servicepool;
 
-import chao.java.tools.servicepool.annotation.Service;
-
 /**
- * todo 初始化 & 初始化优先级
- * todo 懒加载 lazy load
- * todo 初始化时机, 启动初始化，首页初始化(android), 按需初始化...
- * todo 缓存策略， 全局缓存, 定时缓存, 不缓存
  * todo 多行程同步问题
  *
  * @author qinchao
@@ -18,6 +12,10 @@ public class ServicePool {
 
     private volatile static boolean loaded = false;
 
+    private static ExceptionHandler exceptionHandler;
+
+    public static ILogger logger = new Logger();
+
 
     public static boolean isLoaded() {
         return loaded;
@@ -27,13 +25,12 @@ public class ServicePool {
         if (loaded) {
             return;
         }
-        loaded = true;
         controller = new DefaultServiceController();
         long start = System.currentTimeMillis();
         ServiceLoader<IService> loader = ServiceLoader.load(IService.class);
         long end = System.currentTimeMillis();
 
-        System.out.println("service loader spent:" + (end - start));
+        logger.log("service loader spent:" + (end - start));
         controller.addServices(loader.getServices());
         ServiceFactories factories = controller.getServiceByClass(ServiceFactories.class);
         if (factories == null) {
@@ -41,6 +38,7 @@ public class ServicePool {
         }
         controller.addFactories(factories);
         controller.loadFinished();
+        loaded = true;
     }
 
     /**
@@ -52,8 +50,15 @@ public class ServicePool {
      *          会通过 {@link NoOpInstanceFactory} 返回一个 {@link NoOpInstance} Mock实例
      */
     public static <T> T getService(Class<T> serviceClass) {
-        checkLoader();
-        return controller.getServiceByClass(serviceClass);
+        try {
+            checkLoader();
+            return controller.getServiceByClass(serviceClass);
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, serviceClass);
+            }
+        }
+        return null;
     }
 
     /**
@@ -65,8 +70,15 @@ public class ServicePool {
      * @return  service实例对象
      */
     public static <T extends IService> T getService(Class<T> tClass, T defaultService) {
-        checkLoader();
-        return controller.getServiceByClass(tClass, defaultService);
+        try {
+            checkLoader();
+            return controller.getServiceByClass(tClass, defaultService);
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, tClass);
+            }
+        }
+        return null;
     }
 
 //    public static <T extends IService> T newService(Class<T> serviceClass) {
@@ -81,14 +93,25 @@ public class ServicePool {
                     long start = System.currentTimeMillis();
                     loadServices();
                     long end = System.currentTimeMillis();
-                    System.out.println("load init services, spent:" + (end - start));
+                    logger.log("load init services, spent:" + (end - start));
                 }
             }
         }
     }
 
     public static ServiceProxy getProxy(Class<?> clazz) {
-        checkLoader();
-        return controller.getProxy(clazz);
+        try {
+            checkLoader();
+            return controller.getProxy(clazz);
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, clazz);
+            }
+        }
+        return null;
+    }
+
+    public static void setExceptionHandler(ExceptionHandler _exceptionHandler) {
+        exceptionHandler = _exceptionHandler;
     }
 }

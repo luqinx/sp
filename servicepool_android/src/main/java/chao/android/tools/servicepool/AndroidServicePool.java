@@ -2,6 +2,7 @@ package chao.android.tools.servicepool;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+
 import chao.java.tools.servicepool.ServicePool;
 
 /**
@@ -22,6 +23,6 @@ public class AndroidServicePool extends ServicePool {
         long start = System.currentTimeMillis();
         loadServices();
         long end = System.currentTimeMillis();
-        System.out.println("load init services, spent:" + (end - start));
+        logger.log("load init services, spent:" + (end - start));
     }
 }

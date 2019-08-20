@@ -7,8 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.testpluginlib.TestPluginService;
 
 import chao.android.tools.service_pools.test.Haha;
-import chao.android.tools.service_pools.test.InitService5;
-import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -17,24 +15,24 @@ import chao.java.tools.servicepool.annotation.Service;
  */
 public class MainActivity extends AppCompatActivity {
 
-    @Service
-    private Printer appService;
-
-    @Service(CommonPrinter.class)
-    private Printer commonService;
-
-    @Service(Haha.class)
-    private Printer haha;
+//    @Service
+//    private Printer appService;
+//
+//    @Service(CommonPrinter.class)
+//    private Printer commonService;
+//
+//    @Service(Haha.class)
+//    private Printer haha;
 
 //    @Service
 //    private InitService5 initService5;
 
     @Service
-    private TestPluginService testPluginService;
+    private A a;
 
-    {
-//        appService = ServicePool.getService(AppService.class);
-    }
+//    @Service
+//    private TestPluginService testPluginService;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,20 +41,21 @@ public class MainActivity extends AppCompatActivity {
 //        appLibService.appPrint();
 
 //        testPluginService = ServicePool.getService(TestPluginService.class);
-        testPluginService.print();
-
-
-        commonService.print();
-
-        System.out.println(commonService);
-
-//        TestPluginService service = new TestPluginService();
-//        Log.e("System.out", String.valueOf(service instanceof IService));
-
-//        appService = ServicePool.getService(AppService.class);
-        appService.print();
-
-        haha.print();
+//        testPluginService.print();
+//
+//
+//        commonService.print();
+//
+//        System.out.println(commonService);
+//
+////        TestPluginService service = new TestPluginService();
+////        Log.e("System.out", String.valueOf(service instanceof IService));
+//
+////        appService = ServicePool.getService(AppService.class);
+//        appService.print();
+//
+//        haha.print();
+        a.getInt();
 
     }
 }

@@ -1,0 +1,7 @@
+
+
+module("servicepool", "chao.java.tools:servicepool:0.0.3.dev2", ':servicepool').include()
+module("servicepool_android", "chao.java.tools:servicepool-android:0.0.3.dev1", ':servicepool_android').include()
+
+remote("interceptor", "chao.android.tools:interceptor:0.0.1.dev2")
+remote("ami", "chao.android.tools:ami:1.0.2")
