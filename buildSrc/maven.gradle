@@ -1,0 +1,48 @@
+apply plugin: 'maven'
+
+Properties props = new Properties()
+File file = new File(project.projectDir, "maven.properties")
+props.load(new FileInputStream(file))
+
+def ACCOUNT = props.get("nexusUserName")
+def PASSWORD = props.get("nexusPassword")
+def RELEASE = Boolean.parseBoolean(props.get("publishRelease"))
+def MAVEN_LOCAL_PATH = RELEASE ? props.get("nexusUrl") : props.get("nexusSnapshotUrl")
+
+File localFile = new File(project.rootDir, "local.properties")
+if (localFile.exists()) {
+    props.load(new FileInputStream(localFile))
+}
+def ADMIN_ACCOUNT = props.get("adminUserName")
+def ADMIN_PASSWORD = props.get("adminPassword")
+
+
+uploadArchives.doFirst {
+    project.getConfigurations().all { config ->
+        config.getDependencies().all { dependency->
+            if (RELEASE && dependency.version && dependency.version.endsWith("-SNAPSHOT")) {
+                throw new RuntimeException("发布正式版本不能使用snapshot依赖: " + dependency.group + ":" + dependency.name + ":" + dependency.version)
+            }
+        }
+    }
+}
+
+//脚本：将Lib打成aar包上传至maven私有库
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //非release版本自动追加-SNAPSHOT后缀
+            def PUBLISH_VERSION = RELEASE ? VERSION_NAME : (VERSION_NAME + "-SNAPSHOT")
+            def PUBLISH_ACCOUNT = ADMIN_ACCOUNT ? ADMIN_ACCOUNT : ACCOUNT
+            def PUBLISH_PASSWORD = ADMIN_PASSWORD ? ADMIN_PASSWORD : PASSWORD
+            repository(url:MAVEN_LOCAL_PATH ){
+                authentication(userName: PUBLISH_ACCOUNT, password: PUBLISH_PASSWORD)}
+            pom.project {
+                groupId GROUP_ID
+                artifactId ARTIFACT_ID
+                version PUBLISH_VERSION
+                packaging 'aar'
+            }
+        }
+    }
+}
