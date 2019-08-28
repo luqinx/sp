@@ -1,6 +1,5 @@
 package chao.java.tools.servicepool;
 
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,11 +7,10 @@ import chao.java.tools.servicepool.annotation.Init;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
- *
  * Service的代理
- *      创建Service对象
- *      Service缓存策略
- *
+ * 创建Service对象
+ * Service缓存策略
+ * <p>
  * 如果Service是一个非静态内部类, 则缓存策略不可以使用Global, 因为使用Global可以导致外部类不被回收而导致内存泄露
  *
  * @author qinchao
@@ -54,7 +52,8 @@ public class ServiceProxy {
         }
     }
 
-    public ServiceProxy(Class<? extends IService> clazz, IServiceFactory serviceFactory, int priority, int scope, String tag, boolean async, List<Class<? extends IInitService>> dependencies) {
+    public ServiceProxy(Class<? extends IService> clazz, IServiceFactory serviceFactory,
+                        int priority, int scope, String tag, boolean async, List<Class<? extends IInitService>> dependencies) {
         this.serviceClass = clazz;
         this.serviceFactory = serviceFactory;
         this.priority = priority;
@@ -72,14 +71,6 @@ public class ServiceProxy {
 ////            this.scope = IService.Scope.temp;
 //        }
 
-//        //todo for dev debug
-//        Init init = serviceClass.getAnnotation(Init.class);
-//        if (init != null) {
-//            async = init.async();
-//            dependencies = Arrays.asList(init.dependencies());
-//        }
-        System.out.println(async);
-        System.out.println(dependencies);
     }
 
     public IService getService() {
@@ -112,18 +103,21 @@ public class ServiceProxy {
     }
 
     /**
+     *
      */
     public String tag() {
         return tag;
     }
 
     /**
+     *
      */
     public int priority() {
         return priority;
     }
 
     /**
+     *
      */
     public int scope() {
         return scope;
