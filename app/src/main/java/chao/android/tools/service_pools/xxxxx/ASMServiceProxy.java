@@ -1,7 +1,6 @@
-package chao.android.tools.service_pools.asm;
+package chao.android.tools.service_pools.xxxxx;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import chao.android.tools.service_pools.test.InitService1;
 import chao.android.tools.service_pools.test.InitService2;
@@ -23,5 +22,7 @@ public class ASMServiceProxy {
         services.add(InitService2.class);
 
         ServiceProxy proxy = new ServiceProxy(InitService3.class, null, 100, 200, "hah", true, services);
+
+        ASMStaticClass  clzz = new ASMStaticClass();
     }
 }

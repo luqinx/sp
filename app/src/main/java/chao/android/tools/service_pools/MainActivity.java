@@ -9,6 +9,7 @@ import chao.android.tools.service_pools.event.MyEvent;
 import chao.android.tools.service_pools.fragments.EventFragment;
 import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.test.InitService5;
+import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.ServicePool;
@@ -33,9 +34,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Service
-    private InitService5 initService5;
-
-    @Service
     private A a;
 
 //    @Service
@@ -43,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Service(SecondActivity.SecondPrinter.class)
     private Printer main;
+
+    @Service
+    private static Printer sPrinter;
 
 
     @Override
@@ -55,11 +56,9 @@ public class MainActivity extends AppCompatActivity {
 //        testPluginService = ServicePool.getService(TestPluginService.class);
 //        testPluginService.print();
 
-        Ami.log();
 //
         ServicePool.registerEventService(new InnerEvent());
 
-        Ami.log();
 //
         commonService.print();
 //
@@ -79,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn).setOnClickListener(v->{
             UI.show(this, EventFragment.class);
         });
+
+        new ASMStaticClass().printer();
 
     }
 
