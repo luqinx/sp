@@ -4,11 +4,29 @@ byte-buddy Android实现       done
 service回收策略
 service优先级
 
+Service list支持
+
 Service注解， 编译器动态插入/meta-inf/services/com.xxx.Xxx
 
 注意混淆
 
+    
+@Service标记内部类时，可能导致内存泄露 (不会造成内存泄露, 因为对象不是外部类创建的, 内部类不会有外部类的引用)
+    如果标记的是内部类， 应该强制将缓存策略改为once
 
+autoservice:
+    解析Init注解        done.
+
+    @Service标记静态变量时, 赋值操作应该在静态初始化代码块中执行
+
+    @Service标记的类如果不是public权限，会出现访问失败
+        1. 将factory的包名和Service类一致
+        2. 不允许是private权限， 否则在编译器报错并停止编译过程
+        
+
+CombineService
+
+EventService
 
 
 问题汇总:

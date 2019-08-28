@@ -4,9 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.testpluginlib.TestPluginService;
-
+import chao.android.tools.service_pools.event.EventSample;
+import chao.android.tools.service_pools.event.MyEvent;
+import chao.android.tools.service_pools.fragments.EventFragment;
 import chao.android.tools.service_pools.test.Haha;
+import chao.android.tools.service_pools.test.InitService5;
+import chao.app.ami.Ami;
+import chao.app.ami.UI;
+import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -15,17 +20,20 @@ import chao.java.tools.servicepool.annotation.Service;
  */
 public class MainActivity extends AppCompatActivity {
 
-//    @Service
-//    private Printer appService;
-//
-//    @Service(CommonPrinter.class)
-//    private Printer commonService;
-//
-//    @Service(Haha.class)
-//    private Printer haha;
+    @Service
+    private Printer appService;
 
-//    @Service
-//    private InitService5 initService5;
+    @Service(CommonPrinter.class)
+    private Printer commonService;
+
+    @Service(Haha.class)
+    private Printer haha;
+
+    EventSample eventSample = new EventSample();
+
+
+    @Service
+    private InitService5 initService5;
 
     @Service
     private A a;
@@ -33,29 +41,54 @@ public class MainActivity extends AppCompatActivity {
 //    @Service
 //    private TestPluginService testPluginService;
 
+    @Service(SecondActivity.SecondPrinter.class)
+    private Printer main;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
 //        AppLibService appLibService = ServicePool.getService(AppLibService.class);
 //        appLibService.appPrint();
 
 //        testPluginService = ServicePool.getService(TestPluginService.class);
 //        testPluginService.print();
+
+        Ami.log();
 //
+        ServicePool.registerEventService(new InnerEvent());
+
+        Ami.log();
 //
-//        commonService.print();
+        commonService.print();
 //
-//        System.out.println(commonService);
+        System.out.println(commonService);
 //
-////        TestPluginService service = new TestPluginService();
-////        Log.e("System.out", String.valueOf(service instanceof IService));
+//        TestPluginService service = new TestPluginService();
+//        Log.e("System.out", String.valueOf(service instanceof IService));
 //
 ////        appService = ServicePool.getService(AppService.class);
-//        appService.print();
+        appService.print();
 //
-//        haha.print();
+        haha.print();
         a.getInt();
 
+        main.print();
+
+        findViewById(R.id.btn).setOnClickListener(v->{
+            UI.show(this, EventFragment.class);
+        });
+
     }
+
+    public class InnerEvent implements MyEvent {
+
+        @Override
+        public void postEvent() {
+            System.out.println("post event in MainActivity inner.");
+        }
+    }
+
+
 }

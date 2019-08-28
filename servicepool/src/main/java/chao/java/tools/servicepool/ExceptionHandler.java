@@ -5,5 +5,5 @@ package chao.java.tools.servicepool;
  * @since 2019-08-20
  */
 public interface ExceptionHandler {
-    void onException(Throwable e, Class<?> service);
+    void onException(Throwable e, String message);
 }

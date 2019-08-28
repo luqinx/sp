@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 
+import chao.java.tools.servicepool.debug.Debug;
+
 /**
  * @author qinchao
  * @since 2019/5/3
@@ -36,7 +38,9 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
             Enumeration<URL> configs = classLoader.getResources(PREFIX + service.getName());
             long mid = System.currentTimeMillis();
             logger.log("classLoader.getResources spent:" + (mid - start));
+            int configSize = 0;
             while (configs.hasMoreElements()) {
+                configSize++;
                 start = System.currentTimeMillis();
                 List<String> names = parse(service, configs.nextElement());
                 long end = System.currentTimeMillis();
@@ -46,11 +50,16 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
                         services.add(Class.forName(name, true, classLoader).asSubclass(service));
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
+                        Debug.addThrowable(e);
                     }
                 }
             }
+            if (configSize == 0) {
+                Debug.addError(PREFIX + service.getName() + " has no configs.");
+            }
         } catch (IOException e) {
             e.printStackTrace();
+            Debug.addThrowable(e);
         }
     }
 

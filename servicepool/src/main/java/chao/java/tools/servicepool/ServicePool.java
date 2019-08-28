@@ -1,5 +1,9 @@
 package chao.java.tools.servicepool;
 
+import chao.java.tools.servicepool.debug.Debug;
+import chao.java.tools.servicepool.event.EventManager;
+import chao.java.tools.servicepool.event.EventService;
+
 /**
  * todo 多行程同步问题
  *
@@ -16,6 +20,7 @@ public class ServicePool {
 
     public static ILogger logger = new Logger();
 
+    private static EventManager eventManager = new EventManager();
 
     public static boolean isLoaded() {
         return loaded;
@@ -39,6 +44,18 @@ public class ServicePool {
         controller.addFactories(factories);
         controller.loadFinished();
         loaded = true;
+
+        for (Throwable t: Debug.throwables()) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(t, t.getMessage());
+            }
+        }
+        for (String error: Debug.errors()) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(null, error);
+            }
+        }
+
     }
 
     /**
@@ -55,7 +72,7 @@ public class ServicePool {
             return controller.getServiceByClass(serviceClass);
         } catch (Throwable e) {
             if (exceptionHandler != null) {
-                exceptionHandler.onException(e, serviceClass);
+                exceptionHandler.onException(e, String.valueOf(serviceClass));
             }
         }
         return null;
@@ -75,7 +92,7 @@ public class ServicePool {
             return controller.getServiceByClass(tClass, defaultService);
         } catch (Throwable e) {
             if (exceptionHandler != null) {
-                exceptionHandler.onException(e, tClass);
+                exceptionHandler.onException(e, String.valueOf(tClass));
             }
         }
         return null;
@@ -105,7 +122,7 @@ public class ServicePool {
             return controller.getProxy(clazz);
         } catch (Throwable e) {
             if (exceptionHandler != null) {
-                exceptionHandler.onException(e, clazz);
+                exceptionHandler.onException(e, String.valueOf(clazz));
             }
         }
         return null;
@@ -113,5 +130,13 @@ public class ServicePool {
 
     public static void setExceptionHandler(ExceptionHandler _exceptionHandler) {
         exceptionHandler = _exceptionHandler;
+    }
+
+    public static void registerEventService(EventService eventService) {
+        eventManager.registerEventService(eventService);
+    }
+
+    public static <T extends EventService> T getEventService(Class<T> eventClazz) {
+        return eventManager.getEventService(eventClazz);
     }
 }

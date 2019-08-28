@@ -1,5 +1,6 @@
 package chao.java.tools.servicepool;
 
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,6 +8,13 @@ import chao.java.tools.servicepool.annotation.Init;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
+ *
+ * Service的代理
+ *      创建Service对象
+ *      Service缓存策略
+ *
+ * 如果Service是一个非静态内部类, 则缓存策略不可以使用Global, 因为使用Global可以导致外部类不被回收而导致内存泄露
+ *
  * @author qinchao
  * @since 2019/5/5
  */
@@ -46,19 +54,32 @@ public class ServiceProxy {
         }
     }
 
-    public ServiceProxy(Class<? extends IService> clazz, IServiceFactory serviceFactory, int priority, int scope, String tag) {
+    public ServiceProxy(Class<? extends IService> clazz, IServiceFactory serviceFactory, int priority, int scope, String tag, boolean async, List<Class<? extends IInitService>> dependencies) {
         this.serviceClass = clazz;
         this.serviceFactory = serviceFactory;
         this.priority = priority;
         this.scope = scope;
         this.tag = tag;
+        this.async = async;
+        this.dependencies = dependencies;
 
-        //todo for dev debug
-        Init init = serviceClass.getAnnotation(Init.class);
-        if (init != null) {
-            async = init.async();
-            dependencies = Arrays.asList(init.dependencies());
-        }
+//        int modifiers = serviceClass.getModifiers();
+//        //非静态内部类不允许使用global缓存策略
+//        if ((modifiers & Modifier.STATIC) == 0
+//                && serviceClass.getSimpleName().contains("$")
+//                && this.scope == IService.Scope.global) {
+//            System.err.println("global scope should not used on inner class.");
+////            this.scope = IService.Scope.temp;
+//        }
+
+//        //todo for dev debug
+//        Init init = serviceClass.getAnnotation(Init.class);
+//        if (init != null) {
+//            async = init.async();
+//            dependencies = Arrays.asList(init.dependencies());
+//        }
+        System.out.println(async);
+        System.out.println(dependencies);
     }
 
     public IService getService() {
@@ -74,7 +95,7 @@ public class ServiceProxy {
                     strategy = new ServiceCacheStrategy.Temp(serviceFactory);
                     break;
                 default:
-                    strategy = new ServiceCacheStrategy.Global(serviceFactory);
+                    strategy = new ServiceCacheStrategy.Temp(serviceFactory);
                     break;
             }
         }

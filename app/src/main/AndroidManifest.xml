@@ -24,6 +24,9 @@
             </intent-filter>
         </activity>
 
+
+        <activity android:name=".SecondActivity"/>
+
         <meta-data
             android:name="com.openinstall.APP_KEY"
             android:value="y60srl"/>

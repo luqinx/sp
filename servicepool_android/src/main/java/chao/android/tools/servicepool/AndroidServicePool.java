@@ -14,15 +14,14 @@ public class AndroidServicePool extends ServicePool {
     @SuppressLint("StaticFieldLeak")
     private static Context sContext;
 
+
     public static Context getContext() {
         return sContext;
     }
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
-        long start = System.currentTimeMillis();
-        loadServices();
-        long end = System.currentTimeMillis();
-        logger.log("load init services, spent:" + (end - start));
     }
+
+
 }
