@@ -10,7 +10,7 @@ import chao.java.tools.servicepool.annotation.Service;
  * @author luqin
  * @since 2019-08-06
  */
-@Init(async = true, dependencies = {InitService4.class, InitService3.class})
+@Init(dependencies = {InitService4.class, InitService3.class})
 @Service
 public class InitService5 implements IInitService {
     @Override

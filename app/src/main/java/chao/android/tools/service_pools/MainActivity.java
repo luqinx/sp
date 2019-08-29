@@ -8,6 +8,7 @@ import chao.android.tools.service_pools.event.EventSample;
 import chao.android.tools.service_pools.event.MyEvent;
 import chao.android.tools.service_pools.fragments.EventFragment;
 import chao.android.tools.service_pools.test.Haha;
+import chao.android.tools.service_pools.test.InitService5;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.ServicePool;
@@ -42,6 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
 //    @Service
 //    private static Printer sPrinter;
+
+//    @Service
+//    private InitService5 initService5;
+
+    @Service
+    private AppService2 appService2;
+
+    @Service
+    private InnerService innerService;
 
 
     @Override
@@ -79,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
 
         new ASMStaticClass().printer();
 
+        appService2.print();
+
+        innerService.print();
+
     }
 
     public class InnerEvent implements MyEvent {
@@ -89,5 +103,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Service
+    private class InnerService implements Printer {
 
+        @Override
+        public void print() {
+            System.out.println("I'm inner service.");
+        }
+    }
 }

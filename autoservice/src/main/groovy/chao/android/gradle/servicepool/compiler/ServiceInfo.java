@@ -139,4 +139,18 @@ public class ServiceInfo implements Constant {
         }
 
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ServiceInfo) {
+            if (asmName == null && ((ServiceInfo) o).asmName == null) {
+                return true;
+            }
+            if (asmName == null) {
+                return false;
+            }
+            return asmName.equals(((ServiceInfo) o).asmName);
+        }
+        return false;
+    }
 }

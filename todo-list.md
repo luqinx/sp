@@ -17,11 +17,11 @@ Service注解， 编译器动态插入/meta-inf/services/com.xxx.Xxx
 autoservice:
     解析Init注解        done.
 
-    @Service标记静态变量时, 赋值操作应该在静态初始化代码块中执行     doing
+    @Service标记静态变量时, 赋值操作应该在静态初始化代码块中执行     doing       done
         因为<init>方法不一定会被执行
 
-    @Service标记的类如果不是public权限，会出现访问失败
-        1. 将factory的包名和Service类一致
+    @Service标记的类如果不是public权限，会出现访问失败            doing   done
+        1. 将factory的包名和Service类一致                       done
         2. 不允许是private权限， 否则在编译器报错并停止编译过程
         
 

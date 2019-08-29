@@ -47,8 +47,8 @@ class AutoServiceWeaver extends BaseWeaver {
             visitor = collectServiceInfo(classWriter, detect)
         }
 
+//        logger.log(serviceInfoMap)
         if(detect.fieldServiceAnnotations.size() > 0) {
-            logger.log(classReader.className)
             visitor = new AutoServiceFieldClassVisitor(visitor, detect.fieldServiceAnnotations, detect.hasStaticField)
         }
 
@@ -57,12 +57,18 @@ class AutoServiceWeaver extends BaseWeaver {
     }
 
     private ClassVisitor collectServiceInfo(ExtendClassWriter classWriter, AutoServiceAnnotationDetect classNode) {
+//        logger.log(classNode.className)
+        //因为使用ServicePool.getService(xxx)获取时的可能是xxx的任意子类，所以这里注册所有子类
         List<String> classes = classWriter.getSuperNames(classNode.className)
+//        List<String> classes = Collections.singletonList(classNode.className)
         ServiceInfo serviceInfo = new ServiceInfo(classNode.className)
         serviceInfo.parse(classNode.typeServiceAnnotation)
         serviceInfo.parse(classNode.typeInitAnnotation)
 
         for (String clazz: classes) {
+            if (IService.class.name.replaceAll("\\.", File.separator) == clazz) {
+                continue
+            }
             clazz = clazz.replaceAll("/", ".")
             int last = clazz.lastIndexOf('.')
             String pkgName = last == -1 ? clazz : clazz.substring(0, last)
@@ -72,7 +78,9 @@ class AutoServiceWeaver extends BaseWeaver {
                 infos = new ArrayList<>()
                 serviceInfoMap.put(pkgName, infos)
             }
-            infos.add(serviceInfo)
+            if (!infos.contains(serviceInfo)) {
+                infos.add(serviceInfo)
+            }
         }
         return new AutoServiceVisitor(classWriter)
     }
@@ -127,7 +135,7 @@ class AutoServiceWeaver extends BaseWeaver {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
 
         classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, null, Constant.SERVICE_FACTORIES_ASM_NAME)
-        classWriter.visitSource("sp\$\$ServiceFactories.java", null)
+        classWriter.visitSource(Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, null)
 
         MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
         methodVisitor.visitCode()
@@ -137,7 +145,7 @@ class AutoServiceWeaver extends BaseWeaver {
         for (String pkgName : serviceInfoMap.keySet()) {
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
             methodVisitor.visitLdcInsn(pkgName)
-            String serviceFactory = Constant.GENERATE_SERVICE_PACKAGE_NAME + pkgName.replaceAll("\\.", "_") + Constant.GENERATE_SERVICE_SUFFIX
+            String serviceFactory = pkgName.replaceAll("\\.", File.separator) + File.separator + Constant.GENERATE_SERVICE_SUFFIX
             methodVisitor.visitTypeInsn(Opcodes.NEW, serviceFactory)
             methodVisitor.visitInsn(Opcodes.DUP)
             methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, serviceFactory, "<init>", "()V", false)
@@ -281,7 +289,7 @@ class AutoServiceWeaver extends BaseWeaver {
     private static void writeGenerateFactories(ZipOutputStream outputZip, String pkgName, List<ServiceInfo> infoList) {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
 
-        String className = Constant.GENERATE_SERVICE_PACKAGE_NAME + pkgName.replaceAll("\\.", "_") + Constant.GENERATE_SERVICE_SUFFIX
+        String className = pkgName.replaceAll("\\.", File.separator) + File.separator + Constant.GENERATE_SERVICE_SUFFIX
         classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", Constant.SERVICE_FACTORY_ASM_NAME)
 
         generateCreateServiceProxy(classWriter, infoList)
