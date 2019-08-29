@@ -8,9 +8,7 @@ import chao.android.tools.service_pools.event.EventSample;
 import chao.android.tools.service_pools.event.MyEvent;
 import chao.android.tools.service_pools.fragments.EventFragment;
 import chao.android.tools.service_pools.test.Haha;
-import chao.android.tools.service_pools.test.InitService5;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
-import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Service;
@@ -42,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
     @Service(SecondActivity.SecondPrinter.class)
     private Printer main;
 
-    @Service
-    private static Printer sPrinter;
+//    @Service
+//    private static Printer sPrinter;
 
 
     @Override

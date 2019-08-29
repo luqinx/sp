@@ -49,7 +49,7 @@ class AutoServiceWeaver extends BaseWeaver {
 
         if(detect.fieldServiceAnnotations.size() > 0) {
             logger.log(classReader.className)
-            visitor = new AutoServiceFieldClassVisitor(visitor, detect.fieldServiceAnnotations)
+            visitor = new AutoServiceFieldClassVisitor(visitor, detect.fieldServiceAnnotations, detect.hasStaticField)
         }
 
         classReader.accept(visitor, ClassReader.EXPAND_FRAMES)

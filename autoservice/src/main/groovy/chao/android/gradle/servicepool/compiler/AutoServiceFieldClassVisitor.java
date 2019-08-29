@@ -6,11 +6,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import chao.android.gradle.plugin.util.logger;
-import chao.android.gradle.servicepool.Logger;
 
 /**
  *
@@ -21,13 +17,16 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
 
     private Map<String, AutoServiceField> fields;
 
+    private boolean hasStaticField;
+
     private String owner;
 
     private boolean clinitProcessed = false;
 
-    public AutoServiceFieldClassVisitor(ClassVisitor classVisitor, Map<String,AutoServiceField> fields) {
+    public AutoServiceFieldClassVisitor(ClassVisitor classVisitor, Map<String,AutoServiceField> fields, boolean hasStatic) {
         super(Opcodes.ASM6, classVisitor);
         this.fields = fields;
+        this.hasStaticField = hasStatic;
     }
 
 
@@ -43,7 +42,7 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
         if ("<init>".equals(name)) {
             return new InitMethodVisitor(mv);
-        } else if ("<clinit>".equals(name)) {
+        } else if ("<clinit>".equals(name) && hasStaticField) {
             clinitProcessed = true;
             return new ClinitMethodVisitor(mv);
         }
@@ -56,17 +55,17 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
         return super.visitField(access, name, desc, signature, value);
     }
 
+    /**
+     *  <clinit>不存在， 则创建<clinit>方法，并追加service赋值代码
+     */
     @Override
     public void visitEnd() {
-        logger.log(owner);
-        if (!clinitProcessed) {
-            logger.log("proceed..." + owner);
-            MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
+        if (!clinitProcessed && hasStaticField) {
+            MethodVisitor mv = cv.visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
             for (AutoServiceField field: fields.values()) {
                 if (!field.isStatic) {
                     continue;
                 }
-                mv.visitVarInsn(ALOAD, 0);
                 if (field.annotationValue == null) {
                     field.annotationValue = field.desc;
                 }
@@ -75,6 +74,8 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
                 mv.visitTypeInsn(CHECKCAST, field.asmFullName);
                 mv.visitFieldInsn(PUTSTATIC, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
             }
+            mv.visitInsn(RETURN);
+            mv.visitEnd();
         }
         super.visitEnd();
     }
@@ -107,6 +108,9 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
 
     }
 
+    /**
+     * 已存在<clinit>, 追加service赋值代码
+     */
     private class ClinitMethodVisitor extends MethodVisitor {
 
 
@@ -115,31 +119,23 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
         }
 
         @Override
-        public void visitCode() {
-            super.visitCode();
-            for (AutoServiceField field: fields.values()) {
-                if (!field.isStatic) {
-                    continue;
+        public void visitInsn(int opcode) {
+            if ((opcode >= IRETURN && opcode <= RETURN) || opcode == ATHROW) {
+                for (AutoServiceField field : fields.values()) {
+                    if (!field.isStatic) {
+                        continue;
+                    }
+                    if (field.annotationValue == null) {
+                        field.annotationValue = field.desc;
+                    }
+                    mv.visitLdcInsn(Type.getType(field.annotationValue));
+                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
+                    mv.visitTypeInsn(CHECKCAST, field.asmFullName);
+                    mv.visitFieldInsn(PUTSTATIC, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
                 }
-                mv.visitVarInsn(ALOAD, 0);
-                if (field.annotationValue == null) {
-                    field.annotationValue = field.desc;
-                }
-                mv.visitLdcInsn(Type.getType(field.annotationValue));
-                mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
-                mv.visitTypeInsn(CHECKCAST, field.asmFullName);
-                mv.visitFieldInsn(PUTSTATIC, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
+//                mv.visitEnd();
             }
-        }
-
-        @Override
-        public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-            super.visitMethodInsn(opcode, owner, name, desc, itf);
-        }
-
-        @Override
-        public void visitEnd() {
-            super.visitEnd();
+            super.visitInsn(opcode);
         }
     }
 }

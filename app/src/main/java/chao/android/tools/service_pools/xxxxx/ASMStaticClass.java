@@ -11,7 +11,7 @@ import chao.java.tools.servicepool.annotation.Service;
 public class ASMStaticClass {
 
     @Service
-    private static Printer sssssssprinter;
+    private Printer sssssssprinter;
 
     private static EventSample eventSample = new EventSample();
 
@@ -19,9 +19,13 @@ public class ASMStaticClass {
 
     }
 
+    public ASMStaticClass(int i) {
+
+    }
+
 
     public void printer() {
-        sssssssprinter.print();
+//        sssssssprinter.print();
     }
 }
 

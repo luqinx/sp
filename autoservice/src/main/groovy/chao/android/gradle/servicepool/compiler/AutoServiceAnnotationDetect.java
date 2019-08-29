@@ -23,6 +23,9 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
 
     private Map<String, AutoServiceField> fieldServiceAnnotations;
 
+    private boolean hasStaticField;
+
+
     private List<Object> typeInitAnnotation;
 
     private String className;
@@ -70,6 +73,9 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         field.signature = signature;
         field.value = value;
         field.isStatic = (access & Opcodes.ACC_STATIC) != 0;
+        if (field.isStatic) {
+            hasStaticField = true;
+        }
 
         return new AutoServiceAnnotationFieldDetect(fv, field);
     }
@@ -84,6 +90,10 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
 
     public Map<String, AutoServiceField> getFieldServiceAnnotations() {
         return fieldServiceAnnotations;
+    }
+
+    public boolean isHasStaticField() {
+        return hasStaticField;
     }
 
     public String getClassName() {
