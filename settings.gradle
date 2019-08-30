@@ -3,4 +3,4 @@ SettingsInject.inject(getSettings(), getGradle())
 
 include ':app', ':applib1', ':appservice', ':testpluginlib'
 include ':buildSrc'
-//include ':autoservice'
+include ':autoservice'

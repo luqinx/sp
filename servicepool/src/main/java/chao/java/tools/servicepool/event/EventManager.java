@@ -90,9 +90,15 @@ public class EventManager {
             @Override
             public Object onInvoke(T source, Method method, Object[] args) {
                 WeakList<EventService> list = weakServiceMap.get(eventClazz);
+                if (list == null) {
+                    return null;
+                }
                 list.tidy();
                 Object result = null;
                 for (EventService event: list) {
+                    if (event == null) {
+                        continue;
+                    }
                     try {
                         result = method.invoke(event, args);
                     } catch (IllegalAccessException e) {

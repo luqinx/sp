@@ -9,7 +9,6 @@ import org.objectweb.asm.Type;
 import java.util.List;
 import java.util.Map;
 
-import chao.android.gradle.plugin.util.logger;
 
 /**
  *
@@ -50,6 +49,7 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
 //        logger.log(name + ", " + desc + ", " + signature);
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
         if ("<init>".equals(name)) {
+//            logger.log(owner + ", " + name + ", " + desc + ", " + signature);
             return new InitMethodVisitor(mv);
         } else if ("<clinit>".equals(name) && hasStaticField) {
             clinitProcessed = true;
@@ -102,9 +102,9 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
 
             //初始化Service, 调用ServicePool.getService()给成员变量Service赋值
             for (AutoServiceField field: events.values()) {
-                if (field.isStatic) {
-                    continue;
-                }
+//                if (field.isStatic) {
+//                    continue;
+//                }
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitLdcInsn(Type.getType(field.desc));
                 mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getEventService", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/event/EventService;", false);
@@ -127,9 +127,8 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
                 mv.visitFieldInsn(PUTFIELD, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
             }
 
-
             //初始化Event, 注册Event
-            for (String event: eventInterfaces) {
+            if (eventInterfaces.size() > 0) {
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "registerEventService", "(Lchao/java/tools/servicepool/event/EventService;)V", false);
             }

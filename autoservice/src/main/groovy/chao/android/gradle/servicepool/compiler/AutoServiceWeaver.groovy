@@ -6,7 +6,6 @@ import chao.android.gradle.servicepool.hunter.asm.ExtendClassWriter
 import chao.java.tools.servicepool.IService
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
-import chao.android.gradle.plugin.util.logger
 
 import java.nio.file.Files
 import java.util.zip.CRC32

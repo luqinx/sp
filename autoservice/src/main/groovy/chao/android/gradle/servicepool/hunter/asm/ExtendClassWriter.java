@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import chao.android.gradle.plugin.util.logger;
 
 /**
  * Created by quinn on 30/08/2018
