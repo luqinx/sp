@@ -9,6 +9,7 @@ import chao.app.ami.UI;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMISupportFragment;
 import chao.java.tools.servicepool.ServicePool;
+import chao.java.tools.servicepool.annotation.Event;
 
 /**
  * @author luqin
@@ -17,14 +18,11 @@ import chao.java.tools.servicepool.ServicePool;
 @LayoutID(R.layout.main)
 public class EventFragment extends AMISupportFragment implements MyEvent {
 
-    private MyEvent myEvent = ServicePool.getEventService(MyEvent.class);
+    @Event
+    private MyEvent myEvent;
 
 
     public EventFragment() {
-        Ami.log();
-        ServicePool.registerEventService(new InnerEvent());
-        ServicePool.registerEventService(this);
-        Ami.log();
     }
 
     @Override

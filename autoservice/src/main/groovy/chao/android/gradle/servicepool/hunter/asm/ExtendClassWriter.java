@@ -6,11 +6,15 @@ import org.objectweb.asm.Opcodes;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import chao.android.gradle.plugin.util.logger;
 
 /**
  * Created by quinn on 30/08/2018
@@ -142,6 +146,14 @@ public class ExtendClassWriter extends ClassWriter {
         return (classReader.getAccess() & Opcodes.ACC_INTERFACE) != 0;
     }
 
+    public List<String> getInterfaces(String className) {
+        ClassReader classReader = getClassReader(className);
+        if (classReader != null) {
+            return Arrays.asList(classReader.getInterfaces());
+        }
+        return Collections.emptyList();
+    }
+
     public List<String> getSuperNames(String className) {
         List<String> superList = new ArrayList<>();
         if (className == null) {
@@ -186,6 +198,23 @@ public class ExtendClassWriter extends ClassWriter {
             }
         }
         return null;
+    }
+
+    public boolean typeHasAnnotation(String itf, String ant) {
+        try {
+//            logger.log("load class: " + itf);
+            Class clazz = urlClassLoader.loadClass(itf);
+            Annotation[] annotations = clazz.getAnnotations();
+            for (Annotation annotation: annotations) {
+//                logger.log(annotation.annotationType().getName());
+                if (annotation.annotationType().getName().equals(ant)) {
+                    return true;
+                }
+            }
+        } catch (Throwable e) {
+            //ignore
+        }
+        return false;
     }
 }
 

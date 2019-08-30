@@ -1,11 +1,7 @@
 package chao.android.gradle.servicepool.compiler;
 
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.ModuleVisitor;
 import org.objectweb.asm.Opcodes;
-
-import java.util.Map;
 
 import chao.java.tools.servicepool.IService;
 

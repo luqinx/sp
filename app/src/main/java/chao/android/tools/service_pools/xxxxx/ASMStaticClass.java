@@ -13,7 +13,7 @@ public class ASMStaticClass {
     @Service
     private Printer sssssssprinter;
 
-    private static EventSample eventSample = new EventSample();
+//    private static EventSample eventSample = new EventSample();
 
     public ASMStaticClass() {
 

@@ -6,7 +6,10 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import java.util.List;
 import java.util.Map;
+
+import chao.android.gradle.plugin.util.logger;
 
 /**
  *
@@ -17,16 +20,22 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
 
     private Map<String, AutoServiceField> fields;
 
+    private Map<String, AutoServiceField> events;
+
+    private List<String> eventInterfaces;
+
     private boolean hasStaticField;
 
     private String owner;
 
     private boolean clinitProcessed = false;
 
-    public AutoServiceFieldClassVisitor(ClassVisitor classVisitor, Map<String,AutoServiceField> fields, boolean hasStatic) {
+    public AutoServiceFieldClassVisitor(ClassVisitor classVisitor, AutoServiceAnnotationDetect detect) {
         super(Opcodes.ASM6, classVisitor);
-        this.fields = fields;
-        this.hasStaticField = hasStatic;
+        this.fields = detect.getFieldServiceAnnotations();
+        this.hasStaticField = detect.isHasStaticField();
+        this.eventInterfaces = detect.getEventInterfaces();
+        this.events = detect.getFieldEventAnnotations();
     }
 
 
@@ -91,6 +100,19 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
             super.visitMethodInsn(opcode, owner, name, desc, itf);
 
+            //初始化Service, 调用ServicePool.getService()给成员变量Service赋值
+            for (AutoServiceField field: events.values()) {
+                if (field.isStatic) {
+                    continue;
+                }
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitLdcInsn(Type.getType(field.desc));
+                mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getEventService", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/event/EventService;", false);
+                mv.visitTypeInsn(CHECKCAST, field.asmFullName);
+                mv.visitFieldInsn(PUTFIELD, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
+            }
+
+            //初始化Event, 调用ServicePool.getEventService()给成员变量Service赋值
             for (AutoServiceField field: fields.values()) {
                 if (field.isStatic) {
                     continue;
@@ -103,6 +125,13 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
                 mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
                 mv.visitTypeInsn(CHECKCAST, field.asmFullName);
                 mv.visitFieldInsn(PUTFIELD, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
+            }
+
+
+            //初始化Event, 注册Event
+            for (String event: eventInterfaces) {
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "registerEventService", "(Lchao/java/tools/servicepool/event/EventService;)V", false);
             }
         }
 

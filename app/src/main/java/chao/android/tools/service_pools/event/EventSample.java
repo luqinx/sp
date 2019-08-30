@@ -20,8 +20,6 @@ public class EventSample implements MyEvent {
     }
 
     public EventSample(int event) {
-        this.event = event;
-        ServicePool.registerEventService(this);
     }
 
     public void handleEvent() {

@@ -5,20 +5,23 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import chao.android.tools.service_pools.event.EventSample;
+import chao.android.tools.service_pools.event.HisEvent;
 import chao.android.tools.service_pools.event.MyEvent;
 import chao.android.tools.service_pools.fragments.EventFragment;
+import chao.android.tools.service_pools.fragments.HisEventFragment;
 import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.test.InitService5;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.ServicePool;
+import chao.java.tools.servicepool.annotation.Event;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
  * @author qinchao
  * @since 2019/4/29
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HisEvent {
 
     @Service
     private Printer appService;
@@ -47,11 +50,17 @@ public class MainActivity extends AppCompatActivity {
 //    @Service
 //    private InitService5 initService5;
 
+    @Event
+    private MyEvent myEvent2;
+
     @Service
     private AppService2 appService2;
 
     @Service
     private InnerService innerService;
+
+    @Event
+    private MyEvent myEvent;
 
 
     @Override
@@ -65,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
 //        testPluginService.print();
 
 //
-        ServicePool.registerEventService(new InnerEvent());
 
 //
         commonService.print();
@@ -87,12 +95,21 @@ public class MainActivity extends AppCompatActivity {
             UI.show(this, EventFragment.class);
         });
 
+        findViewById(R.id.his_btn).setOnClickListener(v -> {
+            UI.show(this, HisEventFragment.class);
+        });
+
         new ASMStaticClass().printer();
 
         appService2.print();
 
         innerService.print();
 
+    }
+
+    @Override
+    public void postHisEvent() {
+        System.out.println("post his event in MainActivity .");
     }
 
     public class InnerEvent implements MyEvent {

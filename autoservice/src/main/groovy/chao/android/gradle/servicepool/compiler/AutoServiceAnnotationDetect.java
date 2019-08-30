@@ -6,10 +6,13 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import chao.android.gradle.servicepool.hunter.asm.ExtendClassWriter;
 
 
 /**
@@ -23,8 +26,19 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
 
     private Map<String, AutoServiceField> fieldServiceAnnotations;
 
+    private Map<String, AutoServiceField> fieldEventAnnotations;
+
+    /**
+     *  标记当前static的Field是否被@Service标记
+     */
     private boolean hasStaticField;
 
+    /**
+     *  标记当前class是否是一个Event
+     */
+    private boolean hasEventAnnotation;
+
+    private List<String> eventInterfaces;
 
     private List<Object> typeInitAnnotation;
 
@@ -34,9 +48,14 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
 
     private String[] interfaces;
 
-    public AutoServiceAnnotationDetect(ClassVisitor cv) {
-        super(ASM6, cv);
+    private ExtendClassWriter ecw;
+
+    public AutoServiceAnnotationDetect(ExtendClassWriter ecw) {
+        super(ASM6, null);
         fieldServiceAnnotations = new HashMap<>();
+        fieldEventAnnotations = new HashMap<>();
+        eventInterfaces = new ArrayList<>();
+        this.ecw = ecw;
     }
 
     @Override
@@ -45,6 +64,17 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         className = name;
         this.superName = superName;
         this.interfaces = interfaces;
+        if (interfaces == null) {
+            return;
+        }
+        //查找接口是否包含@Event注解
+        for (String itf : interfaces) {
+            if (ecw.typeHasAnnotation(itf.replaceAll(File.separator, "."), Constant.EVENT_ANNOTATION)) {
+                if (!eventInterfaces.contains(itf)) {
+                    eventInterfaces.add(itf);
+                }
+            }
+        }
     }
 
     @Override
@@ -57,6 +87,8 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         } else if (INIT_DESC.equals(desc)) {
             typeInitAnnotation = new ArrayList<>();
             return new InitAnnotationValueDetect(av);
+        } else if (EVENT_DESC.equals(desc)) {
+            hasEventAnnotation = true;
         }
         return av;
     }
@@ -73,9 +105,6 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         field.signature = signature;
         field.value = value;
         field.isStatic = (access & Opcodes.ACC_STATIC) != 0;
-        if (field.isStatic) {
-            hasStaticField = true;
-        }
 
         return new AutoServiceAnnotationFieldDetect(fv, field);
     }
@@ -90,6 +119,18 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
 
     public Map<String, AutoServiceField> getFieldServiceAnnotations() {
         return fieldServiceAnnotations;
+    }
+
+    public Map<String, AutoServiceField> getFieldEventAnnotations() {
+        return fieldEventAnnotations;
+    }
+
+    public boolean isHasEventAnnotation() {
+        return hasEventAnnotation;
+    }
+
+    public List<String> getEventInterfaces() {
+        return eventInterfaces;
     }
 
     public boolean isHasStaticField() {
@@ -175,7 +216,13 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
             if (SERVICE_DESC.equals(desc)) {
                 String uniqueKey = field.name + field + desc;
                 fieldServiceAnnotations.put(uniqueKey, field);
+                if (field.isStatic) {
+                    hasStaticField = true;
+                }
                 return new AutoServiceFieldAnnotationDetect(av);
+            } else if (EVENT_DESC.equals(desc)) {
+                String uniqueKey = field.name + field + desc;
+                fieldEventAnnotations.put(uniqueKey, field);
             }
             return av;
         }
@@ -201,6 +248,5 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         }
 
     }
-
 
 }

@@ -40,16 +40,20 @@ class AutoServiceWeaver extends BaseWeaver {
         ClassVisitor visitor = classWriter
 
 //        ClassNode classNode = new ClassNode()
-        AutoServiceAnnotationDetect detect = new AutoServiceAnnotationDetect()
+        AutoServiceAnnotationDetect detect = new AutoServiceAnnotationDetect(classWriter)
         classReader.accept(detect, 0)
         //RetentionPolicy.RUNTIME是可见， 其他为不可见
         if (detect.typeServiceAnnotation != null) {
             visitor = collectServiceInfo(classWriter, detect)
         }
 
+        if (detect.hasEventAnnotation) {
+            visitor = new AutoServiceEventVisitor(classWriter)
+        }
+
 //        logger.log(serviceInfoMap)
-        if(detect.fieldServiceAnnotations.size() > 0) {
-            visitor = new AutoServiceFieldClassVisitor(visitor, detect.fieldServiceAnnotations, detect.hasStaticField)
+        if(detect.fieldServiceAnnotations.size() > 0 || detect.fieldEventAnnotations.size() > 0) {
+            visitor = new AutoServiceFieldClassVisitor(visitor, detect)
         }
 
         classReader.accept(visitor, ClassReader.EXPAND_FRAMES)

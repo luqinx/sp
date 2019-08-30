@@ -22,7 +22,7 @@ autoservice:
 
     @Service标记的类如果不是public权限，会出现访问失败            doing   done
         1. 将factory的包名和Service类一致                       done
-        2. 不允许是private权限， 否则在编译器报错并停止编译过程
+        2. 不允许是private权限， 否则在编译器报错并停止编译过程       not need
         
 
 CombineService

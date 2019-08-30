@@ -45,6 +45,16 @@ public interface Constant extends Opcodes {
 
     String INIT_DESC = "Lchao/java/tools/servicepool/annotation/Init;";
 
+
+    /** Event **/
+
     String EVENT_DESC = "Lchao/java/tools/servicepool/annotation/Event;";
+
+
+    String EVENT_ANNOTATION = "chao.java.tools.servicepool.annotation.Event";
+
+    String EVENT_FULL_NAME = "chao.java.tools.servicepool.event.EventService";
+
+    String EVENT_ASM_NAME = EVENT_FULL_NAME.replaceAll("\\.", "/");
 
 }
