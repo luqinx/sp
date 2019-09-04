@@ -12,6 +12,7 @@ import chao.android.tools.service_pools.fragments.HisEventFragment;
 import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.test.InitService5;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
+import chao.android.tools.servicepool.route.SRouter;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Event;
@@ -104,6 +105,15 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
         appService2.print();
 
         innerService.print();
+
+        SRouter.build("/app/testRoute")
+                .withInt("int", 100)
+                .withBoolean("boolean", true)
+                .withFloat("float", 100.1f)
+                .withDouble("double", 100.2)
+                .withString("string", "hello luqin")
+//                .withSerializable("parcelable")
+                .navigation();
 
     }
 

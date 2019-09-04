@@ -154,4 +154,9 @@ public class DefaultServiceController implements ServiceController {
     public ServiceProxy getProxy(Class<?> clazz) {
         return getService(clazz);
     }
+
+    public void cacheService(IService service) {
+        ServiceProxy proxy = new InnerProxy<>(service);
+        historyCache.put(service.getClass().getName(), proxy);
+    }
 }

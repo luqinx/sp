@@ -12,7 +12,7 @@ import chao.java.tools.servicepool.event.EventService;
  */
 public class ServicePool {
 
-    private static DefaultServiceController controller;
+    protected static DefaultServiceController controller;
 
     private volatile static boolean loaded = false;
 
@@ -37,6 +37,19 @@ public class ServicePool {
 
         logger.log("service loader spent:" + (end - start));
         controller.addServices(loader.getServices());
+
+        //todo temp for online test.
+        for (Throwable t: Debug.throwables()) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(t, t.getMessage());
+            }
+        }
+        for (String error: Debug.errors()) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(null, error);
+            }
+        }
+
         ServiceFactories factories = controller.getServiceByClass(ServiceFactories.class);
         if (factories == null) {
             throw new ServicePoolException("sp internal err.");

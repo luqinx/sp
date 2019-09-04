@@ -50,15 +50,18 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
                         services.add(Class.forName(name, true, classLoader).asSubclass(service));
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
+                        logger.log("CNFE: " + e.getMessage());
                         Debug.addThrowable(e);
                     }
                 }
             }
             if (configSize == 0) {
+                logger.log(PREFIX + service.getName() + " has no configs.");
                 Debug.addError(PREFIX + service.getName() + " has no configs.");
             }
         } catch (IOException e) {
             e.printStackTrace();
+            logger.log("IOE: " + e.getMessage());
             Debug.addThrowable(e);
         }
     }

@@ -27,6 +27,8 @@
 
         <activity android:name=".SecondActivity"/>
 
+        <activity android:name=".route.TestRouteActivity"/>
+
         <meta-data
             android:name="com.openinstall.APP_KEY"
             android:value="y60srl"/>
