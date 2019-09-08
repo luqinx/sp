@@ -16,6 +16,10 @@ Service注解， 编译器动态插入/meta-inf/services/com.xxx.Xxx
 
 autoservice:
     解析Init注解        done.
+    
+    Init注解， 默认有Service注解功能
+    
+    Init注解, 增加按需加载属性
 
     @Service标记静态变量时, 赋值操作应该在静态初始化代码块中执行     doing       done
         因为<init>方法不一定会被执行
@@ -27,7 +31,8 @@ autoservice:
 
 CombineService
 
-EventService
+EventService    done
+
 
 
 问题汇总:

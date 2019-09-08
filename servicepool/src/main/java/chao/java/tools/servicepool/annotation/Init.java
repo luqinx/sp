@@ -16,5 +16,5 @@ import chao.java.tools.servicepool.IInitService;
 public @interface Init {
     boolean async() default false;
 
-    Class<? extends IInitService>[] dependencies();
+    Class<? extends IInitService>[] dependencies() default {};
 }
