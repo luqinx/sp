@@ -30,6 +30,13 @@ public class ServiceInfo implements Constant {
 
     private List<Type> dependencies;
 
+    private boolean lazy = true;
+
+    /**
+     *  是否是InitService
+     */
+    private boolean isInit;
+
     public ServiceInfo(String name) {
         this.asmName = name;
         this.descriptor = "L" + name + ";";
@@ -61,24 +68,12 @@ public class ServiceInfo implements Constant {
         return scope;
     }
 
-    public void setScope(int scope) {
-        this.scope = scope;
-    }
-
     public int getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
     public String getTag() {
         return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
     }
 
     public String getAsmName() {
@@ -89,21 +84,12 @@ public class ServiceInfo implements Constant {
         return descriptor;
     }
 
-    public void setDescriptor(String descriptor) {
-        this.descriptor = descriptor;
-    }
 
-    public void setAsmName(String asmName) {
-        this.asmName = asmName;
-    }
 
     public boolean isAsync() {
         return async;
     }
 
-    public void setAsync(boolean async) {
-        this.async = async;
-    }
 
     public List<Type> getDependencies() {
         return dependencies;
@@ -111,6 +97,22 @@ public class ServiceInfo implements Constant {
 
     public void setDependencies(List<Type> dependencies) {
         this.dependencies = dependencies;
+    }
+
+    public boolean isLazy() {
+        return lazy;
+    }
+
+    public boolean isInit() {
+        return isInit;
+    }
+
+    public void setInit(boolean init) {
+        isInit = init;
+    }
+
+    public void setLazy(boolean lazy) {
+        this.lazy = lazy;
     }
 
     /**
@@ -135,6 +137,8 @@ public class ServiceInfo implements Constant {
                 async = (boolean) value;
             } else if (METHOD_DEPENDENCIES.equals(key)) {
                 dependencies = (List<Type>) value;
+            } else if (METHOD_LAZY.equals(key)) {
+                lazy = (boolean) value;
             }
         }
 
@@ -152,5 +156,14 @@ public class ServiceInfo implements Constant {
             return asmName.equals(((ServiceInfo) o).asmName);
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceInfo{" +
+                "descriptor='" + descriptor + '\'' +
+                ", lazy=" + lazy +
+                ", isInit=" + isInit +
+                '}';
     }
 }

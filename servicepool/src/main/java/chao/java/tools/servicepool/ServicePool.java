@@ -26,6 +26,24 @@ public class ServicePool {
         return loaded;
     }
 
+    /**
+     * 加载
+     */
+    public static void loadInitService() {
+        InitServices initServices = getService(InitServices.class);
+        try {
+            if (initServices != null) {
+                initServices.initService();
+            } else {
+                throw new NullPointerException();
+            }
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, e.getMessage());
+            }
+        }
+    }
+
     public static synchronized void loadServices() {
         if (loaded) {
             return;

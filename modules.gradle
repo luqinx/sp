@@ -1,11 +1,11 @@
 
 
 module("servicepool")
-        .remote("chao.java.tools:servicepool:0.0.3.dev8")
+        .remote("chao.java.tools:servicepool:0.0.3.dev9")
         .project(':servicepool')
-        .include()
+//        .include()
 module("servicepool_android")
-        .remote("chao.java.tools:servicepool-android:0.0.3.dev8")
+        .remote("chao.java.tools:servicepool-android:0.0.3.dev9")
         .project(':servicepool_android')
         .include()
 

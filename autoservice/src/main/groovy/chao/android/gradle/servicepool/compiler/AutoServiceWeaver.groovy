@@ -67,6 +67,12 @@ class AutoServiceWeaver extends BaseWeaver {
         ServiceInfo serviceInfo = new ServiceInfo(classNode.className)
         serviceInfo.parse(classNode.typeServiceAnnotation)
         serviceInfo.parse(classNode.typeInitAnnotation)
+        if (classNode.typeInitAnnotation != null) {
+            serviceInfo.setInit(true)
+        } else {
+            //默认是懒加载
+//            serviceInfo.setLazy(true)
+        }
 
         for (String clazz: classes) {
             if (IService.class.name.replaceAll("\\.", File.separator) == clazz) {
@@ -120,7 +126,11 @@ class AutoServiceWeaver extends BaseWeaver {
                 Files.newOutputStream(destJar.toPath())))
 
         try {
+            //生成 ServiceFactoriesInstance
             writeGenerateServiceFactories(outputZip)
+
+            //生成 InitServicesInstance
+            writeGenerateInitServices(outputZip)
 
             for (String pkgName : serviceInfoMap.keySet()) {
                 List<ServiceInfo> infoList = serviceInfoMap.get(pkgName)
@@ -131,6 +141,42 @@ class AutoServiceWeaver extends BaseWeaver {
             outputZip.flush()
             outputZip.close()
         }
+
+    }
+
+    private void writeGenerateInitServices(ZipOutputStream outputZip) {
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
+
+        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME, null, Constant.SERVICE_INIT_SERVICES_ASM_NAME)
+        classWriter.visitSource(Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME, null)
+
+        MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
+        methodVisitor.visitCode()
+        methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, Constant.SERVICE_INIT_SERVICES_ASM_NAME, "<init>", "()V", false)
+
+        HashSet<String> descriptors = new HashSet<>()
+        for (String pkgName : serviceInfoMap.keySet()) {
+            List<ServiceInfo> serviceInfoList = serviceInfoMap.get(pkgName)
+            for (ServiceInfo serviceInfo: serviceInfoList) {
+                if (!serviceInfo.isInit() || serviceInfo.isLazy()) {
+                    continue
+                }
+                descriptors.add(serviceInfo.descriptor)
+            }
+        }
+        descriptors.each { descriptor->
+            println(descriptor)
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+            methodVisitor.visitLdcInsn(Type.getType(descriptor))
+            methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME, "addInitService", "(Ljava/lang/Class;)V", false)
+        }
+        methodVisitor.visitInsn(Opcodes.RETURN)
+        methodVisitor.visitMaxs(4, 1)
+        methodVisitor.visitEnd()
+        classWriter.visitEnd()
+
+        writeZipEntry(Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME + Constant.GENERATE_FILE_NAME_SUFFIX, classWriter.toByteArray(), outputZip)
 
     }
 
