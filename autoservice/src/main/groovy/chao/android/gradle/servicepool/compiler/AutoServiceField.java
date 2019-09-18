@@ -11,6 +11,7 @@ public class AutoServiceField {
     public Object value;
     public String asmFullName;
     public String annotationValue;
+    public String annotationPath;
     public boolean isStatic;
 
     @Override

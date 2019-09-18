@@ -6,7 +6,7 @@ package chao.java.tools.servicepool;
  * @since 2019/5/1
  */
 public class DefaultService implements IService {
-    public String tag() {
+    public String path() {
         return getClass().getName();
     }
 

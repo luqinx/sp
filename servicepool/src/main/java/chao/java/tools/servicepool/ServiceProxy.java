@@ -43,7 +43,7 @@ public class ServiceProxy {
         if (service != null) {
             priority = service.priority();
             scope = service.scope();
-            tag = service.tag();
+            tag = service.path();
         }
         Init init = serviceClass.getAnnotation(Init.class);
         if (init != null) {

@@ -32,6 +32,13 @@ public interface Constant extends Opcodes {
 
     String GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME = GENERATE_SERVICE_PACKAGE_NAME + GENERATE_INIT_SERVICES_NAME;
 
+    /** PathServices **/
+    String SERVICE_PATH_SERVICES_ASM_NAME = "chao/java/tools/servicepool/PathServices";
+
+    String GENERATE_PATH_SERVICES_NAME = "PathServicesInstance";
+
+    String GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME = GENERATE_SERVICE_PACKAGE_NAME + GENERATE_PATH_SERVICES_NAME;
+
 
 
     String GENERATE_FILE_NAME_SUFFIX = ".class";
@@ -41,7 +48,7 @@ public interface Constant extends Opcodes {
 
     String METHOD_PRIORITY = "priority";
 
-    String METHOD_TAG = "tag";
+    String METHOD_PATH = "path";
 
     String METHOD_VALUE = "value";
 

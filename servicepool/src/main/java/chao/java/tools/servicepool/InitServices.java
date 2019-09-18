@@ -21,7 +21,7 @@ public abstract class InitServices extends DefaultService {
 
     void initService() {
         for (Class<? extends IInitService> clazz: initServices) {
-            //getService会唤起init
+            //getService会唤起Service的init
             ServicePool.getService(clazz);
         }
     }

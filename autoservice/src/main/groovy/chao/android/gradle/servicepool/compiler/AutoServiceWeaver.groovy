@@ -1,6 +1,5 @@
 package chao.android.gradle.servicepool.compiler
 
-
 import chao.android.gradle.servicepool.hunter.asm.BaseWeaver
 import chao.android.gradle.servicepool.hunter.asm.ExtendClassWriter
 import chao.java.tools.servicepool.IService
@@ -131,9 +130,16 @@ class AutoServiceWeaver extends BaseWeaver {
 
             //生成 InitServicesInstance
             writeGenerateInitServices(outputZip)
+            
+            //生成 PathServicesInstance
+            writeGeneratePathServices(outputZip)
+
 
             for (String pkgName : serviceInfoMap.keySet()) {
                 List<ServiceInfo> infoList = serviceInfoMap.get(pkgName)
+                if (infoList == null) {
+                    println(pkgName + ":" + infoList)
+                }
 
                 writeGenerateFactories(outputZip, pkgName, infoList)
             }
@@ -166,7 +172,6 @@ class AutoServiceWeaver extends BaseWeaver {
             }
         }
         descriptors.each { descriptor->
-            println(descriptor)
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
             methodVisitor.visitLdcInsn(Type.getType(descriptor))
             methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME, "addInitService", "(Ljava/lang/Class;)V", false)
@@ -177,6 +182,48 @@ class AutoServiceWeaver extends BaseWeaver {
         classWriter.visitEnd()
 
         writeZipEntry(Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME + Constant.GENERATE_FILE_NAME_SUFFIX, classWriter.toByteArray(), outputZip)
+
+    }
+
+    private void writeGeneratePathServices(ZipOutputStream outputZip) {
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
+
+        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, Constant.GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME, null, Constant.SERVICE_PATH_SERVICES_ASM_NAME)
+        classWriter.visitSource(Constant.GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME, null)
+
+        MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
+        methodVisitor.visitCode()
+        methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, Constant.SERVICE_PATH_SERVICES_ASM_NAME, "<init>", "()V", false)
+
+        Map<String, String> pathMap = new HashMap<>()
+        for (String pkgName : serviceInfoMap.keySet()) {
+            List<ServiceInfo> serviceInfoList = serviceInfoMap.get(pkgName)
+            for (ServiceInfo serviceInfo: serviceInfoList) {
+                if (serviceInfo.path == null || serviceInfo.path.length() == 0) {
+                    continue
+                }
+                String path = serviceInfo.getPath()
+                String descriptor = serviceInfo.getDescriptor()
+                if (pathMap.get(path) != null && pathMap.get(path) != descriptor) {
+                    throw new IllegalStateException("duplicate path: " + path + ", " + descriptor + " <--> " + pathMap.get(path)) //path重复
+                }
+                pathMap.put(path, descriptor)
+            }
+        }
+        pathMap.each { path, descriptor->
+//            println(path + "=" + descriptor)
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+            methodVisitor.visitLdcInsn(path)
+            methodVisitor.visitLdcInsn(Type.getType(descriptor));
+            methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constant.GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME, "put", "(Ljava/lang/String;Ljava/lang/Class;)V", false);
+        }
+        methodVisitor.visitInsn(Opcodes.RETURN)
+        methodVisitor.visitMaxs(4, 1)
+        methodVisitor.visitEnd()
+        classWriter.visitEnd()
+
+        writeZipEntry(Constant.GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME + Constant.GENERATE_FILE_NAME_SUFFIX, classWriter.toByteArray(), outputZip)
 
     }
 
@@ -248,7 +295,7 @@ class AutoServiceWeaver extends BaseWeaver {
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
             methodVisitor.visitInsn(info.getPriority() + 3)
             methodVisitor.visitInsn(info.getScope() + 3)
-            methodVisitor.visitLdcInsn(info.getTag())
+            methodVisitor.visitLdcInsn(info.getPath())
             methodVisitor.visitInsn(info.async ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
 //            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;)V", false)
@@ -283,7 +330,7 @@ class AutoServiceWeaver extends BaseWeaver {
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
             methodVisitor.visitInsn(info.getPriority() + 3)
             methodVisitor.visitInsn(info.getScope() + 3)
-            methodVisitor.visitLdcInsn(info.getTag())
+            methodVisitor.visitLdcInsn(info.getPath())
             methodVisitor.visitInsn(info.async ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
 

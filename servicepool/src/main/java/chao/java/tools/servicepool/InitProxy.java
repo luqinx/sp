@@ -39,7 +39,7 @@ public class InitProxy extends DefaultService implements IInitService {
 
 
     @Override
-    public String tag() {
+    public String path() {
         return null;
     }
 

@@ -19,7 +19,7 @@ autoservice:
     
     Init注解， 默认有Service注解功能
     
-    Init注解, 增加按需加载属性
+    Init注解, 增加按需加载属性        done.  
 
     @Service标记静态变量时, 赋值操作应该在静态初始化代码块中执行     doing       done
         因为<init>方法不一定会被执行
@@ -34,10 +34,13 @@ CombineService
 EventService    done
 
 
+支持通过path获取Service(原名称是tag)
+
+
 
 问题汇总:
 
-1. android 9.0 byte-buddy适配失败
+1. android 9.0 byte-buddy适配失败       done.
 
 08-12 15:37:36.649 10187 10187 E AndroidRuntime: FATAL EXCEPTION: main
 08-12 15:37:36.649 10187 10187 E AndroidRuntime: Process: com.gihoo.camera, PID: 10187

@@ -243,6 +243,8 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
                 if (METHOD_VALUE.equals(name)) {
                     Type valueType = (Type) value;
                     field.annotationValue = valueType.getDescriptor();
+                } else if (METHOD_PATH.equals(name)) {
+                    field.annotationPath = String.valueOf(value);
                 }
             }
         }

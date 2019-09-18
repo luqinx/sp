@@ -159,4 +159,9 @@ public class DefaultServiceController implements ServiceController {
         ServiceProxy proxy = new InnerProxy<>(service);
         historyCache.put(service.getClass().getName(), proxy);
     }
+
+    public Class<? extends IService> getPathService(String path) {
+        PathServices pathServices = getServiceByClass(PathServices.class);
+        return pathServices.get(path);
+    }
 }

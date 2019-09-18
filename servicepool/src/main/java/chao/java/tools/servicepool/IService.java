@@ -6,7 +6,7 @@ package chao.java.tools.servicepool;
  */
 public interface IService {
 
-//    String tag();
+//    String path();
 //
 //    int priority();
 //

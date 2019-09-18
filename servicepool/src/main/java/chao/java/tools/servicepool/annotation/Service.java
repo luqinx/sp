@@ -46,7 +46,7 @@ public @interface Service {
      */
     int scope() default IService.Scope.global;
 
-    String tag() default "";
+    String path() default "";
 
     Class<?> value() default Void.class;
 

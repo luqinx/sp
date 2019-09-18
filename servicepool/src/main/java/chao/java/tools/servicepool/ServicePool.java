@@ -129,6 +129,14 @@ public class ServicePool {
         return null;
     }
 
+    public static <T> T getService(String path) {
+        Class<? extends IService> clazz = controller.getPathService(path);
+        if (clazz == null) {
+            return null;
+        }
+        return (T) getService(clazz);
+    }
+
 //    public static <T extends IService> T newService(Class<T> serviceClass) {
 //        checkLoader();
 //        return controller.newService(serviceClass);

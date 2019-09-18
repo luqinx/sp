@@ -24,7 +24,7 @@ public class ServiceInfo implements Constant {
 
     private int priority;
 
-    private String tag;
+    private String path;
 
     private boolean async;
 
@@ -45,7 +45,7 @@ public class ServiceInfo implements Constant {
         this.pkgName = last == -1 ? service : service.substring(0, last);
         this.scope = IService.Scope.global;
         this.priority = IService.Priority.NORMAL_PRIORITY;
-        this.tag = "";
+        this.path = "";
     }
 
     public String getPkgName() {
@@ -72,8 +72,8 @@ public class ServiceInfo implements Constant {
         return priority;
     }
 
-    public String getTag() {
-        return tag;
+    public String getPath() {
+        return path;
     }
 
     public String getAsmName() {
@@ -131,8 +131,8 @@ public class ServiceInfo implements Constant {
                 priority = (int) value;
             } else if (METHOD_SCOPE.equals(key)) {
                 scope = (int) value;
-            } else if (METHOD_TAG.equals(key)) {
-                tag = String.valueOf(value);
+            } else if (METHOD_PATH.equals(key)) {
+                path = String.valueOf(value);
             } else if (METHOD_ASYNC.equals(key)) {
                 async = (boolean) value;
             } else if (METHOD_DEPENDENCIES.equals(key)) {
@@ -162,8 +162,7 @@ public class ServiceInfo implements Constant {
     public String toString() {
         return "ServiceInfo{" +
                 "descriptor='" + descriptor + '\'' +
-                ", lazy=" + lazy +
-                ", isInit=" + isInit +
+                ", path='" + path + '\'' +
                 '}';
     }
 }

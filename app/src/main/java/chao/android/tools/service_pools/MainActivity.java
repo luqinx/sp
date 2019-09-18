@@ -9,6 +9,8 @@ import chao.android.tools.service_pools.event.HisEvent;
 import chao.android.tools.service_pools.event.MyEvent;
 import chao.android.tools.service_pools.fragments.EventFragment;
 import chao.android.tools.service_pools.fragments.HisEventFragment;
+import chao.android.tools.service_pools.path.PathService;
+import chao.android.tools.service_pools.path.PathService2;
 import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.test.InitService5;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
@@ -63,6 +65,12 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     @Event
     private MyEvent myEvent;
 
+    @Service(path = "/app/path")
+    private PathService pathService;
+
+    @Service(path = "/app/path2")
+    private static PathService2 pathService2;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +81,10 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 
 //        testPluginService = ServicePool.getService(TestPluginService.class);
 //        testPluginService.print();
+
+        pathService.print();
+
+        pathService2.print();
 
 //
 

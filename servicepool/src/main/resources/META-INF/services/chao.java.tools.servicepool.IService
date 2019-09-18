@@ -1,2 +1,3 @@
 chao.java.tools.servicepool.gen.ServiceFactoriesInstance
 chao.java.tools.servicepool.gen.InitServicesInstance
+chao.java.tools.servicepool.gen.PathServicesInstance

@@ -75,13 +75,21 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
                 if (!field.isStatic) {
                     continue;
                 }
-                if (field.annotationValue == null) {
-                    field.annotationValue = field.desc;
+                //如果path存在, 使用path查找
+                if (field.annotationPath != null && field.annotationPath.length() > 0) {
+                    mv.visitLdcInsn(field.annotationPath);
+                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/String;)Ljava/lang/Object;", false);
+                    mv.visitTypeInsn(CHECKCAST, field.asmFullName);
+                    mv.visitFieldInsn(PUTSTATIC, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
+                } else {
+                    if (field.annotationValue == null) {
+                        field.annotationValue = field.desc;
+                    }
+                    mv.visitLdcInsn(Type.getType(field.annotationValue));
+                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
+                    mv.visitTypeInsn(CHECKCAST, field.asmFullName);
+                    mv.visitFieldInsn(PUTSTATIC, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
                 }
-                mv.visitLdcInsn(Type.getType(field.annotationValue));
-                mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
-                mv.visitTypeInsn(CHECKCAST, field.asmFullName);
-                mv.visitFieldInsn(PUTSTATIC, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
             }
             mv.visitInsn(RETURN);
             mv.visitEnd();
@@ -118,13 +126,22 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
                     continue;
                 }
                 mv.visitVarInsn(ALOAD, 0);
-                if (field.annotationValue == null) {
-                    field.annotationValue = field.desc;
+
+                //如果path存在, 使用path查找
+                if (field.annotationPath != null && field.annotationPath.length() > 0) {
+                    mv.visitLdcInsn(field.annotationPath);
+                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/String;)Ljava/lang/Object;", false);
+                    mv.visitTypeInsn(CHECKCAST, field.asmFullName);
+                    mv.visitFieldInsn(PUTFIELD, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
+                } else {
+                    if (field.annotationValue == null) {
+                        field.annotationValue = field.desc;
+                    }
+                    mv.visitLdcInsn(Type.getType(field.annotationValue));
+                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
+                    mv.visitTypeInsn(CHECKCAST, field.asmFullName);
+                    mv.visitFieldInsn(PUTFIELD, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
                 }
-                mv.visitLdcInsn(Type.getType(field.annotationValue));
-                mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
-                mv.visitTypeInsn(CHECKCAST, field.asmFullName);
-                mv.visitFieldInsn(PUTFIELD, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
             }
 
             //初始化Event, 注册Event
