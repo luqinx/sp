@@ -147,7 +147,13 @@ public class ServicePool {
             synchronized (ServicePool.class) {
                 if (controller == null) {
                     long start = System.currentTimeMillis();
-                    loadServices();
+                    try {
+                        loadServices();
+                    } catch (Throwable e) {
+                        if (exceptionHandler != null) {
+                            exceptionHandler.onException(e, e.getMessage());
+                        }
+                    }
                     long end = System.currentTimeMillis();
                     logger.log("load init services, spent:" + (end - start));
                 }

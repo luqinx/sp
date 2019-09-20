@@ -22,7 +22,7 @@ public class AndroidServicePool extends ServicePool {
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
-        controller.cacheService(new RouteManager());
         loadInitService();
+        controller.cacheService(new RouteManager());
     }
 }

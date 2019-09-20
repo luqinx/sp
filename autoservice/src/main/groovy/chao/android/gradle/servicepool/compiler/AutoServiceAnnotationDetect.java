@@ -69,7 +69,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         }
         //查找接口是否包含@Event注解
         for (String itf : interfaces) {
-            if (ecw.typeHasAnnotation(itf.replaceAll(File.separator, "."), Constant.EVENT_ANNOTATION)) {
+            if (ecw.typeHasAnnotation(itf.replaceAll("/", "."), Constant.EVENT_ANNOTATION)) {
                 if (!eventInterfaces.contains(itf)) {
                     eventInterfaces.add(itf);
                 }

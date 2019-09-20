@@ -41,7 +41,6 @@ public interface IService {
         /**
          *  全局缓存, 创建后不会被回收，直到进程结束
          *
-         *  默认Scope
          */
         int global = 0;
 
@@ -53,6 +52,8 @@ public interface IService {
 
         /**
          *  不会缓存， 每次获取都会重新创建
+         *
+         *  默认Scope
          */
         int once = 2;
     }

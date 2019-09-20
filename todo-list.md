@@ -34,7 +34,9 @@ CombineService
 EventService    done
 
 
-支持通过path获取Service(原名称是tag)
+支持通过path获取Service(原名称是tag)  done.
+
+支持@Inherit ？
 
 
 

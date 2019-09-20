@@ -74,7 +74,7 @@ class AutoServiceWeaver extends BaseWeaver {
         }
 
         for (String clazz: classes) {
-            if (IService.class.name.replaceAll("\\.", File.separator) == clazz) {
+            if (IService.class.name.replaceAll("\\.", "/") == clazz) {
                 continue
             }
             clazz = clazz.replaceAll("/", ".")
@@ -241,7 +241,7 @@ class AutoServiceWeaver extends BaseWeaver {
         for (String pkgName : serviceInfoMap.keySet()) {
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
             methodVisitor.visitLdcInsn(pkgName)
-            String serviceFactory = pkgName.replaceAll("\\.", File.separator) + File.separator + Constant.GENERATE_SERVICE_SUFFIX
+            String serviceFactory = pkgName.replaceAll("\\.", "/") + "/" + Constant.GENERATE_SERVICE_SUFFIX
             methodVisitor.visitTypeInsn(Opcodes.NEW, serviceFactory)
             methodVisitor.visitInsn(Opcodes.DUP)
             methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, serviceFactory, "<init>", "()V", false)
@@ -385,7 +385,7 @@ class AutoServiceWeaver extends BaseWeaver {
     private static void writeGenerateFactories(ZipOutputStream outputZip, String pkgName, List<ServiceInfo> infoList) {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
 
-        String className = pkgName.replaceAll("\\.", File.separator) + File.separator + Constant.GENERATE_SERVICE_SUFFIX
+        String className = pkgName.replaceAll("\\.", "/") + "/" + Constant.GENERATE_SERVICE_SUFFIX
         classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", Constant.SERVICE_FACTORY_ASM_NAME)
 
         generateCreateServiceProxy(classWriter, infoList)

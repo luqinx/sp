@@ -43,7 +43,7 @@ public class ServiceInfo implements Constant {
         this.service = asmName.replaceAll("/", ".");
         int last = service.lastIndexOf('.');
         this.pkgName = last == -1 ? service : service.substring(0, last);
-        this.scope = IService.Scope.global;
+        this.scope = IService.Scope.once;
         this.priority = IService.Priority.NORMAL_PRIORITY;
         this.path = "";
     }

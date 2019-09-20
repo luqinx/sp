@@ -199,6 +199,7 @@ public class HunterTransform extends Transform {
         waitableExecutor.waitForTasksWithQuickFail(true);
         transformFinished(dest);
         long costTime = System.currentTimeMillis() - startTime;
+        urlClassLoader.close();
         logger.warn((getName() + " costed " + costTime + "ms"));
     }
 
