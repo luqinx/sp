@@ -26,9 +26,9 @@ public interface Constant extends Opcodes {
     String GENERATE_SERVICE_SUFFIX = "gen$$ServiceFactory";
 
     /** InitServices **/
-    String SERVICE_INIT_SERVICES_ASM_NAME = "chao/java/tools/servicepool/InitServices";
+    String SERVICE_INIT_SERVICES_ASM_NAME = "chao/java/tools/servicepool/AbsInitServiceManager";
 
-    String GENERATE_INIT_SERVICES_NAME = "InitServicesInstance";
+    String GENERATE_INIT_SERVICES_NAME = "InitServiceManagerInstance";
 
     String GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME = GENERATE_SERVICE_PACKAGE_NAME + GENERATE_INIT_SERVICES_NAME;
 

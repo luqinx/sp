@@ -44,7 +44,7 @@ public @interface Service {
      *
      *  @return scope
      */
-    int scope() default IService.Scope.global;
+    int scope() default IService.Scope.once;
 
     String path() default "";
 

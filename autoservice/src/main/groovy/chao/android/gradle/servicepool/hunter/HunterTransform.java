@@ -185,8 +185,8 @@ public class HunterTransform extends Transform {
         contentTypes.add(RESOURCES);
 
         Set<QualifiedContent.Scope> scopes = new HashSet<>();
-        scopes.add(EXTERNAL_LIBRARIES);
-        scopes.add(PROJECT);
+//        scopes.add(EXTERNAL_LIBRARIES);
+//        scopes.add(PROJECT);
         scopes.add(SUB_PROJECTS);
 
         File dest = outputProvider.getContentLocation(

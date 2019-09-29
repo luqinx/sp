@@ -24,10 +24,13 @@ import chao.java.tools.servicepool.ServiceThreadFactory;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
+ *
+ * 懒加载
+ *
  * @author qinchao
  * @since 2019/4/30
  */
-@Service
+@Service(scope = IService.Scope.global)
 public class DefaultDependencyManager implements DependencyManager, Handler.Callback {
 
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();

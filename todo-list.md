@@ -34,7 +34,11 @@ CombineService
 EventService    done
 
 
-支持通过path获取Service(原名称是tag)  done.
+引入生命周期？
+    1. android lifecycle
+    2. field tag
+
+支持通过path获取Service  done.
 
 支持@Inherit ？
 

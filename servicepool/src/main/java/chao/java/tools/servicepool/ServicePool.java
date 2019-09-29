@@ -30,7 +30,7 @@ public class ServicePool {
      * 加载
      */
     public static void loadInitService() {
-        InitServices initServices = getService(InitServices.class);
+        InitServiceManager initServices = getService(InitServiceManager.class);
         try {
             if (initServices != null) {
                 initServices.initService();
@@ -68,7 +68,7 @@ public class ServicePool {
             }
         }
 
-        ServiceFactories factories = controller.getServiceByClass(ServiceFactories.class);
+        IServiceFactories factories = controller.getServiceByClass(IServiceFactories.class);
         if (factories == null) {
             throw new ServicePoolException("sp internal err.");
         }

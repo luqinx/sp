@@ -1,6 +1,10 @@
 package chao.android.tools.servicepool;
 
 import android.util.Log;
+
+import com.android.dx.dex.DexOptions;
+import com.android.dx.dex.cf.CfOptions;
+
 import java.io.File;
 import java.util.Map;
 import net.bytebuddy.android.AndroidClassLoadingStrategy;
@@ -22,7 +26,7 @@ public enum AndroidLazyStrategy implements TypeResolutionStrategy, TypeResolutio
      */
     INSTANCE;
 
-    File NO_OP_DEX_DIR = new File(AndroidServicePool.getContext().getCacheDir(), "dexs");
+    File NO_OP_DEX_DIR = new File(AndroidServicePool.getContext().getFilesDir(), "dexs");
 
 
     private AndroidClassLoadingStrategy loadingStrategy = null;
@@ -47,9 +51,14 @@ public enum AndroidLazyStrategy implements TypeResolutionStrategy, TypeResolutio
     public <S extends ClassLoader> Map<TypeDescription, Class<?>> initialize(DynamicType dynamicType,
                                                                              S classLoader,
                                                                              ClassLoadingStrategy<? super S> classLoadingStrategy) {
+        if (dexProcessor == null) {
+            DexOptions dexOptions = new DexOptions();
+            dexOptions.targetApiLevel = 13;
+            dexProcessor = new AndroidClassLoadingStrategy.DexProcessor.ForSdkCompiler(dexOptions, new CfOptions());
+        }
         makeDexDir();
         if (loadingStrategy == null) {
-            loadingStrategy = new AndroidClassLoadingStrategy.Wrapping(NO_OP_DEX_DIR);
+            loadingStrategy = new AndroidClassLoadingStrategy.Wrapping(NO_OP_DEX_DIR, dexProcessor);
         }
         return loadingStrategy.load(classLoader, dynamicType.getAllTypes());
     }
@@ -66,4 +75,6 @@ public enum AndroidLazyStrategy implements TypeResolutionStrategy, TypeResolutio
             }
         }
     }
+
+    private AndroidClassLoadingStrategy.DexProcessor dexProcessor;
 }

@@ -17,7 +17,7 @@ public class DefaultServiceController implements ServiceController {
 
     private NoOpInstanceFactory noOpFactory;
 
-    private List<ServiceFactories> factoriesList = new ArrayList<>(1);
+    private List<IServiceFactories> factoriesList = new ArrayList<>(1);
 
 
     public DefaultServiceController() {
@@ -32,13 +32,13 @@ public class DefaultServiceController implements ServiceController {
             proxy = new ServiceProxy(serviceClass);
         }
 
-        cacheService(proxy, serviceClass);
+        cacheService(serviceClass, proxy);
 
         cacheSubClasses(serviceClass, proxy);
 
     }
 
-    private void cacheService(ServiceProxy proxy, Class<?> serviceClass) {
+    private void cacheService(Class<?> serviceClass, ServiceProxy proxy) {
         if (serviceClass == Object.class) {
             return;
         }
@@ -56,19 +56,24 @@ public class DefaultServiceController implements ServiceController {
         if (clazz == Object.class) {
             return;
         }
-        for (Class<?> subInterface: clazz.getInterfaces()) {
+        for (Class<?> subInterface : clazz.getInterfaces()) {
             if (IService.class.equals(subInterface)) {
                 continue;
             }
             if (IInitService.class.equals(subInterface)) {
                 continue;
             }
-            cacheService(serviceProxy, subInterface);
+            cacheService(subInterface, serviceProxy);
+            cacheSubClasses(subInterface, serviceProxy);
         }
-        Class superClass = clazz;
-        while (superClass != Object.class) {
-            cacheService(serviceProxy, superClass);
-            superClass = superClass.getSuperclass();
+        Class superClass = clazz.getSuperclass();
+        if (superClass == Object.class) {
+            return;
+        }
+        if (superClass != null) {
+
+            cacheService(superClass, serviceProxy);
+            cacheSubClasses(superClass, serviceProxy);
         }
     }
 
@@ -88,7 +93,7 @@ public class DefaultServiceController implements ServiceController {
         }
         ServiceProxy proxy = null;
         //目前只有一个ServiceFactories
-        for (ServiceFactories factories: factoriesList) {
+        for (IServiceFactories factories: factoriesList) {
             String name = serviceClass.getName();
             int last = name.lastIndexOf('.');
             if (last == -1) {
@@ -101,7 +106,7 @@ public class DefaultServiceController implements ServiceController {
             }
             proxy = factory.createServiceProxy(serviceClass);
             if (proxy != null) {
-                cacheService(proxy, proxy.getServiceClass());
+                cacheService(proxy.getServiceClass(), proxy);
                 addService(proxy.getServiceClass());
                 proxy = serviceCache.get(proxy.getServiceClass().getName());
             }
@@ -135,7 +140,6 @@ public class DefaultServiceController implements ServiceController {
 
     @Override
     public void loadFinished() {
-
     }
 
     public <T extends IService> T getServiceByClass(Class<T> tClass, T defaultService) {
@@ -146,7 +150,7 @@ public class DefaultServiceController implements ServiceController {
         return defaultService;
     }
 
-    public void addFactories(ServiceFactories factories) {
+    public void addFactories(IServiceFactories factories) {
         factoriesList.add(factories);
     }
 
@@ -161,7 +165,7 @@ public class DefaultServiceController implements ServiceController {
     }
 
     public Class<? extends IService> getPathService(String path) {
-        PathServices pathServices = getServiceByClass(PathServices.class);
+        IPathService pathServices = getServiceByClass(IPathService.class);
         return pathServices.get(path);
     }
 }

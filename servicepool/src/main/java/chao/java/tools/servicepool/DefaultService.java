@@ -15,6 +15,6 @@ public class DefaultService implements IService {
     }
 
     public int scope() {
-        return IService.Scope.global;
+        return Scope.once;
     }
 }

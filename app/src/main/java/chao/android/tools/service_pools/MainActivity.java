@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import chao.android.tools.service_pools.abs.Abs;
 import chao.android.tools.service_pools.event.EventSample;
 import chao.android.tools.service_pools.event.HisEvent;
 import chao.android.tools.service_pools.event.MyEvent;
@@ -16,6 +17,7 @@ import chao.android.tools.service_pools.test.InitService5;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.android.tools.servicepool.route.SRouter;
 import chao.app.ami.UI;
+import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Event;
 import chao.java.tools.servicepool.annotation.Service;
@@ -71,6 +73,11 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     @Service(path = "/app/path2")
     private static PathService2 pathService2;
 
+    @Service
+    private Abs abs;
+
+    @Service
+    private InitService5 initService5;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,7 +94,8 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
         pathService2.print();
 
 //
-
+        abs.method();
+        System.out.println("abs instance of NoInstance:" + (abs instanceof NoOpInstance));
 //
         commonService.print();
 //
@@ -143,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     }
 
     @Service
-    private class InnerService implements Printer {
+    public class InnerService implements Printer {
 
         @Override
         public void print() {

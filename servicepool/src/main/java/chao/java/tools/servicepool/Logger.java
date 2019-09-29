@@ -62,7 +62,7 @@ public class Logger implements ILogger {
 
     @Override
     public void log(String message, Object... args) {
-        System.out.println(String.format(message, args));
+        System.err.println(String.format(message, args));
     }
 
     @Override

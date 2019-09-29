@@ -120,6 +120,10 @@ public class ServiceProxy {
      *
      */
     public int scope() {
+        if (IInitService.class.isAssignableFrom(serviceClass)
+        || IPathService.class.isAssignableFrom(serviceClass)){
+            return IService.Scope.global;
+        }
         return scope;
     }
 
