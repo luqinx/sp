@@ -8,7 +8,6 @@ import java.util.Map;
 import chao.android.tools.interceptor.Interceptor;
 import chao.android.tools.interceptor.OnInvoke;
 import chao.java.tools.servicepool.ILogger;
-import chao.java.tools.servicepool.Logger;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**

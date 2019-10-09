@@ -7,3 +7,19 @@
 
 6. 组件手动销毁和自动销毁
 7. 路由
+
+## sp能力
+
+#### Mock能力
+    1. 接口Mock
+    2. 环境Mock, debug, alpha, publish..
+    3. 功能调试Mock等等
+    
+    
+#### Router
+
+
+#### Event
+
+
+#### 模块初始化

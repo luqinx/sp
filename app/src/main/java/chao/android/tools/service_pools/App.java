@@ -60,8 +60,6 @@ public class App extends Application {
             System.out.println("get service err: " + e);
         });
 
-        RouteManager routeManager = ServicePool.getService(RouteManager.class);
-        routeManager.addRoute("/app/testRoute", TestRouteActivity.class);
 
         Ami.init(this);
 //        Ami.setDrawerId(R.raw.ami_config);

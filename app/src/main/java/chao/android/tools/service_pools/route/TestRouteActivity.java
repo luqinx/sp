@@ -2,7 +2,6 @@ package chao.android.tools.service_pools.route;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
@@ -12,7 +11,6 @@ import chao.android.tools.service_pools.R;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMIActivity;
 import chao.java.tools.servicepool.ILogger;
-import chao.java.tools.servicepool.annotation.Route;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -20,7 +18,7 @@ import chao.java.tools.servicepool.annotation.Service;
  * @since 2019-09-03
  */
 @LayoutID(R.layout.main)
-@Route(path = "/app/testRoute")
+@Service(path = "/app/testRoute")
 public class TestRouteActivity extends AMIActivity {
 
     private int iv;

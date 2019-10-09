@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import chao.java.tools.servicepool.combine.CombineCallback;
+import chao.java.tools.servicepool.combine.CombineManager;
+
 /**
  * @author qinchao
  * @since 2019/5/3
@@ -19,9 +22,13 @@ public class DefaultServiceController implements ServiceController {
 
     private List<IServiceFactories> factoriesList = new ArrayList<>(1);
 
+    private CombineManager combineManager;
+
 
     public DefaultServiceController() {
         noOpFactory = new NoOpInstanceFactory();
+
+        combineManager = new CombineManager();
     }
 
     @Override
@@ -75,6 +82,10 @@ public class DefaultServiceController implements ServiceController {
             cacheService(superClass, serviceProxy);
             cacheSubClasses(superClass, serviceProxy);
         }
+    }
+
+    public <T extends IService> T getCombineService(Class<T> serviceClass) {
+        return combineManager.getCombineService(serviceClass, factoriesList);
     }
 
     private ServiceProxy getService(Class<?> serviceClass) {

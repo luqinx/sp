@@ -1,13 +1,17 @@
 package chao.android.tools.servicepool.route;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.Fragment;
 import android.content.Intent;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import chao.android.tools.servicepool.AndroidServicePool;
+import chao.java.tools.servicepool.IPathService;
 import chao.java.tools.servicepool.IService;
+import chao.java.tools.servicepool.ServicePool;
+import chao.java.tools.servicepool.annotation.Service;
+
+import static chao.java.tools.servicepool.ServicePool.getCombineService;
+import static chao.java.tools.servicepool.ServicePool.logger;
 
 /**
  * @author luqin
@@ -15,45 +19,77 @@ import chao.java.tools.servicepool.IService;
  */
 public class RouteManager implements IService {
 
-    private Map<String, Class<? extends Activity>> routeMap;
+    private static final String SUPPORT_FRAGMENT = "android.support.v4.app.Fragment";
+
+    @Service
+    private IPathService pathService;
+
 
     public RouteManager() {
-        routeMap = new HashMap<>();
     }
 
-    public void addRoute(String path, Class<? extends Activity> activity) {
-        if (!routeMap.containsKey(path)) {
-            routeMap.put(path, activity);
-        } else if (routeMap.get(path) != activity) {
-            throw new IllegalArgumentException("duplicate route path, path already exists with value: " + routeMap.get(path)); //path不允许重复
+    Object navigation(final RouteBuilder route, final RouteNavigationCallback callback) {
+        if (route.context == null) {
+            route.context = AndroidServicePool.getContext();//Application Context
         }
-    }
+        final Class<? extends IService> service = pathService.get(route.path);
 
-    public Class<? extends Activity> getRoute(String path) {
-        Class<? extends Activity> activity = routeMap.get(path);
-        if (activity != null) {
-            return activity;
+        if (Activity.class.isAssignableFrom(service)) {
+            if (callback != null) {
+                callback.onFound(service, route);
+            }
+            getCombineService(RouteInterceptor.class).intercept(route, new RouteInterceptorCallback() {
+                @Override
+                public void onContinue(RouteBuilder route) {
+                    _navigationActivity(route, (Class<? extends Activity>) service, callback);
+                }
+
+                @Override
+                public void onInterrupt(Throwable e) {
+                    if (callback != null) {
+                        callback.onInterrupt(route, e);
+                    }
+                    logger.log("Router Interceptor interrupted!!! " + e);
+                }
+            });
+
+            return null;
+        } else if (Fragment.class.isAssignableFrom(service)) {
+
+        } else if (SUPPORT_FRAGMENT.equals(service.getName())){
+            try {
+                Class<?> supportFragment = Class.forName(SUPPORT_FRAGMENT);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    public void navigation(Context context, RouteBuilder route) {
-        Class<? extends Activity> activity = routeMap.get(route.path);
-        if (activity == null) {
-            return;
-        }
+    private void _navigationActivity(RouteBuilder route, Class<? extends Activity> activity, RouteNavigationCallback callback) {
         Intent intent = new Intent();
         intent.putExtras(route.args);
         intent.setFlags(route.flags);
-        intent.setClass(context, activity);
-        if (context instanceof Activity) {
+        if (route.type != null && route.uri != null) {
+            intent.setDataAndType(route.uri, route.type);
+        } else if (route.uri != null){
+            intent.setData(route.uri);
+        } else if (route.type != null) {
+            intent.setType(route.type);
+        }
+        intent.setClass(route.context, activity);
+        if (route.context instanceof Activity) {
             if (route.exitAnim != -1 && route.enterAnim != -1) {
-                ((Activity) context).overridePendingTransition(route.enterAnim, route.exitAnim);
+                ((Activity) route.context).overridePendingTransition(route.enterAnim, route.exitAnim);
             }
-            ((Activity) context).startActivityForResult(intent, route.requestCode);
+            ((Activity) route.context).startActivityForResult(intent, route.requestCode);
         } else {
             intent.setFlags(route.flags | Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            route.context.startActivity(intent);
+        }
+
+        if (callback != null) {
+            callback.onArrival(route);
         }
     }
 }

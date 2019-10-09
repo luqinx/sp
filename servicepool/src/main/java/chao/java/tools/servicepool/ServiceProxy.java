@@ -134,4 +134,19 @@ public class ServiceProxy {
     public boolean async() {
         return async;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ServiceProxy proxy = (ServiceProxy) o;
+
+        return serviceClass != null ? serviceClass.equals(proxy.serviceClass) : proxy.serviceClass == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return serviceClass != null ? serviceClass.hashCode() : 0;
+    }
 }

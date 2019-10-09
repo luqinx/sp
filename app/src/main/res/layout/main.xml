@@ -19,4 +19,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/init"
+        android:textSize="18sp"
+        android:text="Init Service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/router"
+        android:text="Router"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
 </LinearLayout>

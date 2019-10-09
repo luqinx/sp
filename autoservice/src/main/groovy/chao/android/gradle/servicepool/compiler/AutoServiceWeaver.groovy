@@ -345,6 +345,60 @@ class AutoServiceWeaver extends BaseWeaver {
         methodVisitor.visitEnd()
     }
 
+    private static void generateCreateServiceProxies(ClassWriter classWriter, List<ServiceInfo> infoList) {
+        MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "createServiceProxies", "(Ljava/lang/Class;)Ljava/util/HashSet;", "(Ljava/lang/Class;)Ljava/util/HashSet<Lchao/java/tools/servicepool/ServiceProxy;>;", null)
+        methodVisitor.visitCode()
+
+        methodVisitor.visitTypeInsn(Opcodes.NEW, "java/util/HashSet")
+        methodVisitor.visitInsn(Opcodes.DUP)
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/util/HashSet", "<init>", "()V", false)
+        methodVisitor.visitVarInsn(Opcodes.ASTORE, 3)
+
+        for (ServiceInfo info : infoList) {
+            Label li = new Label()
+
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 1)
+            methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
+            methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Class", "isAssignableFrom", "(Ljava/lang/Class;)Z", false)
+            methodVisitor.visitJumpInsn(Opcodes.IFEQ, li)
+
+            methodVisitor.visitTypeInsn(Opcodes.NEW, "java/util/ArrayList")
+            methodVisitor.visitInsn(Opcodes.DUP)
+            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/util/ArrayList", "<init>", "()V", false)
+            methodVisitor.visitVarInsn(Opcodes.ASTORE, 2)
+            for (Type type: info.getDependencies()) {
+                methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
+                methodVisitor.visitLdcInsn(type)
+                methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/ArrayList", "add", "(Ljava/lang/Object;)Z", false)
+                methodVisitor.visitInsn(Opcodes.POP)
+            }
+
+            methodVisitor.visitTypeInsn(Opcodes.NEW, "chao/java/tools/servicepool/ServiceProxy")
+            methodVisitor.visitInsn(Opcodes.DUP)
+            methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+            methodVisitor.visitInsn(info.getPriority() + 3)
+            methodVisitor.visitInsn(info.getScope() + 3)
+            methodVisitor.visitLdcInsn(info.getPath())
+            methodVisitor.visitInsn(info.async ? Opcodes.ICONST_1: Opcodes.ICONST_0)
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
+
+//            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;)V", false)
+            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;ZLjava/util/List;)V", false)
+            methodVisitor.visitVarInsn(Opcodes.ASTORE, 4)
+
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 3)// HashSet
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 4)
+            methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/HashSet", "add", "(Ljava/lang/Object;)Z", false)
+            methodVisitor.visitInsn(Opcodes.POP)
+            methodVisitor.visitLabel(li)
+        }
+        methodVisitor.visitVarInsn(Opcodes.ALOAD, 3) //HashSet
+        methodVisitor.visitInsn(Opcodes.ARETURN)
+        methodVisitor.visitMaxs(12, 5)
+        methodVisitor.visitEnd()
+    }
+
     private static void generateCreateInstance(ClassWriter classWriter, List<ServiceInfo> infoList) {
         MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "createInstance", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/IService;", "(Ljava/lang/Class<*>;)Lchao/java/tools/servicepool/IService;", null)
         methodVisitor.visitCode()
@@ -389,6 +443,8 @@ class AutoServiceWeaver extends BaseWeaver {
         classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", Constant.SERVICE_FACTORY_ASM_NAME)
 
         generateCreateServiceProxy(classWriter, infoList)
+
+        generateCreateServiceProxies(classWriter, infoList)
 
         generateCreateInstance(classWriter, infoList)
 

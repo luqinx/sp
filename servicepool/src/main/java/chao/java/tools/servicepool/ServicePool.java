@@ -1,5 +1,7 @@
 package chao.java.tools.servicepool;
 
+import chao.java.tools.servicepool.combine.CombineCallback;
+import chao.java.tools.servicepool.combine.CombineThreadExecutor;
 import chao.java.tools.servicepool.debug.Debug;
 import chao.java.tools.servicepool.event.EventManager;
 import chao.java.tools.servicepool.event.EventService;
@@ -22,6 +24,8 @@ public class ServicePool {
 
     private static EventManager eventManager = new EventManager();
 
+    public static CombineThreadExecutor executor;
+
     public static boolean isLoaded() {
         return loaded;
     }
@@ -30,6 +34,7 @@ public class ServicePool {
      * 加载
      */
     public static void loadInitService() {
+        executor = new CombineThreadExecutor();
         InitServiceManager initServices = getService(InitServiceManager.class);
         try {
             if (initServices != null) {
@@ -183,5 +188,9 @@ public class ServicePool {
 
     public static <T extends EventService> T getEventService(Class<T> eventClazz) {
         return eventManager.getEventService(eventClazz);
+    }
+
+    public static <T extends IService> T getCombineService(Class<T> combineClass) {
+        return controller.getCombineService(combineClass);
     }
 }

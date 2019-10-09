@@ -1,7 +1,5 @@
 package chao.java.tools.servicepool;
 
-import java.util.List;
-
 /**
  * @author qinchao
  * @since 2019/4/30

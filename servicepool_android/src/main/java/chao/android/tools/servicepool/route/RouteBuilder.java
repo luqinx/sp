@@ -1,8 +1,7 @@
 package chao.android.tools.servicepool.route;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -10,7 +9,6 @@ import android.text.TextUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import chao.android.tools.servicepool.AndroidServicePool;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -19,22 +17,31 @@ import chao.java.tools.servicepool.annotation.Service;
  */
 public class RouteBuilder {
 
-    private static final int ROUTE_DEFAULT_REQUEST_CODE = 0xff000000;
+    private static final int ROUTE_DEFAULT_REQUEST_CODE = 0xf000;
 
     @Service
     private RouteManager routeManager;
+
+    Context context;
 
     final String path;
 
     Bundle args;
 
+    Uri uri;
+
+    String type;
+
     int flags;
+
+    long interceptorTimeout = 100L; // 拦截超时, 单位: 秒
 
     int enterAnim = -1;
 
     int exitAnim = -1;
 
     int requestCode = ROUTE_DEFAULT_REQUEST_CODE;
+
 
     public RouteBuilder(String path) {
         this.args = new Bundle();
@@ -45,20 +52,16 @@ public class RouteBuilder {
     }
 
     
-    public void navigation() {
-        navigation(AndroidServicePool.getContext());
+    public void navigation(RouteNavigationCallback callback) {
+        routeManager.navigation(this, callback);
     }
 
-    public void navigation(Context context) {
-        routeManager.navigation(context, this);
-    }
-
-    
-    public void navigation(Activity activity, int requestCode) {
+    public void navigation(int requestCode, RouteNavigationCallback callback) {
         if (requestCode == ROUTE_DEFAULT_REQUEST_CODE) {
             throw new IllegalArgumentException(ROUTE_DEFAULT_REQUEST_CODE + " is route inner request code.");
         }
-        routeManager.navigation(activity, this);
+        this.requestCode = requestCode;
+        routeManager.navigation(this, callback);
     }
 
 
@@ -70,9 +73,24 @@ public class RouteBuilder {
         return this;
     }
 
+    public RouteBuilder withContext(Context context) {
+        this.context = context;
+        return this;
+    }
+
     
     public RouteBuilder withBundle(String key, Bundle bundle) {
         args.putBundle(key, bundle);
+        return this;
+    }
+
+    public RouteBuilder withData(Uri uri) {
+        this.uri = uri;
+        return this;
+    }
+
+    public RouteBuilder withType(String type) {
+        this.type = type;
         return this;
     }
 
@@ -232,4 +250,16 @@ public class RouteBuilder {
         return this;
     }
 
+    public RouteBuilder interceptorTimeout(long timeout) {
+        this.interceptorTimeout = timeout;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "RouteBuilder{" +
+                "path='" + path + '\'' +
+                ", uri=" + uri +
+                '}';
+    }
 }

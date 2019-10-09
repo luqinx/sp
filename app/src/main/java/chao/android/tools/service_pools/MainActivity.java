@@ -10,15 +10,15 @@ import chao.android.tools.service_pools.event.HisEvent;
 import chao.android.tools.service_pools.event.MyEvent;
 import chao.android.tools.service_pools.fragments.EventFragment;
 import chao.android.tools.service_pools.fragments.HisEventFragment;
+import chao.android.tools.service_pools.init.InitSampleActivity;
 import chao.android.tools.service_pools.path.PathService;
 import chao.android.tools.service_pools.path.PathService2;
 import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.test.InitService5;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
-import chao.android.tools.servicepool.route.SRouter;
+import chao.android.tools.servicepool.AndroidServicePool;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.NoOpInstance;
-import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Event;
 import chao.java.tools.servicepool.annotation.Service;
 
@@ -76,9 +76,6 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     @Service
     private Abs abs;
 
-    @Service
-    private InitService5 initService5;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,21 +117,27 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
             UI.show(this, HisEventFragment.class);
         });
 
+        findViewById(R.id.init).setOnClickListener(v -> {
+            UI.show(this, InitSampleActivity.class);
+        });
+
         new ASMStaticClass().printer();
 
         appService2.print();
 
         innerService.print();
 
-        SRouter.build("/app/testRoute")
-                .withInt("int", 100)
-                .withBoolean("boolean", true)
-                .withFloat("float", 100.1f)
-                .withDouble("double", 100.2)
-                .withString("string", "hello luqin")
+        findViewById(R.id.router).setOnClickListener(v -> {
+            AndroidServicePool.build("/app/testRoute")
+                    .withContext(this)
+                    .withInt("int", 100)
+                    .withBoolean("boolean", true)
+                    .withFloat("float", 100.1f)
+                    .withDouble("double", 100.2)
+                    .withString("string", "hello luqin")
 //                .withSerializable("parcelable")
-                .navigation();
-
+                    .navigation(null);
+        });
     }
 
     @Override

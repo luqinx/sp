@@ -3,6 +3,7 @@ package chao.android.tools.servicepool;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+import chao.android.tools.servicepool.route.RouteBuilder;
 import chao.android.tools.servicepool.route.RouteManager;
 import chao.java.tools.servicepool.ServicePool;
 
@@ -24,5 +25,9 @@ public class AndroidServicePool extends ServicePool {
         sContext = context.getApplicationContext();
         loadInitService();
         controller.cacheService(new RouteManager());
+    }
+
+    public static RouteBuilder build(String path) {
+        return new RouteBuilder(path);
     }
 }
