@@ -1,7 +1,15 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'sp.autoservice'
+apply plugin: 'sp.autoservice'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('/Users/qinchao/android/chao.keystore')
+            storePassword 'qch123!!'
+            keyAlias = 'chao'
+            keyPassword 'qch123!!'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "chao.android.tools.service_pools"
@@ -14,9 +22,11 @@ android {
     buildTypes {
 
         debug {
+            debuggable true
             minifyEnabled false
         }
         release {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -34,8 +44,17 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation project(":servicepool_android")
-    implementation project(":servicepool")
+    implementation servicepool_android
+    implementation servicepool
+    implementation ami
+
     implementation project(":applib1")
     implementation project(":testpluginlib")
+
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:support-annotations:28.0.0'
+
 }

@@ -23,7 +23,7 @@ import java.lang.reflect.Field
  * @author qinchao
  * @since 2019/5/29
  */
-public class SettingsInject {
+class SettingsInject {
 
     private static final String modulesSettingsFile = "modules.gradle"
 

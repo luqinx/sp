@@ -23,5 +23,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".init.InitSampleActivity"/>
+
+
+        <activity android:name=".SecondActivity"/>
+
+        <activity android:name=".route.TestRouteActivity"/>
+
+        <meta-data
+            android:name="com.openinstall.APP_KEY"
+            android:value="y60srl"/>
     </application>
 </manifest>

@@ -1,5 +1,7 @@
 package chao.android.tools.servicepool;
 
+import java.util.List;
+
 import chao.java.tools.servicepool.DependencyManager;
 import chao.java.tools.servicepool.IInitService;
 
@@ -8,13 +10,9 @@ import chao.java.tools.servicepool.IInitService;
  * @since 2019/4/30
  */
 public class AndroidDependencyManager implements DependencyManager {
-    @Override
-    public void addService(IInitService service) {
-
-    }
 
     @Override
-    public void servicesInit() {
+    public void tryInitService(IInitService service, List<Class<? extends IInitService>> dependencies, boolean async) {
 
     }
 }

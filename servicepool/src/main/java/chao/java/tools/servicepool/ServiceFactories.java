@@ -27,5 +27,4 @@ public abstract class ServiceFactories implements IServiceFactories {
     public IServiceFactory getServiceFactory(String packageName) {
         return factories.get(packageName);
     }
-
 }

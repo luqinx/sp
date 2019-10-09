@@ -48,7 +48,6 @@ class DependencyPlugin extends BasePlugin {
         } else {
             modules = new ArrayList<>()
         }
-        println(modules)
 
         getProject().rootProject.subprojects { subproject ->
 
@@ -65,7 +64,6 @@ class DependencyPlugin extends BasePlugin {
                     if (module.useProject) {
                         subproject.extensions.add(module.name, project.project(module.project))
                     } else {
-                        println("${module.name} - ${module.remote}")
                         subproject.extensions.add(module.name, module.remote)
                     }
                 }

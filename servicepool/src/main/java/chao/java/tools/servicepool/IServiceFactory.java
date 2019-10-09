@@ -1,5 +1,7 @@
 package chao.java.tools.servicepool;
 
+import java.util.HashSet;
+
 /**
  * @author qinchao
  * @since 2019/5/4
@@ -7,6 +9,8 @@ package chao.java.tools.servicepool;
  * @in
  */
 public interface IServiceFactory {
+
+    HashSet<ServiceProxy> createServiceProxies(Class<?> clazz);
 
     ServiceProxy createServiceProxy(Class<?> clazz);
 

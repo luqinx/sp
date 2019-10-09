@@ -1,10 +1,12 @@
 package chao.java.tools.servicepool;
 
+import chao.java.tools.servicepool.combine.CombineCallback;
+import chao.java.tools.servicepool.combine.CombineThreadExecutor;
+import chao.java.tools.servicepool.debug.Debug;
+import chao.java.tools.servicepool.event.EventManager;
+import chao.java.tools.servicepool.event.EventService;
+
 /**
- * todo 初始化 & 初始化优先级
- * todo 懒加载 lazy load
- * todo 初始化时机, 启动初始化，首页初始化(android), 按需初始化...
- * todo 缓存策略， 全局缓存, 定时缓存, 不缓存
  * todo 多行程同步问题
  *
  * @author qinchao
@@ -12,29 +14,84 @@ package chao.java.tools.servicepool;
  */
 public class ServicePool {
 
-    private static DefaultServiceController controller;
+    protected static DefaultServiceController controller;
 
     private volatile static boolean loaded = false;
 
+    private static ExceptionHandler exceptionHandler;
+
+    public static ILogger logger = new Logger();
+
+    private static EventManager eventManager = new EventManager();
+
+    public static CombineThreadExecutor executor;
+
     public static boolean isLoaded() {
         return loaded;
+    }
+
+    /**
+     * 加载
+     */
+    public static void loadInitService() {
+        executor = new CombineThreadExecutor();
+        InitServiceManager initServices = getService(InitServiceManager.class);
+        try {
+            if (initServices != null) {
+                initServices.initService();
+            } else {
+                throw new NullPointerException();
+            }
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, e.getMessage());
+            }
+        }
     }
 
     public static synchronized void loadServices() {
         if (loaded) {
             return;
         }
-        loaded = true;
         controller = new DefaultServiceController();
+        long start = System.currentTimeMillis();
         ServiceLoader<IService> loader = ServiceLoader.load(IService.class);
+        long end = System.currentTimeMillis();
+
+        logger.log("service loader spent:" + (end - start));
         controller.addServices(loader.getServices());
 
-        ServiceFactories factories = controller.getServiceByClass(ServiceFactories.class);
+        //todo temp for online test.
+        for (Throwable t: Debug.throwables()) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(t, t.getMessage());
+            }
+        }
+        for (String error: Debug.errors()) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(null, error);
+            }
+        }
+
+        IServiceFactories factories = controller.getServiceByClass(IServiceFactories.class);
         if (factories == null) {
             throw new ServicePoolException("sp internal err.");
         }
         controller.addFactories(factories);
         controller.loadFinished();
+        loaded = true;
+
+        for (Throwable t: Debug.throwables()) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(t, t.getMessage());
+            }
+        }
+        for (String error: Debug.errors()) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(null, error);
+            }
+        }
+
     }
 
     /**
@@ -46,8 +103,15 @@ public class ServicePool {
      *          会通过 {@link NoOpInstanceFactory} 返回一个 {@link NoOpInstance} Mock实例
      */
     public static <T> T getService(Class<T> serviceClass) {
-        checkLoader();
-        return controller.getServiceByClass(serviceClass);
+        try {
+            checkLoader();
+            return controller.getServiceByClass(serviceClass);
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, String.valueOf(serviceClass));
+            }
+        }
+        return null;
     }
 
     /**
@@ -59,8 +123,23 @@ public class ServicePool {
      * @return  service实例对象
      */
     public static <T extends IService> T getService(Class<T> tClass, T defaultService) {
-        checkLoader();
-        return controller.getServiceByClass(tClass, defaultService);
+        try {
+            checkLoader();
+            return controller.getServiceByClass(tClass, defaultService);
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, String.valueOf(tClass));
+            }
+        }
+        return null;
+    }
+
+    public static <T> T getService(String path) {
+        Class<? extends IService> clazz = controller.getPathService(path);
+        if (clazz == null) {
+            return null;
+        }
+        return (T) getService(clazz);
     }
 
 //    public static <T extends IService> T newService(Class<T> serviceClass) {
@@ -72,9 +151,46 @@ public class ServicePool {
         if (controller == null) {
             synchronized (ServicePool.class) {
                 if (controller == null) {
-                    loadServices();
+                    long start = System.currentTimeMillis();
+                    try {
+                        loadServices();
+                    } catch (Throwable e) {
+                        if (exceptionHandler != null) {
+                            exceptionHandler.onException(e, e.getMessage());
+                        }
+                    }
+                    long end = System.currentTimeMillis();
+                    logger.log("load init services, spent:" + (end - start));
                 }
             }
         }
+    }
+
+    public static ServiceProxy getProxy(Class<?> clazz) {
+        try {
+            checkLoader();
+            return controller.getProxy(clazz);
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, String.valueOf(clazz));
+            }
+        }
+        return null;
+    }
+
+    public static void setExceptionHandler(ExceptionHandler _exceptionHandler) {
+        exceptionHandler = _exceptionHandler;
+    }
+
+    public static void registerEventService(EventService eventService) {
+        eventManager.registerEventService(eventService);
+    }
+
+    public static <T extends EventService> T getEventService(Class<T> eventClazz) {
+        return eventManager.getEventService(eventClazz);
+    }
+
+    public static <T extends IService> T getCombineService(Class<T> combineClass) {
+        return controller.getCombineService(combineClass);
     }
 }

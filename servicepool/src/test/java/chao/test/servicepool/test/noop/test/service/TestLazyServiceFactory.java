@@ -2,7 +2,11 @@ package chao.test.servicepool.test.noop.test.service;
 
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceFactory;
+import chao.java.tools.servicepool.ServiceProxy;
+
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author qinchao
@@ -11,8 +15,17 @@ import java.util.Arrays;
 public class TestLazyServiceFactory implements IServiceFactory {
 
     @Override
-    public Iterable<Class<? extends IService>> createServices() {
-        return Arrays.asList(TestLazyService1.class, TestLazyService2.class, TestWeakService.class);
-//        return Collections.emptyList();
+    public Set<ServiceProxy> createServiceProxies(Class<?> clazz) {
+        return null;
+    }
+
+    @Override
+    public ServiceProxy createServiceProxy(Class<?> clazz) {
+        return null;
+    }
+
+    @Override
+    public IService createInstance(Class<?> clazz) {
+        return null;
     }
 }

@@ -1,13 +1,14 @@
 package chao.java.tools.servicepool;
 
-import java.lang.reflect.Constructor;
-import java.util.concurrent.atomic.AtomicInteger;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
 import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatchers;
+
+import java.lang.reflect.Constructor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author qinchao
@@ -30,7 +31,7 @@ public class DefaultNoOpInstantiator extends DefaultService implements NoOpInsta
     }
 
     @Override
-    public String tag() {
+    public String path() {
         return null;
     }
 }

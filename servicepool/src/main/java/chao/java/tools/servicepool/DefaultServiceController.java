@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
+
+import chao.java.tools.servicepool.combine.CombineCallback;
+import chao.java.tools.servicepool.combine.CombineManager;
 
 /**
  * @author qinchao
@@ -12,55 +14,48 @@ import java.util.ServiceLoader;
  */
 public class DefaultServiceController implements ServiceController {
 
-    private Map<Integer, ServiceProxy> serviceCache = new HashMap<>();
+    private Map<String, ServiceProxy> serviceCache = new HashMap<>();
 
-    private DependencyManager dependencyManager;
+    private Map<String, ServiceProxy> historyCache = new HashMap<>();
 
     private NoOpInstanceFactory noOpFactory;
 
-    private List<ServiceFactories> factoriesList = new ArrayList<>(1);
+    private List<IServiceFactories> factoriesList = new ArrayList<>(1);
+
+    private CombineManager combineManager;
 
 
     public DefaultServiceController() {
         noOpFactory = new NoOpInstanceFactory();
-        ServiceLoader<DependencyManager> dependencyManagers = ServiceLoader.load(DependencyManager.class);
-        for (DependencyManager dependencyManager: dependencyManagers) {
-            this.dependencyManager = dependencyManager;
-        }
-        if (dependencyManager == null) {
-            this.dependencyManager = new DefaultDependencyManager();
-        }
+
+        combineManager = new CombineManager();
     }
 
     @Override
     public void addService(Class<? extends IService> serviceClass) {
 
-        ServiceProxy proxy = serviceCache.get(serviceClass.hashCode());
+        ServiceProxy proxy = serviceCache.get(serviceClass.getName());
         if (proxy == null) {
             proxy = new ServiceProxy(serviceClass);
         }
 
-        cacheService(proxy, serviceClass);
+        cacheService(serviceClass, proxy);
 
         cacheSubClasses(serviceClass, proxy);
 
-        if (IInitService.class.isAssignableFrom(serviceClass)) {
-            IInitService initService = (IInitService) proxy.getService();
-//            dependencyManager.addService(initService);
-        }
     }
 
-    private void cacheService(ServiceProxy proxy, Class<?> serviceClass) {
+    private void cacheService(Class<?> serviceClass, ServiceProxy proxy) {
         if (serviceClass == Object.class) {
             return;
         }
-        ServiceProxy oldProxy = serviceCache.get(serviceClass.hashCode());
+        ServiceProxy oldProxy = serviceCache.get(serviceClass.getName());
         //1. service还不存在
         //2. 申请的serviceClass和缓存key一致时，属于第一优先级
         //3. service已存在，但是当前的service优先级更高
         if (oldProxy == null || (!oldProxy.getServiceClass().equals(serviceClass)
-            && proxy.priority() > oldProxy.priority())) {
-            serviceCache.put(serviceClass.hashCode(), proxy);
+            && (proxy.priority() > oldProxy.priority()) || proxy.getServiceClass().equals(serviceClass))) {
+            serviceCache.put(serviceClass.getName(), proxy);
         }
     }
 
@@ -68,32 +63,48 @@ public class DefaultServiceController implements ServiceController {
         if (clazz == Object.class) {
             return;
         }
-        for (Class<?> subInterface: clazz.getInterfaces()) {
+        for (Class<?> subInterface : clazz.getInterfaces()) {
             if (IService.class.equals(subInterface)) {
                 continue;
             }
             if (IInitService.class.equals(subInterface)) {
                 continue;
             }
-            cacheService(serviceProxy, subInterface);
+            cacheService(subInterface, serviceProxy);
+            cacheSubClasses(subInterface, serviceProxy);
         }
-        Class superClass = clazz;
-        while (superClass != Object.class) {
-            cacheService(serviceProxy, superClass);
-            superClass = superClass.getSuperclass();
+        Class superClass = clazz.getSuperclass();
+        if (superClass == Object.class) {
+            return;
+        }
+        if (superClass != null) {
+
+            cacheService(superClass, serviceProxy);
+            cacheSubClasses(superClass, serviceProxy);
         }
     }
 
+    public <T extends IService> T getCombineService(Class<T> serviceClass) {
+        return combineManager.getCombineService(serviceClass, factoriesList);
+    }
+
     private ServiceProxy getService(Class<?> serviceClass) {
-        ServiceProxy cachedProxy = serviceCache.get(serviceClass.hashCode());
+
+        long getServiceStart = System.currentTimeMillis();
+
+        ServiceProxy record = historyCache.get(serviceClass.getName());
+        if (record != null) {
+            return record;
+        }
+
+        ServiceProxy cachedProxy = serviceCache.get(serviceClass.getName());
         //申请的Service和缓存的Service同类型，属于最高优先级，直接返回
-        if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass
-                || cachedProxy.priority() == IService.Priority.MAX_PRIORITY)) {
+        if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass)) {
             return cachedProxy;
         }
         ServiceProxy proxy = null;
         //目前只有一个ServiceFactories
-        for (ServiceFactories factories: factoriesList) {
+        for (IServiceFactories factories: factoriesList) {
             String name = serviceClass.getName();
             int last = name.lastIndexOf('.');
             if (last == -1) {
@@ -106,13 +117,18 @@ public class DefaultServiceController implements ServiceController {
             }
             proxy = factory.createServiceProxy(serviceClass);
             if (proxy != null) {
-                cacheService(proxy, proxy.getServiceClass());
+                cacheService(proxy.getServiceClass(), proxy);
                 addService(proxy.getServiceClass());
-                proxy = serviceCache.get(proxy.getServiceClass().hashCode());
+                proxy = serviceCache.get(proxy.getServiceClass().getName());
             }
         }
         if (proxy == null) {
             proxy = cachedProxy;
+        }
+        long getServiceEnd = System.currentTimeMillis();
+        if (proxy != null) {
+            historyCache.put(serviceClass.getName(), proxy);
+            System.out.println("get service " + proxy.getServiceClass() + " spent:" + (getServiceEnd - getServiceStart));
         }
         return proxy;
     }
@@ -135,7 +151,6 @@ public class DefaultServiceController implements ServiceController {
 
     @Override
     public void loadFinished() {
-        dependencyManager.servicesInit();
     }
 
     public <T extends IService> T getServiceByClass(Class<T> tClass, T defaultService) {
@@ -146,7 +161,22 @@ public class DefaultServiceController implements ServiceController {
         return defaultService;
     }
 
-    public void addFactories(ServiceFactories factories) {
+    public void addFactories(IServiceFactories factories) {
         factoriesList.add(factories);
+    }
+
+    @Override
+    public ServiceProxy getProxy(Class<?> clazz) {
+        return getService(clazz);
+    }
+
+    public void cacheService(IService service) {
+        ServiceProxy proxy = new InnerProxy<>(service);
+        historyCache.put(service.getClass().getName(), proxy);
+    }
+
+    public Class<? extends IService> getPathService(String path) {
+        IPathService pathServices = getServiceByClass(IPathService.class);
+        return pathServices.get(path);
     }
 }

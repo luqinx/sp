@@ -1,12 +1,11 @@
 package chao.java.tools.servicepool.annotation;
 
-import chao.java.tools.servicepool.IService;
-import chao.java.tools.servicepool.NoOpInstance;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import chao.java.tools.servicepool.IService;
 
 /**
  * 标记一个类是一个服务类Service
@@ -44,9 +43,9 @@ public @interface Service {
      *
      *  @return scope
      */
-    int scope() default IService.Scope.global;
+    int scope() default IService.Scope.once;
 
-    String tag() default "";
+    String path() default "";
 
     Class<?> value() default Void.class;
 

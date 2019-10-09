@@ -35,6 +35,7 @@ class ModuleBuilder {
 
     ModuleBuilder name(String name) {
         this.name = name
+        this.useProject = false;
         return this
     }
 

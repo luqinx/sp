@@ -30,4 +30,5 @@ public class ExampleUnitTest {
         System.out.println(clazz.getName());
         System.out.println(clazz.getGenericSuperclass());
     }
+
 }

@@ -2,7 +2,7 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':servicepool')
+    implementation servicepool
 }
 
 sourceCompatibility = "7"

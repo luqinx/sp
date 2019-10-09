@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 
+import chao.java.tools.servicepool.debug.Debug;
+
 /**
  * @author qinchao
  * @since 2019/5/3
@@ -27,22 +29,42 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
         return services;
     }
 
+    private Logger logger = new Logger();
+
     private ServiceLoader(Class<T> service, ClassLoader classLoader) {
         this.services = new ArrayList<>();
         try {
+            long start = System.currentTimeMillis();
             Enumeration<URL> configs = classLoader.getResources(PREFIX + service.getName());
+            long mid = System.currentTimeMillis();
+            logger.log("classLoader.getResources spent:" + (mid - start));
+            int configSize = 0;
             while (configs.hasMoreElements()) {
+                configSize++;
+                start = System.currentTimeMillis();
                 List<String> names = parse(service, configs.nextElement());
+                long end = System.currentTimeMillis();
+                logger.log("parse spent:" + (end - start));
                 for (String name: names) {
                     try {
                         services.add(Class.forName(name, true, classLoader).asSubclass(service));
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
+                        logger.log("CNFE: " + e.getMessage());
+                        Debug.addThrowable(e);
                     }
                 }
             }
-        } catch (IOException e) {
+            logger.log("configSize = " + configSize);
+
+            if (configSize == 0) {
+                logger.log(PREFIX + service.getName() + " has no configs.");
+                Debug.addError(PREFIX + service.getName() + " has no configs.");
+            }
+        } catch (Throwable e) {
             e.printStackTrace();
+            logger.log("IOE: " + e.getMessage());
+            Debug.addThrowable(e);
         }
     }
 

@@ -2,3 +2,7 @@
 .idea/
 .gradle/
 *.iml
+
+src/main/groovy/chao/android/gradle/servicepool
+src/main/groovy/chao/java
+src/main/resources/META-INF/gradle-plugins/sp.autoservice.properties

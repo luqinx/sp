@@ -10,8 +10,8 @@ import chao.java.tools.servicepool.IService;
 public class TestPluginService3 extends DefaultService implements IService {
 
     @Override
-    public String tag() {
-        return "tag";
+    public String path() {
+        return "path";
     }
 
     @Override
