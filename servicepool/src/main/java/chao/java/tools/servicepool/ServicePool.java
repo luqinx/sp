@@ -74,7 +74,8 @@ public class ServicePool {
         }
 
         IServiceFactories factories = controller.getServiceByClass(IServiceFactories.class);
-        if (factories == null) {
+        if (factories instanceof NoOpInstance) {
+            Debug.addError("IServiceFactories not found !!!");
             throw new ServicePoolException("sp internal err.");
         }
         controller.addFactories(factories);

@@ -38,6 +38,7 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
             Enumeration<URL> configs = classLoader.getResources(PREFIX + service.getName());
             long mid = System.currentTimeMillis();
             logger.log("classLoader.getResources spent:" + (mid - start));
+            Debug.addError("classLoader.getResources spent:" + (mid - start));
             int configSize = 0;
             while (configs.hasMoreElements()) {
                 configSize++;
@@ -45,17 +46,20 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
                 List<String> names = parse(service, configs.nextElement());
                 long end = System.currentTimeMillis();
                 logger.log("parse spent:" + (end - start));
+                Debug.addError("parse spent:" + (end - start));
                 for (String name: names) {
                     try {
                         services.add(Class.forName(name, true, classLoader).asSubclass(service));
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                         logger.log("CNFE: " + e.getMessage());
+                        Debug.addError("CNFE: " + e.getMessage());
                         Debug.addThrowable(e);
                     }
                 }
             }
             logger.log("configSize = " + configSize);
+            Debug.addError("configSize = " + configSize);
 
             if (configSize == 0) {
                 logger.log(PREFIX + service.getName() + " has no configs.");
@@ -64,6 +68,7 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
         } catch (Throwable e) {
             e.printStackTrace();
             logger.log("IOE: " + e.getMessage());
+            Debug.addError("IOE: " + e.getMessage());
             Debug.addThrowable(e);
         }
     }
@@ -107,6 +112,7 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
         throws IOException, ServiceConfigurationError
     {
         String ln = r.readLine();
+        Debug.addError("parse line: " + ln);
         if (ln == null) {
             return -1;
         }
@@ -141,6 +147,7 @@ public class ServiceLoader<T> implements Iterable<Class<? extends T>>{
     private static void fail(Class<?> service, String msg)
         throws ServiceConfigurationError
     {
+        Debug.addError("fail: " + service.getName() + ": " + msg);
         throw new ServiceConfigurationError(service.getName() + ": " + msg);
     }
 

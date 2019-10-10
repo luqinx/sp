@@ -36,7 +36,7 @@ public class AndroidNoOpInstantiator extends DefaultService implements NoOpInsta
             .intercept(MethodCall.invoke(constructor).with(params))
             .method(ElementMatchers.any()).intercept(MethodDelegation.to(NoOpInterceptor.class))
             .make(AndroidLazyStrategy.INSTANCE)
-            .load(clazz.getClassLoader())
+            .load(AndroidServicePool.getContext().getClassLoader())
             .getLoaded();
     }
 

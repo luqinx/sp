@@ -3,6 +3,9 @@ package chao.android.tools.service_pools;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.AbsListView;
+
+import java.util.ArrayList;
 
 import chao.android.tools.service_pools.abs.Abs;
 import chao.android.tools.service_pools.event.EventSample;
@@ -17,6 +20,7 @@ import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.test.InitService5;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.android.tools.servicepool.AndroidServicePool;
+import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.annotation.Event;
@@ -80,6 +84,21 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        ClassLoader classLoader = getClassLoader();
+        Ami.log("Context.getClassLoader() --> " + classLoader);
+        Ami.log("ClassLoader.getSystemClassLoader() --> " + ClassLoader.getSystemClassLoader());
+        Ami.log("getClass().getClassLoader() --> " + getClass().getClassLoader());
+        Ami.log("AbsListView.class.getClassLoader() --> " + AbsListView.class.getClassLoader());
+        Ami.log("ArrayList.class.getClassLoader() --> " + ArrayList.class.getClassLoader());
+        classLoader = getClass().getClassLoader();
+        while (classLoader != null) {
+            classLoader = classLoader.getParent();
+            if (classLoader != null) {
+                Ami.log("classloader.parent: " + classLoader.getParent());
+            }
+        }
+
 //        AppLibService appLibService = ServicePool.getService(AppLibService.class);
 //        appLibService.appPrint();
 

@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'sp.autoservice'
+apply plugin: 'com.jakewharton.butterknife'
+
 
 android {
     signingConfigs {
@@ -50,6 +52,9 @@ dependencies {
 
     implementation project(":applib1")
     implementation project(":testpluginlib")
+
+    implementation "com.jakewharton:butterknife:9.0.0"
+    annotationProcessor "com.jakewharton:butterknife-compiler:9.0.0"
 
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:design:28.0.0'

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import chao.java.tools.servicepool.combine.CombineCallback;
 import chao.java.tools.servicepool.combine.CombineManager;
+import chao.java.tools.servicepool.debug.Debug;
 
 /**
  * @author qinchao
@@ -136,6 +137,7 @@ public class DefaultServiceController implements ServiceController {
 
     public void addServices(Iterable<Class<? extends IService>> services) {
         for (Class<? extends IService> serviceClass: services) {
+            Debug.addError("cache factories service: " + serviceClass);
             addService(serviceClass);
         }
     }

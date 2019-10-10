@@ -31,6 +31,8 @@
 
         <activity android:name=".route.TestRouteActivity"/>
 
+        <activity android:name=".route.TestRouteTargetActivity"/>
+
         <meta-data
             android:name="com.openinstall.APP_KEY"
             android:value="y60srl"/>

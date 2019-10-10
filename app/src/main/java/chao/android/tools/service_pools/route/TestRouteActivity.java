@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import java.io.Serializable;
 
+import butterknife.OnClick;
+import chao.android.tools.service_pools.BaseActivity;
 import chao.android.tools.service_pools.R;
+import chao.android.tools.servicepool.AndroidServicePool;
 import chao.app.ami.annotations.LayoutID;
-import chao.app.ami.base.AMIActivity;
 import chao.java.tools.servicepool.ILogger;
 import chao.java.tools.servicepool.annotation.Service;
 
@@ -17,9 +20,9 @@ import chao.java.tools.servicepool.annotation.Service;
  * @author luqin
  * @since 2019-09-03
  */
-@LayoutID(R.layout.main)
+@LayoutID(R.layout.test_route_activity)
 @Service(path = "/app/testRoute")
-public class TestRouteActivity extends AMIActivity {
+public class TestRouteActivity extends BaseActivity {
 
     private int iv;
 
@@ -55,4 +58,36 @@ public class TestRouteActivity extends AMIActivity {
         logger.log(iv, bv, fv, dv, sv, serializable, pv);
 
     }
+
+    @OnClick({R.id.not_found, R.id.interceptor_all_pass, R.id.interceptor_interrupt, R.id.interceptor_thr_e})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.not_found:
+                testNotExistPath();
+                break;
+            case R.id.interceptor_all_pass:
+                testInterceptor(0);
+                break;
+            case R.id.interceptor_interrupt:
+                testInterceptor(1);
+                break;
+            case R.id.interceptor_thr_e:
+                testInterceptor(2);
+                break;
+        }
+    }
+
+    private void testInterceptor(int interceptor) {
+        AndroidServicePool.build("/app/routeTarget")
+                .withContext(this)
+                .withInt("interceptor", interceptor)
+                .navigation(null);
+    }
+
+    private void testNotExistPath() {
+        AndroidServicePool.build("/app/notExist")
+                .withContext(this)
+                .navigation(null);
+    }
+
 }

@@ -1,4 +1,4 @@
-package chao.android.tools.service_pools.interceptor;
+package chao.android.tools.service_pools.route.interceptor;
 
 import chao.android.tools.servicepool.route.RouteBuilder;
 import chao.android.tools.servicepool.route.RouteInterceptor;
@@ -11,11 +11,11 @@ import chao.java.tools.servicepool.annotation.Service;
  * @author luqin
  * @since 2019-10-09
  */
-@Service(priority = 1,scope = IService.Scope.global)
-public class RouteExceptionInterceptor1 implements RouteInterceptor {
+@Service(priority = 5, scope = IService.Scope.global)
+public class RouteContinueInterceptor5 implements RouteInterceptor {
     @Override
     public void intercept(RouteBuilder route, RouteInterceptorCallback callback) {
         Ami.log(route);
-        throw new RuntimeException("route interceptor err test.");
+        callback.onContinue(route);
     }
 }

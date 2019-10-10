@@ -8,14 +8,13 @@ dependencies {
     implementation 'org.ow2.asm:asm:5.1'
     implementation 'org.ow2.asm:asm-util:5.1'
     implementation 'org.ow2.asm:asm-commons:5.1'
-3
 }
 
 abkit {
     maven {
         groupId "chao.android.gradle"
         artifactId "autoservice"
-        versionName "0.0.3.dev9"
+        versionName "1.0.0.dev1"
     }
 }
 

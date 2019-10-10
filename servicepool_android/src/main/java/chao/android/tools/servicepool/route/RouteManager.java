@@ -7,7 +7,6 @@ import android.content.Intent;
 import chao.android.tools.servicepool.AndroidServicePool;
 import chao.java.tools.servicepool.IPathService;
 import chao.java.tools.servicepool.IService;
-import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Service;
 
 import static chao.java.tools.servicepool.ServicePool.getCombineService;
@@ -33,6 +32,13 @@ public class RouteManager implements IService {
             route.context = AndroidServicePool.getContext();//Application Context
         }
         final Class<? extends IService> service = pathService.get(route.path);
+        if (service == null) {
+            if (callback != null) {
+                callback.onLost(route);
+            }
+            logger.log("Router [%s] not found !!! ", route.path);
+            return null;
+        }
 
         if (Activity.class.isAssignableFrom(service)) {
             if (callback != null) {
@@ -62,13 +68,18 @@ public class RouteManager implements IService {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+        } else {
+            if (callback != null) {
+                callback.onLost(route);
+            }
+            logger.log("Router [%s] not found !!! ", route.path);
         }
         return null;
     }
 
     private void _navigationActivity(RouteBuilder route, Class<? extends Activity> activity, RouteNavigationCallback callback) {
         Intent intent = new Intent();
-        intent.putExtras(route.args);
+        intent.putExtras(route.extras);
         intent.setFlags(route.flags);
         if (route.type != null && route.uri != null) {
             intent.setDataAndType(route.uri, route.type);

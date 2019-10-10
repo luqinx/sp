@@ -17,7 +17,7 @@ abkit {
     maven {
         artifactId 'servicepool'
         groupId 'chao.java.tools'
-        versionName '0.0.3.dev14'
+        versionName '1.0.0.dev3'
     }
 }
 
