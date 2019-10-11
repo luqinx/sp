@@ -14,7 +14,7 @@ abkit {
     maven {
         groupId "chao.android.gradle"
         artifactId "autoservice"
-        versionName "1.0.0.dev1"
+        versionName "1.0.0.dev2"
     }
 }
 

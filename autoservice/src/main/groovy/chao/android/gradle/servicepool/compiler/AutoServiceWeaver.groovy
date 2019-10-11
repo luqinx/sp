@@ -230,7 +230,7 @@ class AutoServiceWeaver extends BaseWeaver {
     private void writeGenerateServiceFactories(ZipOutputStream outputZip) {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
 
-        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, null, Constant.SERVICE_FACTORIES_ASM_NAME)
+        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, null, Constant.SERVICE_FACTORIES_ASM_NAME, null)
         classWriter.visitSource(Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, null)
 
         MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
