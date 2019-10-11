@@ -3,6 +3,8 @@ package chao.android.tools.servicepool.route;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 
 import chao.android.tools.servicepool.AndroidServicePool;
 import chao.java.tools.servicepool.IPathService;
@@ -23,8 +25,10 @@ public class RouteManager implements IService {
     @Service
     private IPathService pathService;
 
+    private static Handler mHandler;
 
     public RouteManager() {
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
     Object navigation(final RouteBuilder route, final RouteNavigationCallback callback) {
@@ -46,8 +50,13 @@ public class RouteManager implements IService {
             }
             getCombineService(RouteInterceptor.class).intercept(route, new RouteInterceptorCallback() {
                 @Override
-                public void onContinue(RouteBuilder route) {
-                    _navigationActivity(route, (Class<? extends Activity>) service, callback);
+                public void onContinue(final RouteBuilder route) {
+                    runInMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            _navigationActivity(route, (Class<? extends Activity>) service, callback);
+                        }
+                    });
                 }
 
                 @Override
@@ -101,6 +110,14 @@ public class RouteManager implements IService {
 
         if (callback != null) {
             callback.onArrival(route);
+        }
+    }
+
+    private void runInMainThread(Runnable runnable) {
+        if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
+            mHandler.post(runnable);
+        } else {
+            runnable.run();
         }
     }
 }

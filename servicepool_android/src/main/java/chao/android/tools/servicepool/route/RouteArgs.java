@@ -21,6 +21,8 @@ class RouteArgs {
 
     String message;
 
+    RouteInterceptorCallback callback;
+
     int code = INTERCEPTOR_CODE_OK;
 
     public RouteArgs(RouteBuilder route) {

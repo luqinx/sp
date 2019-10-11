@@ -51,6 +51,9 @@ public class RouteBuilder {
         }
     }
 
+    public void navigation() {
+        navigation(null);
+    }
     
     public void navigation(RouteNavigationCallback callback) {
         routeManager.navigation(this, callback);

@@ -12,8 +12,12 @@ import butterknife.OnClick;
 import chao.android.tools.service_pools.BaseActivity;
 import chao.android.tools.service_pools.R;
 import chao.android.tools.servicepool.AndroidServicePool;
+import chao.android.tools.servicepool.route.RouteBuilder;
+import chao.android.tools.servicepool.route.RouteNavigationCallback;
+import chao.app.ami.Ami;
 import chao.app.ami.annotations.LayoutID;
 import chao.java.tools.servicepool.ILogger;
+import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -81,7 +85,27 @@ public class TestRouteActivity extends BaseActivity {
         AndroidServicePool.build("/app/routeTarget")
                 .withContext(this)
                 .withInt("interceptor", interceptor)
-                .navigation(null);
+                .navigation(new RouteNavigationCallback() {
+                    @Override
+                    public void onLost(RouteBuilder route) {
+                        Ami.log(Thread.currentThread().getName());
+                    }
+
+                    @Override
+                    public void onFound(Class<? extends IService> service, RouteBuilder builder) {
+                        Ami.log(Thread.currentThread().getName());
+                    }
+
+                    @Override
+                    public void onInterrupt(RouteBuilder route, Throwable e) {
+                        Ami.log(Thread.currentThread().getName());
+                    }
+
+                    @Override
+                    public void onArrival(RouteBuilder route) {
+                        Ami.log(Thread.currentThread().getName());
+                    }
+                });
     }
 
     private void testNotExistPath() {
