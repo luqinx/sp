@@ -90,7 +90,6 @@ public class DefaultDependencyManager implements DependencyManager, Handler.Call
                 initProxy = initServices.get(service);
                 if (initProxy == null) {
                     initProxy = new InitProxy(service, dependencies, async);
-                    System.out.println("new init proxy: " + initProxy + ", " + service);
                     initServices.put(service, initProxy);
                 }
             }

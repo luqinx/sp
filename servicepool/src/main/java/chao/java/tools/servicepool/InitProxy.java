@@ -45,12 +45,9 @@ public class InitProxy extends DefaultService implements IInitService {
 
     @Override
     public void onInit() {
-        System.out.println(this);
-        System.out.println("initState1: " + initState);
         if (!initState.compareAndSet(Constant.initState.TRYING, Constant.initState.INITING)) {
             logger.log("init state: trying -> initing failed!!!");
         }
-        System.out.println("initState2: " + initState);
         try {
             long timeMillis = System.currentTimeMillis();
             delegate.onInit();
@@ -59,11 +56,9 @@ public class InitProxy extends DefaultService implements IInitService {
             e.printStackTrace();
             initState.getAndSet(Constant.initState.FAILED);
         }
-        System.out.println("initState3: " + initState);
         if (!initState.compareAndSet(Constant.initState.INITING, Constant.initState.INITED)) {
             logger.log("init state: initing -> inited failed!!!");
         }
-        System.out.println("initState4: " + initState);
     }
 
     public boolean async() {
