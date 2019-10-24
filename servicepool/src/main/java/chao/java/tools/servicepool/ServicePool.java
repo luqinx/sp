@@ -6,7 +6,6 @@ import chao.java.tools.servicepool.event.EventManager;
 import chao.java.tools.servicepool.event.EventService;
 
 /**
- * todo 多行程同步问题
  *
  * @author qinchao
  * @since 2019/4/29

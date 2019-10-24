@@ -18,7 +18,7 @@ public class DefaultServiceController implements ServiceController {
 
     private Map<String, ServiceProxy> serviceCache = new ConcurrentHashMap<>();
 
-    private Map<String, ServiceProxy> historyCache = new ConcurrentHashMap<>();
+    private Map<String, ServiceProxy> historyCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的情况
 
     private NoOpInstanceFactory noOpFactory;
 
