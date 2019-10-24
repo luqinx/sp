@@ -35,4 +35,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/init_sync"
+        android:text="Init Sync"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
 </LinearLayout>

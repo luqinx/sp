@@ -75,19 +75,23 @@ public class ServiceProxy {
 
     public IService getService() {
         if (strategy == null) {
-            switch (scope()) {
-                case IService.Scope.global:
-                    strategy = new ServiceCacheStrategy.Global(serviceFactory);
-                    break;
-                case IService.Scope.once:
-                    strategy = new ServiceCacheStrategy.Once(serviceFactory);
-                    break;
-                case IService.Scope.temp:
-                    strategy = new ServiceCacheStrategy.Temp(serviceFactory);
-                    break;
-                default:
-                    strategy = new ServiceCacheStrategy.Temp(serviceFactory);
-                    break;
+            synchronized (this) {
+                if (strategy == null) {
+                    switch (scope()) {
+                        case IService.Scope.global:
+                            strategy = new ServiceCacheStrategy.Global(serviceFactory);
+                            break;
+                        case IService.Scope.once:
+                            strategy = new ServiceCacheStrategy.Once(serviceFactory);
+                            break;
+                        case IService.Scope.temp:
+                            strategy = new ServiceCacheStrategy.Temp(serviceFactory);
+                            break;
+                        default:
+                            strategy = new ServiceCacheStrategy.Once(serviceFactory);
+                            break;
+                    }
+                }
             }
         }
         IService service = strategy.getService(serviceClass);
@@ -121,7 +125,7 @@ public class ServiceProxy {
      */
     public int scope() {
         if (IInitService.class.isAssignableFrom(serviceClass)
-        || IPathService.class.isAssignableFrom(serviceClass)){
+                || IPathService.class.isAssignableFrom(serviceClass)) {
             return IService.Scope.global;
         }
         return scope;

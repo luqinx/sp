@@ -14,6 +14,7 @@ import chao.android.tools.service_pools.event.MyEvent;
 import chao.android.tools.service_pools.fragments.EventFragment;
 import chao.android.tools.service_pools.fragments.HisEventFragment;
 import chao.android.tools.service_pools.init.InitSampleActivity;
+import chao.android.tools.service_pools.init.InitSyncSampleFragment;
 import chao.android.tools.service_pools.path.PathService;
 import chao.android.tools.service_pools.path.PathService2;
 import chao.android.tools.service_pools.test.Haha;
@@ -144,7 +145,8 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 
         appService2.print();
 
-        innerService.print();
+        //todo android 4.4及以下版本设备会报空
+//        innerService.print();
 
         findViewById(R.id.router).setOnClickListener(v -> {
             AndroidServicePool.build("/app/testRoute")
@@ -156,6 +158,10 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
                     .withString("string", "hello luqin")
 //                .withSerializable("parcelable")
                     .navigation(null);
+        });
+
+        findViewById(R.id.init_sync).setOnClickListener(v -> {
+            UI.show(this, InitSyncSampleFragment.class);
         });
     }
 
@@ -172,6 +178,9 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
         }
     }
 
+    /**
+     * android 4.4及以下会报异常
+     */
     @Service
     public class InnerService implements Printer {
 

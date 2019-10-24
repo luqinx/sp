@@ -442,6 +442,15 @@ class AutoServiceWeaver extends BaseWeaver {
         String className = pkgName.replaceAll("\\.", "/") + "/" + Constant.GENERATE_SERVICE_SUFFIX
         classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", Constant.SERVICE_FACTORY_ASM_NAME)
 
+        //classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
+        MethodVisitor initMv = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
+        initMv.visitCode()
+        initMv.visitVarInsn(Opcodes.ALOAD, 0)
+        initMv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
+        initMv.visitInsn(Opcodes.RETURN)
+        initMv.visitMaxs(1, 1)
+        initMv.visitEnd()
+
         generateCreateServiceProxy(classWriter, infoList)
 
         generateCreateServiceProxies(classWriter, infoList)

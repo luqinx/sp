@@ -4,9 +4,7 @@ import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceFactory;
 import chao.java.tools.servicepool.ServiceProxy;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.HashSet;
 
 /**
  * @author qinchao
@@ -15,7 +13,7 @@ import java.util.Set;
 public class TestLazyServiceFactory implements IServiceFactory {
 
     @Override
-    public Set<ServiceProxy> createServiceProxies(Class<?> clazz) {
+    public HashSet<ServiceProxy> createServiceProxies(Class<?> clazz) {
         return null;
     }
 

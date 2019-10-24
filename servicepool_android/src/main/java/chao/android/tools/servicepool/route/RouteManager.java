@@ -99,7 +99,7 @@ public class RouteManager implements IService {
         }
         intent.setClass(route.context, activity);
         if (route.context instanceof Activity) {
-            if (route.exitAnim != -1 && route.enterAnim != -1) {
+            if (route.exitAnim != -1 || route.enterAnim != -1) {
                 ((Activity) route.context).overridePendingTransition(route.enterAnim, route.exitAnim);
             }
             ((Activity) route.context).startActivityForResult(intent, route.requestCode);

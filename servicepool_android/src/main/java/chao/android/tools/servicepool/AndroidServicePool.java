@@ -2,6 +2,8 @@ package chao.android.tools.servicepool;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import chao.android.tools.servicepool.route.RouteBuilder;
 import chao.android.tools.servicepool.route.RouteManager;
@@ -16,14 +18,19 @@ public class AndroidServicePool extends ServicePool {
     @SuppressLint("StaticFieldLeak")
     private static Context sContext;
 
-
     public static Context getContext() {
         return sContext;
     }
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
-        loadInitService();
+        Handler handler = new Handler(Looper.myLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                loadInitService();
+            }
+        });
         controller.cacheService(new RouteManager());
     }
 

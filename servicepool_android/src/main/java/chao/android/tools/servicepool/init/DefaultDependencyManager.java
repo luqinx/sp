@@ -50,6 +50,8 @@ public class DefaultDependencyManager implements DependencyManager, Handler.Call
 
     private ThreadPoolExecutor threadExecutor;
 
+    private final Object initProxyLock = new Object();
+
     private static final BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<Runnable>(128);
 
 
@@ -84,15 +86,20 @@ public class DefaultDependencyManager implements DependencyManager, Handler.Call
     public void tryInitService(IInitService service, List<Class<? extends IInitService>> dependencies, boolean async) {
         InitProxy initProxy = initServices.get(service);
         if (initProxy == null) {
-            initProxy = new InitProxy(service, dependencies, async);
-            initServices.put(service, initProxy);
+            synchronized (initProxyLock) {
+                initProxy = initServices.get(service);
+                if (initProxy == null) {
+                    initProxy = new InitProxy(service, dependencies, async);
+                    System.out.println("new init proxy: " + initProxy + ", " + service);
+                    initServices.put(service, initProxy);
+                }
+            }
         }
         tryInit(initProxy);
-
     }
 
     private void tryInit(final InitProxy initProxy) {
-        if (initProxy.initState.get() != Constant.initState.UNINIT) {
+        if (!initProxy.initState.compareAndSet(Constant.initState.UNINIT, Constant.initState.TRYING)) {
             return;
         }
         boolean canInit = true;

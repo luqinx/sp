@@ -11,6 +11,10 @@ import chao.java.tools.servicepool.annotation.Service;
 @Service(priority = IService.Priority.MAX_PRIORITY)
 public class Haha extends CommonPrinter {
 
+    public Haha() {
+
+    }
+
     @Override
     public void print() {
         System.out.println("I'm Haha");

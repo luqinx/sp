@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import chao.java.tools.servicepool.combine.CombineCallback;
 import chao.java.tools.servicepool.combine.CombineManager;
@@ -15,15 +16,17 @@ import chao.java.tools.servicepool.debug.Debug;
  */
 public class DefaultServiceController implements ServiceController {
 
-    private Map<String, ServiceProxy> serviceCache = new HashMap<>();
+    private Map<String, ServiceProxy> serviceCache = new ConcurrentHashMap<>();
 
-    private Map<String, ServiceProxy> historyCache = new HashMap<>();
+    private Map<String, ServiceProxy> historyCache = new ConcurrentHashMap<>();
 
     private NoOpInstanceFactory noOpFactory;
 
     private List<IServiceFactories> factoriesList = new ArrayList<>(1);
 
     private CombineManager combineManager;
+
+    private final Object serviceLock = new Object();
 
 
     public DefaultServiceController() {
@@ -104,32 +107,45 @@ public class DefaultServiceController implements ServiceController {
             return cachedProxy;
         }
         ServiceProxy proxy = null;
-        //目前只有一个ServiceFactories
-        for (IServiceFactories factories: factoriesList) {
-            String name = serviceClass.getName();
-            int last = name.lastIndexOf('.');
-            if (last == -1) {
-                continue;
+        synchronized (serviceLock) {
+            record = historyCache.get(serviceClass.getName());
+            if (record != null) {
+                return record;
             }
-            String pkgName = name.substring(0, last);
-            IServiceFactory factory = factories.getServiceFactory(pkgName);
-            if (factory == null) {
-                continue;
+
+            cachedProxy = serviceCache.get(serviceClass.getName());
+            //申请的Service和缓存的Service同类型，属于最高优先级，直接返回
+            if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass)) {
+                return cachedProxy;
             }
-            proxy = factory.createServiceProxy(serviceClass);
+
+            //目前只有一个ServiceFactories
+            for (IServiceFactories factories : factoriesList) {
+                String name = serviceClass.getName();
+                int last = name.lastIndexOf('.');
+                if (last == -1) {
+                    continue;
+                }
+                String pkgName = name.substring(0, last);
+                IServiceFactory factory = factories.getServiceFactory(pkgName);
+                if (factory == null) {
+                    continue;
+                }
+                proxy = factory.createServiceProxy(serviceClass);
+                if (proxy != null) {
+                    cacheService(proxy.getServiceClass(), proxy);
+                    addService(proxy.getServiceClass());
+                    proxy = serviceCache.get(proxy.getServiceClass().getName());
+                }
+            }
+            if (proxy == null) {
+                proxy = cachedProxy;
+            }
+            long getServiceEnd = System.currentTimeMillis();
             if (proxy != null) {
-                cacheService(proxy.getServiceClass(), proxy);
-                addService(proxy.getServiceClass());
-                proxy = serviceCache.get(proxy.getServiceClass().getName());
+                historyCache.put(serviceClass.getName(), proxy);
+                System.out.println("get service " + proxy.getServiceClass() + " spent:" + (getServiceEnd - getServiceStart));
             }
-        }
-        if (proxy == null) {
-            proxy = cachedProxy;
-        }
-        long getServiceEnd = System.currentTimeMillis();
-        if (proxy != null) {
-            historyCache.put(serviceClass.getName(), proxy);
-            System.out.println("get service " + proxy.getServiceClass() + " spent:" + (getServiceEnd - getServiceStart));
         }
         return proxy;
     }
@@ -170,6 +186,12 @@ public class DefaultServiceController implements ServiceController {
     @Override
     public ServiceProxy getProxy(Class<?> clazz) {
         return getService(clazz);
+    }
+
+    @Override
+    public void recycleService(Class clazz) {
+        historyCache.remove(clazz.getName());
+        serviceCache.remove(clazz.getName());
     }
 
     public void cacheService(IService service) {

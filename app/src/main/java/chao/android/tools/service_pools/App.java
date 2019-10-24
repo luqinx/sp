@@ -2,17 +2,8 @@ package chao.android.tools.service_pools;
 
 import android.app.Application;
 
-import com.example.testpluginlib.TestPluginService;
-
-import chao.android.tools.service_pools.route.TestRouteActivity;
-import chao.android.tools.service_pools.test.Haha;
-import chao.android.tools.service_pools.test.InitService3;
 import chao.android.tools.servicepool.AndroidServicePool;
-import chao.android.tools.servicepool.route.RouteManager;
 import chao.app.ami.Ami;
-import chao.java.tools.servicepool.ILogger;
-import chao.java.tools.servicepool.ServicePool;
-import chao.java.tools.servicepool.annotation.Service;
 
 /**
  * todo 问题:

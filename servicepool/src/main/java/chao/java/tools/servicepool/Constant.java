@@ -8,8 +8,9 @@ public interface Constant {
 
     interface initState {
         int UNINIT = 0;
-        int INITING = 1;
-        int INITED = 2;
-        int FAILED = 3;
+        int TRYING = 1;
+        int INITING = 2;
+        int INITED = 3;
+        int FAILED = 4;
     }
 }

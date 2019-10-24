@@ -1,6 +1,5 @@
 package chao.java.tools.servicepool;
 
-import chao.java.tools.servicepool.combine.CombineCallback;
 import chao.java.tools.servicepool.combine.CombineThreadExecutor;
 import chao.java.tools.servicepool.debug.Debug;
 import chao.java.tools.servicepool.event.EventManager;
@@ -141,6 +140,10 @@ public class ServicePool {
             return null;
         }
         return (T) getService(clazz);
+    }
+
+    public static void recycleService(Class clazz) {
+        controller.recycleService(clazz);
     }
 
 //    public static <T extends IService> T newService(Class<T> serviceClass) {

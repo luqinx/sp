@@ -13,4 +13,6 @@ public interface ServiceController {
     void loadFinished();
 
     ServiceProxy getProxy(Class<?> clazz);
+
+    void recycleService(Class clazz);
 }
