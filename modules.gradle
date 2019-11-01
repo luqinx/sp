@@ -13,3 +13,5 @@ module("servicepool_android")
 
 remote("interceptor", "chao.android.tools:interceptor:0.0.1.dev2")
 remote("ami", "chao.android.tools:ami:1.0.2")
+
+remote("guava", "com.google.guava:guava:19.0")

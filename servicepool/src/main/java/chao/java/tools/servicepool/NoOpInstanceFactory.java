@@ -2,6 +2,8 @@ package chao.java.tools.servicepool;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import chao.android.tools.interceptor.Interceptor;
@@ -18,10 +20,18 @@ public class NoOpInstanceFactory {
 
     private NoOpInstantiator mInstantiator = null;
 
+    private Map<Class, NoOpInstance> noOpCache = new ConcurrentHashMap<>();
+
     public <T> T newInstance(Class<T> clazz) {
+        T t = clazz.cast(noOpCache.get(clazz));
+        if (t != null) {
+            return t;
+        }
         //如果是接口
         if (clazz.isInterface()) {
-            return Interceptor.of(null, clazz).interfaces(NoOpInstance.class).newInstance();
+            t = Interceptor.of(null, clazz).interfaces(NoOpInstance.class).newInstance();
+            noOpCache.put(clazz, (NoOpInstance) t);
+            return t;
         }
         //如果是类
         try {
@@ -50,7 +60,9 @@ public class NoOpInstanceFactory {
                     mInstantiator = ServicePool.getService(NoOpInstantiator.class, new DefaultNoOpInstantiator());
                 }
                 Class<?> noOp = mInstantiator.make(clazz, constructor, params,noOpCount);
-                return clazz.cast(noOp.getConstructor(NoOpConstructorArg.class).newInstance(sConstructorArg));
+                t = clazz.cast(noOp.getConstructor(NoOpConstructorArg.class).newInstance(sConstructorArg));
+                noOpCache.put(clazz, (NoOpInstance) t);
+                return t;
             }
         } catch(Throwable e){
             throw new RuntimeException("NoOpInstance创建失败, " + e.getMessage(), e);

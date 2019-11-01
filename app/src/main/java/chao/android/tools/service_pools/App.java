@@ -1,6 +1,11 @@
 package chao.android.tools.service_pools;
 
 import android.app.Application;
+import android.util.TimeUtils;
+
+import com.google.common.base.Stopwatch;
+
+import java.util.concurrent.TimeUnit;
 
 import chao.android.tools.servicepool.AndroidServicePool;
 import chao.app.ami.Ami;
@@ -44,6 +49,9 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
         AndroidServicePool.init(this);
         AndroidServicePool.setExceptionHandler((e, message) -> {
 //            logger.log(message);
@@ -51,10 +59,11 @@ public class App extends Application {
             System.out.println("get service err: " + e);
         });
 
+        Ami.log(stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
-        Ami.init(this);
+//        Ami.init(this);
 //        Ami.setDrawerId(R.raw.ami_config);
-
+        Ami.log(stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
 //        commonService.print();
 //

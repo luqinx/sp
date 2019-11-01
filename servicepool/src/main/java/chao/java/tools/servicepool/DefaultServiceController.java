@@ -18,7 +18,7 @@ public class DefaultServiceController implements ServiceController {
 
     private Map<String, ServiceProxy> serviceCache = new ConcurrentHashMap<>();
 
-    private Map<String, ServiceProxy> historyCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的情况
+    private Map<String, ServiceProxy> historyCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
 
     private NoOpInstanceFactory noOpFactory;
 
@@ -144,7 +144,7 @@ public class DefaultServiceController implements ServiceController {
             long getServiceEnd = System.currentTimeMillis();
             if (proxy != null) {
                 historyCache.put(serviceClass.getName(), proxy);
-                System.out.println("get service " + proxy.getServiceClass() + " spent:" + (getServiceEnd - getServiceStart));
+                System.out.println("get service " + serviceClass.getName() + " spent:" + (getServiceEnd - getServiceStart));
             }
         }
         return proxy;

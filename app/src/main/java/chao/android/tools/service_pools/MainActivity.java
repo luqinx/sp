@@ -5,7 +5,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.AbsListView;
 
+import com.google.common.base.Stopwatch;
+
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import chao.android.tools.service_pools.abs.Abs;
 import chao.android.tools.service_pools.event.EventSample;
@@ -24,6 +27,7 @@ import chao.android.tools.servicepool.AndroidServicePool;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.NoOpInstance;
+import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Event;
 import chao.java.tools.servicepool.annotation.Service;
 
@@ -33,25 +37,30 @@ import chao.java.tools.servicepool.annotation.Service;
  */
 public class MainActivity extends AppCompatActivity implements HisEvent {
 
-    @Service
+    private static final Class[] classes = {
+            Printer.class, CommonPrinter.class, Haha.class, A.class, SecondActivity.SecondPrinter.class,
+            AppService.class, AppService2.class, InnerService.class, PathService.class, Abs.class
+    };
+
+//    @Service
     private Printer appService;
 
-    @Service(CommonPrinter.class)
+//    @Service(CommonPrinter.class)
     private Printer commonService;
 
-    @Service(Haha.class)
+//    @Service(Haha.class)
     private Printer haha;
 
     EventSample eventSample = new EventSample();
 
 
-    @Service
+//    @Service
     private A a;
 
 //    @Service
 //    private TestPluginService testPluginService;
 
-    @Service(SecondActivity.SecondPrinter.class)
+//    @Service(SecondActivity.SecondPrinter.class)
     private Printer main;
 
 //    @Service
@@ -63,29 +72,38 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     @Event
     private MyEvent myEvent2;
 
-    @Service
+//    @Service
     private AppService2 appService2;
 
-    @Service
+//    @Service
     private InnerService innerService;
 
     @Event
     private MyEvent myEvent;
 
-    @Service(path = "/app/path")
+//    @Service(path = "/app/path")
     private PathService pathService;
 
-    @Service(path = "/app/path2")
+//    @Service(path = "/app/path2")
     private static PathService2 pathService2;
 
-    @Service
+//    @Service
     private Abs abs;
+
+    public MainActivity() {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        for (Class clazz: classes) {
+            ServicePool.getService(clazz);
+        }
+        Ami.log(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        Stopwatch stopwatch = Stopwatch.createStarted();
         ClassLoader classLoader = getClassLoader();
         Ami.log("Context.getClassLoader() --> " + classLoader);
         Ami.log("ClassLoader.getSystemClassLoader() --> " + ClassLoader.getSystemClassLoader());
@@ -98,6 +116,11 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
             if (classLoader != null) {
                 Ami.log("classloader.parent: " + classLoader.getParent());
             }
+        }
+        Ami.log(stopwatch.elapsed(TimeUnit.NANOSECONDS));
+        Ami.log(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        if (true) {
+            return;
         }
 
 //        AppLibService appLibService = ServicePool.getService(AppLibService.class);
@@ -163,6 +186,12 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
         findViewById(R.id.init_sync).setOnClickListener(v -> {
             UI.show(this, InitSyncSampleFragment.class);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println();
     }
 
     @Override
