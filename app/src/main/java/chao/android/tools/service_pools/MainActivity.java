@@ -123,8 +123,6 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
             return;
         }
 
-//        AppLibService appLibService = ServicePool.getService(AppLibService.class);
-//        appLibService.appPrint();
 
 //        testPluginService = ServicePool.getService(TestPluginService.class);
 //        testPluginService.print();

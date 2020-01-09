@@ -64,4 +64,8 @@ dependencies {
 
     implementation guava
 
+    implementation A
+    implementation B
+    implementation pool
+
 }

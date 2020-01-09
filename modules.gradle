@@ -9,6 +9,10 @@ module("servicepool_android")
         .project(':servicepool_android')
         .include()
 
+module("A").project(":applib1").include()
+module("B").project(":applib2").include()
+module("pool").project(":pool").include()
+
 
 
 remote("interceptor", "chao.android.tools:interceptor:0.0.1.dev2")

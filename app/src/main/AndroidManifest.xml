@@ -24,6 +24,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".sample.SimpleBaseActivity"/>
+
         <activity android:name=".init.InitSampleActivity"/>
 
 

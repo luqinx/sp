@@ -10,6 +10,11 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import chao.app.pool.IA;
+import chao.app.pool.IB;
+import chao.java.tools.servicepool.ServicePool;
+import chao.java.tools.servicepool.annotation.Service;
+
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -30,5 +35,4 @@ public class ExampleUnitTest {
         System.out.println(clazz.getName());
         System.out.println(clazz.getGenericSuperclass());
     }
-
 }
