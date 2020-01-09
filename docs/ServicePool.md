@@ -205,5 +205,60 @@ public class PriorityService2 implements IPriorityService {
    Mock等等
 3. 不同的业务场景使用不同的服务
 
-### 指定Service生命周期
+### 给服务对象指定生命周期
+每个由ServicePool创建的service对象都有各自生命周期，service对象的生命周期由ServicePool管理,
+并由@Service注解配置生命周期类型。
+1. Service有once, temp, global三种生命周期类型. 
+2. 指定Service的生命周期为once,@Service(scope=IService.Scope.once),每次ServicePool.getService()都会创建一个新的对象,对象使用后随gc自动被回收,
+   scope默认为once
+3. 指定Service的生命周期为temp,@Service(scope=IService.Scope.temp),Service由WeakReference缓存，只适用无状态服务。
+4. 指定Service的生命周期为global,@Service(scope=IService.Scope.global),每次ServicePool.getService()拿到的都是同一个对象,App运行期间不会被回收
 
+```
+组件A中
+/**
+ * 
+ * OnceService.java
+ */
+@Service(scope = IService.Scope.once)
+public class OnceService implements LifecycleService {
+}
+
+
+/**
+ * 
+ * TempService.java
+ */
+@Service(scope = IService.Scope.temp)
+public class TempService implements LifecycleService {
+}
+
+
+/**
+ * 
+ * GlobalService.java
+ */
+@Service(scope = IService.Scope.global)
+public class GlobalService implements LifecycleService {
+}
+```
+
+```
+组件B中执行:
+    System.out.println(ServicePool.getService(OnceService.class) == ServicePool.getService(OnceService.class));
+    //System.out.println(ServicePool.getService(TempService.class) == ServicePool.getService(TempService.class));//不可靠
+    System.out.println(ServicePool.getService(GlobalService.class) == ServicePool.getService(GlobalService.class));
+
+输出:
+    false
+    true
+```
+
+
+### 组件初始化
+
+### 组件懒加载机制 & 禁用懒加载
+
+### Activity路由
+
+### 依赖注入
