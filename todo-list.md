@@ -1,3 +1,29 @@
+1. 解耦合              
+2. 解决组件之间循环引用
+3. 组件热插拔，组件快速替换     done
+4. 组件初始化
+
+5. 依赖注入(注解)  done
+
+6. 组件手动销毁和自动销毁
+7. 路由
+
+## sp能力
+
+#### Mock能力
+    1. 接口Mock
+    2. 环境Mock, debug, alpha, publish..
+    3. 功能调试Mock等等
+    
+    
+#### Router
+
+
+#### Event
+
+
+#### 模块初始化
+
 byte-buddy Android实现       done
 依赖注入
 线程安全
@@ -6,7 +32,6 @@ service优先级
 
 Service list支持
 
-Service注解， 编译器动态插入/meta-inf/services/com.xxx.Xxx
 
 注意混淆
 
@@ -92,4 +117,4 @@ EventService    done
 
 
 
-2. autoservice在Windows电脑上编译失败
+2. autoservice在Windows电脑上编译失败 done
