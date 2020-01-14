@@ -15,6 +15,8 @@ class ModuleBuilder {
 
     private String project
 
+    private boolean disabled
+
     /**
      *  todo
      */
@@ -78,8 +80,17 @@ class ModuleBuilder {
         return this
     }
 
+    ModuleBuilder disabled() {
+        this.disabled = true
+        return this
+    }
+
     String getName() {
         return name
+    }
+
+    boolean isDisabled() {
+        return disabled
     }
 
     Module build() {
@@ -90,6 +101,7 @@ class ModuleBuilder {
         module.project = project
         module.flavorScope = flavorScope
         module.buildScope = buildScope
+        module.disabled = disabled
         return module
     }
 }

@@ -311,6 +311,10 @@ public class GlobalService implements LifecycleService {
 ```
 
 
+### 组件初始化
+
+
+
 ### 组件懒加载机制 & 禁用懒加载
 
 ### Activity路由

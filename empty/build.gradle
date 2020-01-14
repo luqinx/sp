@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
+
+
+abkit {
+    maven {
+        groupId "chao.java.tools"
+        artifactId "empty"
+        versionName "1.0.0"
+    }
+}

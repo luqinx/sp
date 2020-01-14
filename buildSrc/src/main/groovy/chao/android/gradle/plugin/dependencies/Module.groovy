@@ -27,6 +27,8 @@ class Module {
 
     private String versionName
 
+    private boolean disabled
+
     String getName() {
         return name
     }
@@ -107,5 +109,13 @@ class Module {
 
     void setVersionName(String versionName) {
         this.versionName = versionName
+    }
+
+    boolean getDisabled() {
+        return disabled
+    }
+
+    void setDisabled(boolean disabled) {
+        this.disabled = disabled
     }
 }

@@ -18,6 +18,7 @@ class DependencyPlugin extends BasePlugin {
 
     private static final String MODULES_GRADLE_FILE_NAME = "modules.gradle"
 
+    private static final String EMPTY_REMOTE_MODULE = "chao.java.tools:empty:1.0.0"
 
     private ModuleHandler handler
 
@@ -54,14 +55,16 @@ class DependencyPlugin extends BasePlugin {
 
             subproject.beforeEvaluate {
 
-                //使用Module名作为依赖入口名， privateApi xxxx
+                //使用Module名作为依赖入口名, xxxx
                 for (Module module : modules) {
                     def orgName = subproject.extensions.findByName(module.name)
                     if (orgName) {
                         println("??????? ====> " + orgName)
                         continue
                     }
-                    if (module.useProject) {
+                    if (module.disabled) {
+                        subproject.extensions.add(module.name, EMPTY_REMOTE_MODULE)
+                    } else if (module.useProject) {
                         subproject.extensions.add(module.name, project.project(module.project))
                     } else {
                         subproject.extensions.add(module.name, module.remote)
@@ -77,6 +80,9 @@ class DependencyPlugin extends BasePlugin {
                 subproject.configurations.all { configuration ->
                     configuration.resolutionStrategy.dependencySubstitution { strategy ->
                             modules.each { module ->
+                                if (module.disabled) {
+                                    return
+                                }
 //                                substitute module(value.groupId + ":" + value.artifactId) with module(value.remote)
                                 String from = module.groupId + ":" + module.artifactId
                                 if (module.useProject) {
