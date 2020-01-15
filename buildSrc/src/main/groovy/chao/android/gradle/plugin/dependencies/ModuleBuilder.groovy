@@ -1,6 +1,12 @@
 package chao.android.gradle.plugin.dependencies
 
 import chao.android.gradle.plugin.Constant
+import org.gradle.api.Project
+import org.gradle.api.initialization.ProjectDescriptor
+import org.gradle.api.internal.project.DefaultProjectRegistry
+import org.gradle.initialization.DefaultProjectDescriptor
+import org.gradle.initialization.DefaultProjectDescriptorRegistry
+import org.gradle.initialization.ProjectDescriptorRegistry
 
 /**
  * @author qinchao
@@ -37,7 +43,7 @@ class ModuleBuilder {
 
     ModuleBuilder name(String name) {
         this.name = name
-        this.useProject = false;
+        this.useProject = false
         return this
     }
 
@@ -57,6 +63,7 @@ class ModuleBuilder {
      */
     ModuleBuilder include() {
         handler.project(name, project)
+        handler.settings.include(project)
         useProject = true
         return this
     }
@@ -82,6 +89,16 @@ class ModuleBuilder {
 
     ModuleBuilder disabled() {
         this.disabled = true
+
+        String projectPath = handler.settings.project(project).toString()
+        ProjectDescriptorRegistry registry = handler.settings.getProjectDescriptorRegistry()
+        DefaultProjectDescriptor descriptor = registry.getProject(projectPath)
+        ProjectDescriptor parentDescriptor = descriptor.getParent()
+        if (parentDescriptor != null) {
+            parentDescriptor.children.remove(descriptor)
+        }
+
+        registry.removeProject(projectPath)
         return this
     }
 

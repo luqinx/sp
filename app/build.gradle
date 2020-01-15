@@ -46,11 +46,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation servicepool_android
-    implementation servicepool
     implementation ami
+    implementation servicepool
+    implementation servicepool_android
 
-    implementation project(":applib1")
     implementation project(":testpluginlib")
 
     implementation "com.jakewharton:butterknife:9.0.0"
@@ -68,4 +67,6 @@ dependencies {
     implementation B
     implementation pool
 
+
+    implementation ""
 }

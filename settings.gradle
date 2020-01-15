@@ -1,6 +1,6 @@
 import chao.android.gradle.plugin.api.SettingsInject
 SettingsInject.inject(getSettings(), getGradle())
 
-include ':app', ':applib1', ':appservice', ':testpluginlib', ':applib2', ':pool', ':empty'
+include ':app', ':appservice', ':testpluginlib', ':pool'
 include ':buildSrc'
 include ':autoservice'

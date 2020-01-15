@@ -9,8 +9,14 @@ module("servicepool_android")
         .project(':servicepool_android')
         .include()
 
-module("A").project(":applib1").include().disabled()
-module("B").project(":applib2").include().disabled()
+module("A").project(":applib1")
+        .include()
+//        .disabled()
+
+module("B").project(":applib2")
+        .include()
+//        .disabled()
+
 module("pool").project(":pool").include()
 
 

@@ -3,6 +3,7 @@ package chao.android.gradle.plugin.dependencies
 import chao.android.gradle.plugin.base.PluginException
 import chao.android.gradle.plugin.util.StringUtils
 import org.gradle.api.initialization.Settings
+import org.gradle.initialization.DefaultSettings
 
 import java.util.function.Function
 import java.util.stream.Collectors
@@ -13,7 +14,7 @@ import java.util.stream.Collectors
  */
 class ModuleHandler {
 
-    private Settings settings
+    private DefaultSettings settings
 
     private Map<String, ModuleBuilder> builders
 
@@ -34,8 +35,12 @@ class ModuleHandler {
         builders = new HashMap<>()
     }
 
-    void settings(Settings settings) {
+    void setSettings(DefaultSettings settings) {
         this.settings = settings
+    }
+
+    DefaultSettings getSettings() {
+        return this.settings
     }
 
     ModuleBuilder module(String moduleName, String remoteName, String projectName) {
@@ -65,7 +70,6 @@ class ModuleHandler {
             builders.put(moduleName, moduleBuilder)
         }
         moduleBuilder.name(moduleName).project(project)
-        settings.include(project)
         return moduleBuilder
     }
 
