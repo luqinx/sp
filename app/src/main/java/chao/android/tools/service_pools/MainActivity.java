@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.AbsListView;
 
+import com.example.testpluginlib.TestPluginService;
 import com.google.common.base.Stopwatch;
 
 import java.util.ArrayList;
@@ -42,25 +43,25 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
             AppService.class, AppService2.class, InnerService.class, PathService.class, Abs.class
     };
 
-//    @Service
+    @Service
     private Printer appService;
 
-//    @Service(CommonPrinter.class)
+    @Service(CommonPrinter.class)
     private Printer commonService;
 
-//    @Service(Haha.class)
+    @Service(Haha.class)
     private Printer haha;
 
     EventSample eventSample = new EventSample();
 
 
-//    @Service
+    @Service
     private A a;
 
 //    @Service
 //    private TestPluginService testPluginService;
 
-//    @Service(SecondActivity.SecondPrinter.class)
+    @Service(SecondActivity.SecondPrinter.class)
     private Printer main;
 
 //    @Service
@@ -72,22 +73,22 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     @Event
     private MyEvent myEvent2;
 
-//    @Service
+    @Service
     private AppService2 appService2;
 
-//    @Service
+    @Service
     private InnerService innerService;
 
     @Event
     private MyEvent myEvent;
 
-//    @Service(path = "/app/path")
+    @Service(path = "/app/path")
     private PathService pathService;
 
-//    @Service(path = "/app/path2")
+    @Service(path = "/app/path2")
     private static PathService2 pathService2;
 
-//    @Service
+    @Service
     private Abs abs;
 
     public MainActivity() {
@@ -102,26 +103,6 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        ClassLoader classLoader = getClassLoader();
-        Ami.log("Context.getClassLoader() --> " + classLoader);
-        Ami.log("ClassLoader.getSystemClassLoader() --> " + ClassLoader.getSystemClassLoader());
-        Ami.log("getClass().getClassLoader() --> " + getClass().getClassLoader());
-        Ami.log("AbsListView.class.getClassLoader() --> " + AbsListView.class.getClassLoader());
-        Ami.log("ArrayList.class.getClassLoader() --> " + ArrayList.class.getClassLoader());
-        classLoader = getClass().getClassLoader();
-        while (classLoader != null) {
-            classLoader = classLoader.getParent();
-            if (classLoader != null) {
-                Ami.log("classloader.parent: " + classLoader.getParent());
-            }
-        }
-        Ami.log(stopwatch.elapsed(TimeUnit.NANOSECONDS));
-        Ami.log(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        if (true) {
-            return;
-        }
 
 
 //        testPluginService = ServicePool.getService(TestPluginService.class);
