@@ -49,16 +49,14 @@ class Property {
     private static Properties pluginProperties
 
 
-    private Project rootProject = Env.rootProject
-
     Property() {
 
     }
 
-    def initStaticProperties() {
+    def initStaticProperties(File rootDir) {
         try {
             localProperties = new Properties()
-            File local = rootProject.file("local.properties")
+            File local = new File(rootDir,"local.properties")
             if (local.exists()) {
                 localProperties.load(local.newInputStream())
                 logger.logd("local properties ${localProperties}")
@@ -70,7 +68,7 @@ class Property {
             ignored.printStackTrace()
         }
         try {
-            File gradle = rootProject.file("gradle.properties")
+            File gradle = new File(rootDir, "gradle.properties")
             gradleProperties = new Properties()
             if (gradle.exists()) {
                 gradleProperties.load(gradle.newInputStream())
@@ -82,7 +80,7 @@ class Property {
             ignored.printStackTrace()
         }
         try {
-            File plugin = rootProject.file("plugin.properties")
+            File plugin = new File(rootDir,"plugin.properties")
             pluginProperties = new Properties()
             if (plugin.exists()) {
                 pluginProperties.load(plugin.newInputStream())
@@ -110,7 +108,7 @@ class Property {
             if (pluginNameProperties.exists()) {
                 logTag = "use project"
             } else {
-                pluginNameProperties = rootProject.file(name)
+                pluginNameProperties = project.rootProject.file(name)
                 if (pluginNameProperties.exists()) {
                     logTag = "use root"
                 }
@@ -238,5 +236,9 @@ class Property {
             return mValue == null
         }
 
+    }
+
+    boolean hasProperty(String property) {
+        return propertyResult(property).value != null
     }
 }

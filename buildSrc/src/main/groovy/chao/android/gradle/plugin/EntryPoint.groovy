@@ -10,8 +10,13 @@ import chao.android.gradle.plugin.normalization.CheckStylePlugin
 import chao.android.gradle.plugin.normalization.JacocoPlugin
 import chao.android.gradle.plugin.normalization.LintPlugin
 import chao.android.gradle.plugin.version.ACVersionPlugin
+import org.gradle.BuildAdapter
+import org.gradle.BuildListener
+import org.gradle.BuildResult
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.initialization.Settings
+import org.gradle.api.invocation.Gradle
 
 class EntryPoint implements Plugin<Project> {
 
@@ -27,8 +32,15 @@ class EntryPoint implements Plugin<Project> {
         Env.rootProject project
 
         Property prop = new Property()
-        prop.initStaticProperties()
+        prop.initStaticProperties(project.rootDir)
         Env.properties(prop)
+
+        project.gradle.addBuildListener(new BuildAdapter() {
+            @Override
+            void buildFinished(BuildResult buildResult) {
+                Env.properties(null)
+            }
+        })
         Env.debug(Env.properties.propertyResult(Constant.propertyKey.DEBUGGABLE).booleanValue(false))
 
         pluginManager = new PluginManager(project)
