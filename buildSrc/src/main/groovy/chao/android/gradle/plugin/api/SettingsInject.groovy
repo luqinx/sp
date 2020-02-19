@@ -1,5 +1,7 @@
 package chao.android.gradle.plugin.api
 
+
+import chao.android.gradle.plugin.base.Property
 import chao.android.gradle.plugin.dependencies.ModuleHandler
 import org.gradle.api.Action
 import org.gradle.api.initialization.Settings
@@ -25,17 +27,29 @@ import java.lang.reflect.Field
  */
 class SettingsInject {
 
-    private static final String modulesSettingsFile = "modules.gradle"
+    private static final String DEFAULT_MODULES_SETTINGS_FILE = "modules.gradle"
+
+    private static final String MODULES_SETTINGS_FILE_KEY = "modules.gradle.file"
 
     private static File modulesFile
 
     static void inject(Settings settings, DefaultGradle gradle) {
-//        Map<String, Object> map = new HashMap<>(1)
-//        map.put("from", new File(settings.getRootDir(), modulesSettingsFile))
-//        gradle.apply(map)
 
-        modulesFile = new File(settings.getRootDir(), modulesSettingsFile)
+//        Env.debug(true)
 
+        Property prop = new Property()
+        prop.initStaticProperties(settings.getRootDir())
+
+        String modulesFileName = DEFAULT_MODULES_SETTINGS_FILE
+
+        if (prop.hasProperty(MODULES_SETTINGS_FILE_KEY)) {
+            modulesFileName = prop.propertyResult(MODULES_SETTINGS_FILE_KEY).value
+            if (!modulesFileName.endsWith(".gradle")) {
+                modulesFileName += ".gradle"
+            }
+        }
+        println("====> " + modulesFileName)
+        modulesFile = new File(settings.rootDir, modulesFileName)
 
         gradle.apply(new Action<ObjectConfigurationAction>() {
             @Override

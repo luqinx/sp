@@ -19,6 +19,12 @@ module("B").project(":applib2")
 
 module("pool").project(":pool").include()
 
+module("app").project(":app").include()
+module("appservice").project(":appservice").include()
+module("testpluginlib").project(":testpluginlib").include()
+module("pool").project(":pool").include()
+
+
 
 
 remote("interceptor", "chao.android.tools:interceptor:0.0.1.dev2")
