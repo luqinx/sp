@@ -14,6 +14,8 @@ class MavenExtension extends DefaultExtension {
 
     String artifactId
 
+    boolean publish2Local = true
+
     MavenExtension(String name) {
         super(name)
     }
@@ -40,5 +42,13 @@ class MavenExtension extends DefaultExtension {
 
     void artifactId(String artifactId) {
         this.artifactId = artifactId
+    }
+
+    void publish2Local(boolean local) {
+        this.publish2Local = local
+    }
+
+    boolean isPublish2Local() {
+        return publish2Local
     }
 }

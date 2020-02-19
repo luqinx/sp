@@ -21,6 +21,8 @@ class MavenPlugin extends BasePlugin<MavenExtension> {
 
     String DEFAULT_SNAPSHOT_NEXUS_URL="http://47.99.188.223:8081/repository/maven-snapshots/"
 
+    final String USER_HOME = System.getProperty("user.home")
+
     MavenPlugin(Project project) {
         super(project)
     }
@@ -95,7 +97,9 @@ class MavenPlugin extends BasePlugin<MavenExtension> {
             def PUBLISH_PASSWORD = publishRelease ? ADMIN_PASSWORD : password
             def PUBLISH_VERSION = publishRelease ? extension.versionName : extension.versionName + "-SNAPSHOT"
             def PUBLISH_PACKAGING = Util.isAndroid(project) ? "aar" : "jar"
-            def PUBLISH_URL = publishRelease ? releaseNexusUrl : snapshotNexusUrl
+            def LOCAL_URL = "file://$USER_HOME/.m2/repository/"
+
+            def PUBLISH_URL = extension.publish2Local ? LOCAL_URL: publishRelease ? releaseNexusUrl : snapshotNexusUrl
 
             def wholeName = extension.groupId + ":" + extension.artifactId + ":" + PUBLISH_VERSION
 
@@ -107,6 +111,7 @@ class MavenPlugin extends BasePlugin<MavenExtension> {
                             || StringUtils.isEmpty(extension.versionName)) {
                         throw new PluginException("发布信息不完整: " + wholeName + " on " + project)
                     }
+
                     repository(url: PUBLISH_URL) {
                         authentication(userName: PUBLISH_ACCOUNT, password: PUBLISH_PASSWORD)
                     }
@@ -122,6 +127,8 @@ class MavenPlugin extends BasePlugin<MavenExtension> {
                 println("准备打包上传..." )
                 println("版本名称:" + wholeName)
                 println("发布类型:" + (publishRelease ? "release" : "snapshot"))
+                println("本地仓库:" + extension.publish2Local)
+                println("仓库地址:" + PUBLISH_URL)
 
                 //发布release版本必须使用admin账号
                 if (publishRelease && (!ADMIN_ACCOUNT || !ADMIN_PASSWORD)) {
