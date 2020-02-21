@@ -68,6 +68,15 @@ EventService    done
 支持@Inherit ？
 
 
+初始化完成监听
+
+Activity路由支持URL Schema跳转
+
+路由配置动态下发？？
+
+
+
+
 
 问题汇总:
 
