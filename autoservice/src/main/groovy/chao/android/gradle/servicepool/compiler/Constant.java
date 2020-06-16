@@ -62,6 +62,9 @@ public interface Constant extends Opcodes {
 
     String SERVICE_DESC = "Lchao/java/tools/servicepool/annotation/Service;";
 
+    String SERVICES_DESC = "Lchao/java/tools/servicepool/annotation/Services;";
+
+
     String INIT_DESC = "Lchao/java/tools/servicepool/annotation/Init;";
 
 

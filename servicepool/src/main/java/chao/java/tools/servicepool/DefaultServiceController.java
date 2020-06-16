@@ -199,8 +199,12 @@ public class DefaultServiceController implements ServiceController {
         historyCache.put(service.getClass().getName(), proxy);
     }
 
-    public Class<? extends IService> getPathService(String path) {
-        IPathService pathServices = getServiceByClass(IPathService.class);
+    public Class<? extends IService> getServiceByPath(String path) {
+        IPathService pathServices = getPathService();
         return pathServices.get(path);
+    }
+
+    public IPathService getPathService() {
+        return getServiceByClass(IPathService.class);
     }
 }

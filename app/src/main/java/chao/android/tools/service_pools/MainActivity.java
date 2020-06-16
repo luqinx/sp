@@ -165,6 +165,13 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
         findViewById(R.id.init_sync).setOnClickListener(v -> {
             UI.show(this, InitSyncSampleFragment.class);
         });
+
+
+        Printer repeat = ServicePool.getService("/app/repeat");
+        repeat.print();
+
+        Printer repeatable = ServicePool.getService("/app/repeatable");
+        repeatable.print();
     }
 
     @Override

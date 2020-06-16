@@ -26,8 +26,6 @@ public class ServiceProxy {
 
     private int scope;
 
-    private String tag;
-
     private boolean async;
 
     private List<Class<? extends IInitService>> dependencies;
@@ -43,7 +41,6 @@ public class ServiceProxy {
         if (service != null) {
             priority = service.priority();
             scope = service.scope();
-            tag = service.path();
         }
         Init init = serviceClass.getAnnotation(Init.class);
         if (init != null) {
@@ -53,12 +50,11 @@ public class ServiceProxy {
     }
 
     public ServiceProxy(Class<? extends IService> clazz, IServiceFactory serviceFactory,
-                        int priority, int scope, String tag, boolean async, List<Class<? extends IInitService>> dependencies) {
+                        int priority, int scope,@Deprecated String tag, boolean async, List<Class<? extends IInitService>> dependencies) {
         this.serviceClass = clazz;
         this.serviceFactory = serviceFactory;
         this.priority = priority;
         this.scope = scope;
-        this.tag = tag;
         this.async = async;
         this.dependencies = dependencies;
 
@@ -104,13 +100,6 @@ public class ServiceProxy {
 
     Class<? extends IService> getServiceClass() {
         return serviceClass;
-    }
-
-    /**
-     *
-     */
-    public String tag() {
-        return tag;
     }
 
     /**

@@ -2,6 +2,7 @@ package chao.android.gradle.servicepool.compiler;
 
 import org.objectweb.asm.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import chao.java.tools.servicepool.IService;
@@ -24,7 +25,10 @@ public class ServiceInfo implements Constant {
 
     private int priority;
 
+    @Deprecated
     private String path;
+
+    private List<String> paths;
 
     private boolean async;
 
@@ -46,6 +50,7 @@ public class ServiceInfo implements Constant {
         this.scope = IService.Scope.once;
         this.priority = IService.Priority.NORMAL_PRIORITY;
         this.path = "";
+        this.paths = new ArrayList<>();
     }
 
     public String getPkgName() {
@@ -72,6 +77,7 @@ public class ServiceInfo implements Constant {
         return priority;
     }
 
+    @Deprecated
     public String getPath() {
         return path;
     }
@@ -84,7 +90,9 @@ public class ServiceInfo implements Constant {
         return descriptor;
     }
 
-
+    public List<String> getPaths() {
+        return paths;
+    }
 
     public boolean isAsync() {
         return async;
@@ -133,6 +141,7 @@ public class ServiceInfo implements Constant {
                 scope = (int) value;
             } else if (METHOD_PATH.equals(key)) {
                 path = String.valueOf(value);
+                paths.add(String.valueOf(value));
             } else if (METHOD_ASYNC.equals(key)) {
                 async = (boolean) value;
             } else if (METHOD_DEPENDENCIES.equals(key)) {

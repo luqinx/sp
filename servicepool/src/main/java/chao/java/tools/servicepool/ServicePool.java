@@ -1,5 +1,7 @@
 package chao.java.tools.servicepool;
 
+import java.util.Map;
+
 import chao.java.tools.servicepool.combine.CombineThreadExecutor;
 import chao.java.tools.servicepool.debug.Debug;
 import chao.java.tools.servicepool.event.EventManager;
@@ -134,11 +136,28 @@ public class ServicePool {
     }
 
     public static <T> T getService(String path) {
-        Class<? extends IService> clazz = controller.getPathService(path);
+        Class<? extends IService> clazz = controller.getServiceByPath(path);
         if (clazz == null) {
             return null;
         }
         return (T) getService(clazz);
+    }
+
+    public static void registerPaths(Map<String, Class<? extends IService>> serviceMaps) {
+        try {
+            checkLoader();
+            IPathService pathService = controller.getPathService();
+            if (serviceMaps == null) {
+                return;
+            }
+            for (String path : serviceMaps.keySet()) {
+                pathService.put(path, serviceMaps.get(path));
+            }
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, e.getMessage());
+            }
+        }
     }
 
     public static void recycleService(Class clazz) {

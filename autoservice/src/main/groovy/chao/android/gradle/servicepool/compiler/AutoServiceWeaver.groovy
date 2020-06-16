@@ -200,15 +200,17 @@ class AutoServiceWeaver extends BaseWeaver {
         for (String pkgName : serviceInfoMap.keySet()) {
             List<ServiceInfo> serviceInfoList = serviceInfoMap.get(pkgName)
             for (ServiceInfo serviceInfo: serviceInfoList) {
-                if (serviceInfo.path == null || serviceInfo.path.length() == 0) {
-                    continue
+                for (String path: serviceInfo.paths) {
+                    if (path == null || path.length() == 0) {
+                        continue
+                    }
+                    String descriptor = serviceInfo.getDescriptor()
+                    if (pathMap.get(path) != null && pathMap.get(path) != descriptor) {
+                        throw new IllegalStateException("duplicate path: " + path + ", " + descriptor + " <--> " + pathMap.get(path))
+                        //path重复
+                    }
+                    pathMap.put(path, descriptor)
                 }
-                String path = serviceInfo.getPath()
-                String descriptor = serviceInfo.getDescriptor()
-                if (pathMap.get(path) != null && pathMap.get(path) != descriptor) {
-                    throw new IllegalStateException("duplicate path: " + path + ", " + descriptor + " <--> " + pathMap.get(path)) //path重复
-                }
-                pathMap.put(path, descriptor)
             }
         }
         pathMap.each { path, descriptor->

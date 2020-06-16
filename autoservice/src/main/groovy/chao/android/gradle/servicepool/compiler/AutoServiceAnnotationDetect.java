@@ -89,6 +89,9 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
             return new InitAnnotationValueDetect(av);
         } else if (EVENT_DESC.equals(desc)) {
             hasEventAnnotation = true;
+        } else if (SERVICES_DESC.equals(desc)) {
+            typeServiceAnnotation = new ArrayList<>();
+            return new ServiceAnnotationsValueDetect(av);
         }
         return av;
     }
@@ -154,8 +157,32 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
                 typeServiceAnnotation.add(name);
                 typeServiceAnnotation.add(value);
             }
+            System.out.println(name + ": " + value);
+        }
+    }
+
+    private class ServiceAnnotationsValueDetect extends AnnotationVisitor {
+
+        public ServiceAnnotationsValueDetect(AnnotationVisitor av) {
+            super(ASM6, av);
         }
 
+        @Override
+        public AnnotationVisitor visitArray(String name) {
+            AnnotationVisitor av = super.visitArray(name);
+            return new ServiceAnnotationsAnnotationDetect(av);
+        }
+
+        private class ServiceAnnotationsAnnotationDetect extends AnnotationVisitor {
+            public ServiceAnnotationsAnnotationDetect(AnnotationVisitor av) {
+                super(ASM6, av);
+            }
+
+            @Override
+            public AnnotationVisitor visitAnnotation(String name, String desc) {
+                return new ServiceAnnotationValueDetect(super.visitAnnotation(name, desc));
+            }
+        }
     }
 
     private class InitAnnotationValueDetect extends AnnotationVisitor {

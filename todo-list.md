@@ -75,7 +75,19 @@ Activity路由支持URL Schema跳转
 路由配置动态下发？？
 
 
+service初始化增加条件 主线程idle
+1. 同步
+2. 异步
+3. 主线程idle
 
+
+绑定Lifecycle
+
+
+@Services 支持单类可以添加多个pathService done
+
+
+path投放
 
 
 问题汇总:
@@ -127,3 +139,7 @@ Activity路由支持URL Schema跳转
 
 
 2. autoservice在Windows电脑上编译失败 done
+
+
+3. scope为global时,
+   ServicePool.getService(Xxx.class)和ServicePool.getService(XxxImpl.class)应该返回同一个对象
