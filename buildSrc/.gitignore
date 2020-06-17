@@ -2,6 +2,7 @@
 .idea/
 .gradle/
 *.iml
+local.properties
 
 src/main/groovy/chao/android/gradle/servicepool
 src/main/groovy/chao/java

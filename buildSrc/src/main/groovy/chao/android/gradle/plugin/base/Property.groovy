@@ -48,20 +48,26 @@ class Property {
 
     private static Properties pluginProperties
 
+    private static Properties buildTypeProperties
+
+    private static Properties flavorProperties
+
 
     Property() {
 
     }
 
-    def initStaticProperties(File rootDir) {
+    def static initStaticProperties(File rootDir) {
+        buildTypeProperties = new Properties()
+        flavorProperties = new Properties()
         try {
             localProperties = new Properties()
             File local = new File(rootDir,"local.properties")
             if (local.exists()) {
                 localProperties.load(local.newInputStream())
-                logger.logd("local properties ${localProperties}")
+                logger.logd("abkit: local properties ${localProperties}")
             } else {
-                logger.logd("${local.path} not exists")
+                logger.logd("abkit: ${local.path} not exists")
             }
         } catch (Throwable ignored) {
             // ignore
@@ -72,9 +78,9 @@ class Property {
             gradleProperties = new Properties()
             if (gradle.exists()) {
                 gradleProperties.load(gradle.newInputStream())
-                logger.logd("gradle properties ${gradleProperties}")
+                logger.logd("abkit: gradle properties ${gradleProperties}")
             } else {
-                logger.logd("${gradle.path} not exists")
+                logger.logd("abkit: ${gradle.path} not exists")
             }
         } catch (Throwable ignored) {
             ignored.printStackTrace()
@@ -84,12 +90,33 @@ class Property {
             pluginProperties = new Properties()
             if (plugin.exists()) {
                 pluginProperties.load(plugin.newInputStream())
-                logger.logd("plugin properties ${pluginProperties}")
+                logger.logd("abkit: plugin properties ${pluginProperties}")
             } else {
-                logger.logd("${plugin.path} not exists")
+                logger.logd("abkit: ${plugin.path} not exists")
             }
         } catch (Throwable ignored) {
             ignored.printStackTrace()
+        }
+
+    }
+
+    def static loadFlavorProperties(File rootDir, String flavor) {
+        File flavorFile = new File(rootDir, flavor + ".properties")
+        if (flavorFile.exists()) {
+            flavorProperties.load(flavorFile.newInputStream())
+            logger.logd("abkit: flavor properties ${flavorFile.path}: ${flavorProperties}")
+        } else {
+            logger.logd("abkit: ${flavorFile.path} not exists")
+        }
+    }
+
+    def static loadBuildTypeProperties(File rootDir, String buildType) {
+        File buildTypeFile = new File(rootDir, buildType + ".properties")
+        if (buildTypeFile.exists()) {
+            buildTypeProperties.load(buildTypeFile.newInputStream())
+            logger.logd("abkit: flavor properties ${buildTypeFile.path}: ${buildTypeProperties}")
+        } else {
+            logger.logd("abkit: ${buildTypeFile.path} not exists")
         }
     }
 
@@ -144,9 +171,16 @@ class Property {
             return new PropertyResult(property)
         }
 
+        property = gradleProperties.getProperty(key)
+        if (property != null) {
+            return new PropertyResult(property)
+        }
 
-
-        return new PropertyResult(gradleProperties.getProperty(key))
+        property = buildTypeProperties.getProperty(key)
+        if (property != null) {
+            return new PropertyResult(property)
+        }
+        return new PropertyResult(flavorProperties.getProperty(key))
     }
 
     class PropertyResult {
@@ -240,5 +274,18 @@ class Property {
 
     boolean hasProperty(String property) {
         return propertyResult(property).value != null
+    }
+
+    /**
+     * 清除缓存
+     */
+    void clear() {
+        localProperties.clear()
+        gradleProperties.clear()
+        pluginProperties.clear()
+        properties.clear()
+
+        buildTypeProperties.clear()
+        flavorProperties.clear()
     }
 }

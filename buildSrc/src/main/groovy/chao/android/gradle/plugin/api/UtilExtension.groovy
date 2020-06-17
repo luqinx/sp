@@ -8,7 +8,7 @@ import chao.android.gradle.plugin.base.Env
  */
 class UtilExtension {
 
-    String property(String key) {
+    static String property(String key) {
         return Env.properties.propertyResult(key).value
     }
 }

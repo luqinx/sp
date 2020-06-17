@@ -6,7 +6,7 @@ public interface Constant {
 
         String AC = "abkit";
 
-        String AC_VERSION = "acVersion";
+        String AC_VERSION = "abVersion";
 
         String AC_DEPENDENCY = "AC_DEPENDENCY";
 

@@ -4,8 +4,6 @@ Properties props = new Properties()
 File file = new File(project.projectDir, "maven.properties")
 props.load(new FileInputStream(file))
 
-def ACCOUNT = props.get("nexusUserName")
-def PASSWORD = props.get("nexusPassword")
 def RELEASE = Boolean.parseBoolean(props.get("publishRelease"))
 def MAVEN_LOCAL_PATH = RELEASE ? props.get("nexusUrl") : props.get("nexusSnapshotUrl")
 
@@ -13,6 +11,11 @@ File localFile = new File(project.rootDir, "local.properties")
 if (localFile.exists()) {
     props.load(new FileInputStream(localFile))
 }
+
+def ACCOUNT = props.get("nexusUserName")
+def PASSWORD = props.get("nexusPassword")
+
+
 def ADMIN_ACCOUNT = props.get("adminUserName")
 def ADMIN_PASSWORD = props.get("adminPassword")
 

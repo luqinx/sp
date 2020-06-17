@@ -35,6 +35,12 @@ class ModuleHandler {
         builders = new HashMap<>()
     }
 
+    void clearCache() {
+        if (builders != null) {
+            builders.clear()
+        }
+    }
+
     void setSettings(DefaultSettings settings) {
         this.settings = settings
     }

@@ -1,8 +1,9 @@
 package chao.android.gradle.plugin.api
 
-
+import chao.android.gradle.plugin.base.Env
 import chao.android.gradle.plugin.base.Property
 import chao.android.gradle.plugin.dependencies.ModuleHandler
+import org.gradle.TaskExecutionRequest
 import org.gradle.api.Action
 import org.gradle.api.initialization.Settings
 import org.gradle.api.initialization.dsl.ScriptHandler
@@ -19,6 +20,7 @@ import org.gradle.internal.resource.BasicTextResourceLoader
 import org.gradle.internal.resource.TextResource
 import org.gradle.invocation.DefaultGradle
 
+import java.lang.reflect.Array
 import java.lang.reflect.Field
 
 /**
@@ -33,22 +35,72 @@ class SettingsInject {
 
     private static File modulesFile
 
+    public static Property props
+
     static void inject(Settings settings, DefaultGradle gradle) {
 
-//        Env.debug(true)
 
-        Property prop = new Property()
-        prop.initStaticProperties(settings.getRootDir())
+        props = new Property()
+        props.initStaticProperties(settings.getRootDir())
+
+        String flavorValue = props.propertyResult("abkit.flavors").getValue()
+        String buildTypeValue = props.propertyResult("abkit.buildTypes").getValue()
+
+        def flavors = new HashSet<>()
+        def buildTypes = new HashSet()
+
+        flavors.addAll(flavorValue? flavorValue.split(":"): new String[0])
+        buildTypes.addAll(buildTypeValue? buildTypeValue.split(":"): new String[0])
+
+        buildTypes.add("debug")
+        buildTypes.add("release")
+
+        List<TaskExecutionRequest> requests = new ArrayList<>(gradle.startParameter.taskRequests)
+        if (requests.size() == 0) {
+            requests.add(null)
+        }
+        for (TaskExecutionRequest request:requests) {
+            def args
+            if (request == null || request.args.size() == 0) {
+                args = []
+                args.add(props.propertyResult('abkit.sync.flavor').value + props.propertyResult('abkit.sync.buildType').value)
+                println("abkit: startParameter request is empty, add config request args:" + args)
+            } else {
+                args = request.args
+            }
+            println("abkit: startParameter request args: ${args}")
+            for (String arg: args) {
+                //查找flavors
+                for (String flavor: flavors) {
+                    flavor = flavor.toLowerCase()
+                    if (arg != null && arg.toLowerCase().contains(flavor)) {
+                        props.loadFlavorProperties(settings.getRootDir(), flavor)
+                        break
+                    }
+                }
+                //查找buildType
+                for (String buildType: buildTypes) {
+                    buildType = buildType.toLowerCase()
+                    if (arg != null && arg.toLowerCase().contains(buildType)) {
+                        props.loadBuildTypeProperties(settings.getRootDir(), buildType)
+                        break
+                    }
+                }
+            }
+        }
+
+        Env.properties(props)
+
 
         String modulesFileName = DEFAULT_MODULES_SETTINGS_FILE
 
-        if (prop.hasProperty(MODULES_SETTINGS_FILE_KEY)) {
-            modulesFileName = prop.propertyResult(MODULES_SETTINGS_FILE_KEY).value
+        if (props.hasProperty(MODULES_SETTINGS_FILE_KEY)) {
+            modulesFileName = props.propertyResult(MODULES_SETTINGS_FILE_KEY).value
             if (!modulesFileName.endsWith(".gradle")) {
                 modulesFileName += ".gradle"
             }
         }
-        println("====> " + modulesFileName)
+        println("abkit: modules config file:  " + modulesFileName)
         modulesFile = new File(settings.rootDir, modulesFileName)
 
         gradle.apply(new Action<ObjectConfigurationAction>() {
