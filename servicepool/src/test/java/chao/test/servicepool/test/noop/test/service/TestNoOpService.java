@@ -7,10 +7,6 @@ import chao.java.tools.servicepool.IService;
  * @since 2019/5/5
  */
 public class TestNoOpService implements NoOp, IService {
-    @Override
-    public String tag() {
-        return "no op";
-    }
 
     public Integer getInteger() {
         return 10086;

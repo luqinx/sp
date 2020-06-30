@@ -45,7 +45,7 @@ public class DefaultServiceController implements ServiceController {
 
         cacheService(serviceClass, proxy);
 
-        cacheSubClasses(serviceClass, proxy);
+//        cacheSubClasses(serviceClass, proxy);
 
     }
 
@@ -155,6 +155,9 @@ public class DefaultServiceController implements ServiceController {
         for (Class<? extends IService> serviceClass: services) {
             Debug.addError("cache factories service: " + serviceClass);
             addService(serviceClass);
+            if (IServiceFactories.class.isAssignableFrom(serviceClass)) {
+                addFactories((IServiceFactories) getServiceByClass(serviceClass));
+            }
         }
     }
 

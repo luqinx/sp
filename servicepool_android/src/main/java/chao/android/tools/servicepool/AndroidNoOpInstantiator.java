@@ -31,7 +31,7 @@ public class AndroidNoOpInstantiator extends DefaultService implements NoOpInsta
         return new ByteBuddy()
             .subclass(clazz, ConstructorStrategy.Default.NO_CONSTRUCTORS)
             .name(clazz.getPackage().getName() + ".NoOp" + clazz.getSimpleName() + "_" + noOpCount.incrementAndGet())
-            .implement(NoOpInstance.class)
+            .implement(NoOpInstance.class, IService.class)
             .defineConstructor(Visibility.PUBLIC).withParameters(NoOpConstructorArg.class)
             .intercept(MethodCall.invoke(constructor).with(params))
             .method(ElementMatchers.any()).intercept(MethodDelegation.to(NoOpInterceptor.class))

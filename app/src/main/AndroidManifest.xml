@@ -29,7 +29,8 @@
         <activity android:name=".init.InitSampleActivity"/>
 
 
-        <activity android:name=".SecondActivity"/>
+        <activity android:name=".SecondActivity">
+        </activity>
 
         <activity android:name=".route.TestRouteActivity"/>
 

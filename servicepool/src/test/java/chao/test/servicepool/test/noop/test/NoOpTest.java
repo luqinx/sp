@@ -25,18 +25,14 @@ public class NoOpTest extends SampleCase {
 
         assertEquals(ServicePool.getService(TestNoOpService.class).hashCode(), 0);
         assertEquals(ServicePool.getService(TestNoOpService.class).getInteger(), new Integer(0));
-        assertNull(ServicePool.getService(TestNoOpService.class).tag());
         assertFalse(ServicePool.getService(TestNoOpService.class).equals(ServicePool.getService(TestNoOpService.class)));
     }
 
     @Test
     public void testNoOpInterface() {
-        assertInstanceOf(ServicePool.getService(NoOp.class, TestNoOpService.class), NoOpInstance.class);
-        System.out.println(ServicePool.getService(TestNoOpService.class));
 
         assertEquals(ServicePool.getService(TestNoOpService.class).hashCode(), 0);
         assertEquals(ServicePool.getService(TestNoOpService.class).getInteger(), new Integer(0));
-        assertNull(ServicePool.getService(TestNoOpService.class).tag());
         assertFalse(ServicePool.getService(TestNoOpService.class).equals(ServicePool.getService(TestNoOpService.class)));
 
     }

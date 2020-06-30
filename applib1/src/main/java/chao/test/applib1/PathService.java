@@ -1,6 +1,6 @@
 package chao.test.applib1;
 
-import chao.app.pool.IPathService;
+import chao.app.pool.IPathInstanceService;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -9,7 +9,7 @@ import chao.java.tools.servicepool.annotation.Service;
  * PathService
  */
 @Service(path = "pathService")
-public class PathService implements IPathService {
+public class PathService implements IPathInstanceService {
     @Override
     public String pathServiceName() {
         return "Path Service";

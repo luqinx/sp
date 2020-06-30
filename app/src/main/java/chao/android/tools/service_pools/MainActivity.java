@@ -3,12 +3,9 @@ package chao.android.tools.service_pools;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.AbsListView;
 
-import com.example.testpluginlib.TestPluginService;
 import com.google.common.base.Stopwatch;
 
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import chao.android.tools.service_pools.abs.Abs;
@@ -22,7 +19,6 @@ import chao.android.tools.service_pools.init.InitSyncSampleFragment;
 import chao.android.tools.service_pools.path.PathService;
 import chao.android.tools.service_pools.path.PathService2;
 import chao.android.tools.service_pools.test.Haha;
-import chao.android.tools.service_pools.test.InitService5;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.android.tools.servicepool.AndroidServicePool;
 import chao.app.ami.Ami;
@@ -94,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     public MainActivity() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         for (Class clazz: classes) {
-            ServicePool.getService(clazz);
+//            ServicePool.getService(clazz);
         }
         Ami.log(stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
@@ -130,6 +126,16 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
         a.getInt();
 
         main.print();
+
+        //测试Scope为global
+        if (ServicePool.getService("/app/path") != ServicePool.getService("/app/path")) {
+            throw new RuntimeException();
+        }
+
+        //测试Scope为once
+        if (ServicePool.getService("/app/path2") == ServicePool.getService("/app/path2")) {
+            throw new RuntimeException();
+        }
 
         findViewById(R.id.btn).setOnClickListener(v->{
             UI.show(this, EventFragment.class);

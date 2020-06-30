@@ -61,9 +61,12 @@ class SettingsInject {
         }
         for (TaskExecutionRequest request:requests) {
             def args
+            String syncFlavor = "" + props.propertyResult('abkit.sync.flavor').value
+            String syncBuildType = "" + props.propertyResult('abkit.sync.buildType').value
+
             if (request == null || request.args.size() == 0) {
                 args = []
-                args.add(props.propertyResult('abkit.sync.flavor').value + props.propertyResult('abkit.sync.buildType').value)
+                args.add( syncFlavor + syncBuildType)
                 println("abkit: startParameter request is empty, add config request args:" + args)
             } else {
                 args = request.args
