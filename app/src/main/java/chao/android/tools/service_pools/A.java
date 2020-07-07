@@ -1,10 +1,12 @@
 package chao.android.tools.service_pools;
 
+import chao.java.tools.servicepool.IService;
+
 /**
  * @author qinchao
  * @since 2019/6/25
  */
-public class A {
+public class A implements IService {
 
     private int a;
 

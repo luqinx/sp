@@ -39,6 +39,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation servicepool
-    implementation "net.bytebuddy:byte-buddy-android:1.10.1"
+    implementation "net.bytebuddy:byte-buddy-android:1.10.13"
 //    implementation "net.bytebuddy:byte-buddy-android:1.9.6"
 }

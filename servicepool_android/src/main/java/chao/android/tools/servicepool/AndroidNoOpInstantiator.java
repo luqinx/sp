@@ -7,6 +7,7 @@ import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.NoOpInstantiator;
 import chao.java.tools.servicepool.NoOpInterceptor;
 import chao.java.tools.servicepool.annotation.Service;
+import dalvik.system.InMemoryDexClassLoader;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.atomic.AtomicInteger;
