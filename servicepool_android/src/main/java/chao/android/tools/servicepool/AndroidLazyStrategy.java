@@ -53,7 +53,6 @@ public enum AndroidLazyStrategy implements TypeResolutionStrategy, TypeResolutio
                                                                              ClassLoadingStrategy<? super S> classLoadingStrategy) {
         if (dexProcessor == null) {
             DexOptions dexOptions = new DexOptions();
-            dexOptions.targetApiLevel = 13;
             dexProcessor = new AndroidClassLoadingStrategy.DexProcessor.ForSdkCompiler(dexOptions, new CfOptions());
         }
         makeDexDir();

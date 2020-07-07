@@ -14,7 +14,7 @@ class MavenExtension extends DefaultExtension {
 
     String artifactId
 
-    boolean publish2Local = true
+    boolean publish2Local = false
 
     MavenExtension(String name) {
         super(name)
