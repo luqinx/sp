@@ -3,11 +3,15 @@ package chao.android.gradle.servicepool.compiler;
 import java.util.ArrayList;
 import java.util.List;
 
+import groovy.lang.Closure;
+
 /**
  * @author luqin
  * @date 2019-07-15
  */
 public class AutoServiceExtension {
+
+    private boolean debuggable;
 
     private List<String> excludes;
 
@@ -29,5 +33,17 @@ public class AutoServiceExtension {
 
     public List<String> excludes() {
         return excludes;
+    }
+
+    public void exclude(String name) {
+        excludes.add(name);
+    }
+
+    public void debuggable(boolean debuggable) {
+        this.debuggable = debuggable;
+    }
+
+    public boolean isDebuggable() {
+        return debuggable;
     }
 }

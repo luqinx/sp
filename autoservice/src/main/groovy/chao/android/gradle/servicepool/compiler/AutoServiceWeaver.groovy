@@ -72,6 +72,7 @@ class AutoServiceWeaver extends BaseWeaver {
             //默认是懒加载
 //            serviceInfo.setLazy(true)
         }
+        println("AutoService: Find service class " + serviceInfo)
 
         for (String clazz: classes) {
             if (IService.class.name.replaceAll("\\.", "/") == clazz) {
@@ -214,7 +215,10 @@ class AutoServiceWeaver extends BaseWeaver {
             }
         }
         pathMap.each { path, descriptor->
-//            println(path + "=" + descriptor)
+            if (extension.isDebuggable()) {
+                println("AutoService: generate path record [$path]($descriptor)")
+            }
+
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
             methodVisitor.visitLdcInsn(path)
             methodVisitor.visitLdcInsn(Type.getType(descriptor));

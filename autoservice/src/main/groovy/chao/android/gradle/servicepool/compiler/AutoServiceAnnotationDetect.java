@@ -157,7 +157,6 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
                 typeServiceAnnotation.add(name);
                 typeServiceAnnotation.add(value);
             }
-            System.out.println(name + ": " + value);
         }
     }
 

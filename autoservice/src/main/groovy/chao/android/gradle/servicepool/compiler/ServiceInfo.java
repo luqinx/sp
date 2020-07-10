@@ -171,7 +171,9 @@ public class ServiceInfo implements Constant {
     public String toString() {
         return "ServiceInfo{" +
                 "descriptor='" + descriptor + '\'' +
-                ", path='" + path + '\'' +
+                ", scope=" + scope +
+                ", priority=" + priority +
+                ", paths=" + paths +
                 '}';
     }
 }
