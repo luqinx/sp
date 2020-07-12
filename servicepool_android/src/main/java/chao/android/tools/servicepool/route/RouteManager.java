@@ -27,8 +27,12 @@ public class RouteManager implements IService {
 
     private static Handler mHandler;
 
+    private RouteCombineStrategyImpl routeCombineStrategy;
+
     public RouteManager() {
         mHandler = new Handler(Looper.getMainLooper());
+
+        routeCombineStrategy = new RouteCombineStrategyImpl();
     }
 
     Object navigation(final RouteBuilder route, final RouteNavigationCallback callback) {
@@ -48,7 +52,7 @@ public class RouteManager implements IService {
             if (callback != null) {
                 callback.onFound(service, route);
             }
-            getCombineService(RouteInterceptor.class).intercept(route, new RouteInterceptorCallback() {
+            getCombineService(RouteInterceptor.class, routeCombineStrategy).intercept(route, new RouteInterceptorCallback() {
                 @Override
                 public void onContinue(final RouteBuilder route) {
                     runInMainThread(new Runnable() {
@@ -69,14 +73,6 @@ public class RouteManager implements IService {
             });
 
             return null;
-        } else if (Fragment.class.isAssignableFrom(service)) {
-
-        } else if (SUPPORT_FRAGMENT.equals(service.getName())){
-            try {
-                Class<?> supportFragment = Class.forName(SUPPORT_FRAGMENT);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
         } else {
             if (callback != null) {
                 callback.onLost(route);

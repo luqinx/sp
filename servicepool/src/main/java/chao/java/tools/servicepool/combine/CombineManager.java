@@ -10,6 +10,7 @@ import java.util.Set;
 
 import chao.android.tools.interceptor.Interceptor;
 import chao.android.tools.interceptor.OnInvoke;
+import chao.java.tools.servicepool.ExceptionHandler;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceFactories;
 import chao.java.tools.servicepool.IServiceFactory;
@@ -38,11 +39,17 @@ public class CombineManager {
 
     private HashMap<Class, List<ServiceProxy>> combinedCache = new HashMap<>();
 
+    private ExceptionHandler exceptionHandler;
+
 
     public CombineManager() {
     }
 
     public <T extends IService> T getCombineService(final Class<T> serviceClass, final List<IServiceFactories> factories) {
+        return getCombineService(serviceClass, factories, null);
+    }
+
+    public <T extends IService> T getCombineService(final Class<T> serviceClass, final List<IServiceFactories> factories, final CombineStrategy strategy) {
         if (serviceClass == null) {
             throw new IllegalArgumentException("argument 'serviceClass' should not be null.");
         }
@@ -78,15 +85,10 @@ public class CombineManager {
                             return proxies.iterator();
                         }
 
-                        CombineStrategy combineStrategy = null;
-                        if (serviceClass != CombineStrategy.class) {
-                            combineStrategy = ServicePool.getCombineService(CombineStrategy.class);
-                        }
-
-                        if(combineStrategy != null
-                                && !(combineStrategy instanceof NoOpInstance)
-                                && combineStrategy.filter(serviceClass, method, args)
-                                && combineStrategy.invoke(proxies, serviceClass, method, args)) {
+                        if(strategy != null
+                                && !(strategy instanceof NoOpInstance)
+                                && strategy.filter(serviceClass, method, args)
+                                && strategy.invoke(proxies, serviceClass, method, args)) {
                             return null;
                         }
 
@@ -96,7 +98,10 @@ public class CombineManager {
                             try {
                                 result = method.invoke(proxy.getService(), args);
                             } catch (Throwable e) {
-                                throw new CombineException(e.getMessage(), e);
+                                if (exceptionHandler != null) {
+                                    exceptionHandler.onException(e, e.getMessage());
+                                }
+                                e.printStackTrace();
                             }
                         }
                         return result;
@@ -144,4 +149,7 @@ public class CombineManager {
     }
 
 
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+    }
 }

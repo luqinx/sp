@@ -11,6 +11,5 @@ public interface ILogger extends IService {
     void i(String tag, String message);
     void v(String tag, String message);
     void log(Object... messages);
-    void log(String message, Object... args);
     void method();
 }

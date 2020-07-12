@@ -21,7 +21,6 @@ import chao.java.tools.servicepool.thirdparty.CancelableCountDownLatch;
  * @author luqin
  * @since 2019-10-08
  */
-@Service(priority = IService.Priority.MIN_PRIORITY, scope = IService.Scope.global)
 public class RouteCombineStrategyImpl implements CombineStrategy, Handler.Callback {
 
     private static final int MSG_WHAT_CONTINUE = 1;

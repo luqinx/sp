@@ -1,13 +1,16 @@
 package chao.java.tools.servicepool;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import chao.java.tools.servicepool.combine.CombineCallback;
+import chao.android.tools.interceptor.Interceptor;
+import chao.android.tools.interceptor.OnInvoke;
 import chao.java.tools.servicepool.combine.CombineManager;
+import chao.java.tools.servicepool.combine.CombineStrategy;
 import chao.java.tools.servicepool.debug.Debug;
 
 /**
@@ -29,10 +32,16 @@ public class DefaultServiceController implements ServiceController {
     private final Object serviceLock = new Object();
 
 
+    private ServiceInterceptorStrategy strategy;
+
+    private ExceptionHandler exceptionHandler;
+
     public DefaultServiceController() {
         noOpFactory = new NoOpInstanceFactory();
 
         combineManager = new CombineManager();
+
+        strategy = new ServiceInterceptorStrategy();
     }
 
     @Override
@@ -91,6 +100,11 @@ public class DefaultServiceController implements ServiceController {
     public <T extends IService> T getCombineService(Class<T> serviceClass) {
         return combineManager.getCombineService(serviceClass, factoriesList);
     }
+
+    public <T extends IService> T getCombineService(Class<T> serviceClass, CombineStrategy strategy) {
+        return combineManager.getCombineService(serviceClass, factoriesList, strategy);
+    }
+
 
     private ServiceProxy getService(Class<?> serviceClass) {
 
@@ -162,24 +176,71 @@ public class DefaultServiceController implements ServiceController {
     }
 
     @Override
-    public <T> T getServiceByClass(Class<T> t) {
-        ServiceProxy serviceProxy = getService(t);
-        if (serviceProxy != null) {
-            return t.cast(serviceProxy.getService());
-        }
-        return noOpFactory.newInstance(t);
-    }
-
-    @Override
     public void loadFinished() {
     }
 
-    public <T extends IService> T getServiceByClass(Class<T> tClass, T defaultService) {
-        ServiceProxy serviceProxy = getService(tClass);
+    @Override
+    public <T> T getServiceByClass(Class<T> t) {
+        T instance = null;
+        ServiceProxy serviceProxy = getService(t);
         if (serviceProxy != null) {
-            return tClass.cast(serviceProxy.getService());
+            instance = t.cast(serviceProxy.getService());
         }
-        return defaultService;
+        if (instance == null) {
+            return noOpFactory.newInstance(t);
+        }
+        return getServiceByClassInternal(t, instance);
+    }
+
+
+    public <T extends IService> T getServiceByClass(Class<T> t, T defaultService) {
+        ServiceProxy serviceProxy = getService(t);
+        T instance = null;
+        if (serviceProxy != null) {
+            instance = t.cast(serviceProxy.getService());
+        }
+        if (instance == null) {
+            return defaultService;
+        }
+        return getServiceByClassInternal(t, instance);
+    }
+
+    private <T> T getServiceByClassInternal(Class<T> t, T instance) {
+        if (t.isInterface()) {
+            final T finalInstance = instance;
+            return Interceptor.of(instance, t).intercepted(true).invoke(new OnInvoke<T>() {
+
+                class ResultHolder {
+                    Object result;
+                }
+                @Override
+                public Object onInvoke(T source, final Method method, final Object[] args) {
+                    final ResultHolder holder = new ResultHolder();
+                    getCombineService(IServiceInterceptor.class, strategy).intercept(finalInstance, method, args, new IServiceInterceptorCallback() {
+                        @Override
+                        public void onContinue(Method interceptorMethod, Object... interceptorArgs) {
+                            try {
+                                holder.result = method.invoke(finalInstance, args);
+                            } catch (Throwable e) {
+                                if (exceptionHandler != null) {
+                                    exceptionHandler.onException(e, e.getMessage());
+                                }
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onInterrupt(Object lastResult) {
+                            holder.result = lastResult;
+                        }
+                    });
+                    return holder.result;
+                }
+
+            }).newInstance();
+        } else {
+            return instance;
+        }
     }
 
     public void addFactories(IServiceFactories factories) {
@@ -209,5 +270,10 @@ public class DefaultServiceController implements ServiceController {
 
     public IPathService getPathService() {
         return getServiceByClass(IPathService.class);
+    }
+
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+        this.combineManager.setExceptionHandler(exceptionHandler);
     }
 }

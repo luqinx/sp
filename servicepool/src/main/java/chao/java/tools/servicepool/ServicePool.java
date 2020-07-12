@@ -2,6 +2,7 @@ package chao.java.tools.servicepool;
 
 import java.util.Map;
 
+import chao.java.tools.servicepool.combine.CombineStrategy;
 import chao.java.tools.servicepool.combine.CombineThreadExecutor;
 import chao.java.tools.servicepool.debug.Debug;
 import chao.java.tools.servicepool.event.EventManager;
@@ -203,6 +204,7 @@ public class ServicePool {
 
     public static void setExceptionHandler(ExceptionHandler _exceptionHandler) {
         exceptionHandler = _exceptionHandler;
+        controller.setExceptionHandler(_exceptionHandler);
     }
 
     public static void registerEventService(EventService eventService) {
@@ -215,5 +217,9 @@ public class ServicePool {
 
     public static <T extends IService> T getCombineService(Class<T> combineClass) {
         return controller.getCombineService(combineClass);
+    }
+
+    public static <T extends IService> T getCombineService(Class<T> combineClass, CombineStrategy strategy) {
+        return controller.getCombineService(combineClass, strategy);
     }
 }

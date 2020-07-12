@@ -1,12 +1,14 @@
 package chao.android.tools.service_pools;
 
 import chao.java.tools.servicepool.IService;
+import chao.java.tools.servicepool.annotation.Service;
 
 /**
  * @author qinchao
  * @since 2019/6/25
  */
-public class A implements IService {
+@Service
+public class A implements IA, IService {
 
     private int a;
 

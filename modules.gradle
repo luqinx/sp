@@ -3,7 +3,7 @@
 module("servicepool")
         .remote("chao.java.tools:servicepool:1.1.1")
         .project(':servicepool')
-//        .include()
+        .include()
 module("servicepool_android")
         .remote("chao.java.tools:servicepool-android:1.1.0")
         .project(':servicepool_android')
@@ -27,7 +27,7 @@ module("pool").project(":pool").include()
 
 
 
-remote("interceptor", "chao.android.tools:interceptor:0.0.1.dev2")
+remote("interceptor", "chao.android.tools:interceptor:0.0.2.dev2")
 remote("ami", "chao.android.tools:ami:1.0.2")
 
 remote("guava", "com.google.guava:guava:19.0")

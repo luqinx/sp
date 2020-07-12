@@ -1,7 +1,13 @@
 package chao.android.tools.service_pools;
 
+import android.util.TimeUtils;
 import android.view.View;
 
+import com.google.common.base.Stopwatch;
+
+import java.util.concurrent.TimeUnit;
+
+import chao.app.ami.Ami;
 import chao.app.ami.base.AmiSimpleFragment;
 import chao.java.tools.servicepool.ServicePool;
 
@@ -13,20 +19,36 @@ public class SimpleFragment extends AmiSimpleFragment {
     @Override
     public void onClick(View v) {
 
+        IA a = ServicePool.getService(IA.class);
         try {
-            Class<?> clazz = Class.forName("chao.android.tools.service_pools.NoOpA_1", false, getActivity().getClassLoader());
-            System.out.println(clazz.getName());
-        } catch (ClassNotFoundException e) {
+            System.out.println("" + a.getInt());
+        } catch (Throwable e) {
             e.printStackTrace();
         }
-        A a = ServicePool.getService(A.class);
-        System.out.println(a);
+        System.out.println(""+ a);
 
-        try {
-            Class<?> clazz = Class.forName("chao.android.tools.service_pools.NoOpA_1", false, getActivity().getClassLoader());
-            System.out.println(clazz.getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
+        IA a1 = ServicePool.getService(IA.class);
+        int ai1 = a1.getInt();
+        System.out.println(ai1);
+        stopwatch.stop();
+
+        long time1 = stopwatch.elapsed(TimeUnit.NANOSECONDS);
+
+        stopwatch.reset();
+
+        stopwatch.start();
+        IA a2 = new A();
+        int ai2 = a2.getInt();
+        System.out.println(ai2);
+        stopwatch.stop();
+
+        long time2 = stopwatch.elapsed(TimeUnit.NANOSECONDS);
+
+
+        Ami.log(time1 + ": " + time2);
+
     }
 }

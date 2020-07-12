@@ -26,7 +26,7 @@ public interface CombineStrategy extends IService {
     /**
      * CombineService 服务组执行方式的策略
      *
-     * @param proxies   service组的代理
+     * @param proxies   service组的代理, 已经根据优先级排序
      * @param serviceClass  service类
      * @param method    将执行的方法
      * @param args      执行方法的参数

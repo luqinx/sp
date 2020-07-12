@@ -90,6 +90,18 @@ service初始化增加条件 主线程idle
 path投放
 
 
+ServicePool 方法拦截
+
+
+分组方法查找
+
+
+Service支持泛型
+
+
+changelog
+
+
 问题汇总:
 
 1. android 9.0 byte-buddy适配失败       done.

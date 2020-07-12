@@ -65,7 +65,6 @@ public class AndroidLogger implements ILogger {
         Log.d(TAG, log.toString());
     }
 
-    @Override
     public void log(String message, Object... args) {
         Log.d(TAG, String.format(message, args));
     }
