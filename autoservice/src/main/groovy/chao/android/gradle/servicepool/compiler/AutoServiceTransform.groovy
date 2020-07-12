@@ -27,6 +27,7 @@ class AutoServiceTransform extends HunterTransform {
 
     @Override
     protected void transformFinished(File destJar) {
+        System.out.println("transformFinished" + destJar.path)
         autoServiceWeaver.transformFinished(destJar)
     }
 

@@ -11,7 +11,7 @@ public interface Constant extends Opcodes {
 
     String SERVICE_ASM_NAME = SERVICE_FULL_NAME.replaceAll("\\.", "/");
 
-    String GENERATE_SERVICE_PACKAGE_NAME = "chao/java/tools/servicepool/gen/";
+    String GENERATE_SERVICE_PACKAGE_NAME = "chao/java/tools/servicepool/gen";
 
     /** FactoriesService **/
     String SERVICE_FACTORIES_ASM_NAME = "chao/java/tools/servicepool/ServiceFactories";
@@ -21,7 +21,7 @@ public interface Constant extends Opcodes {
 
     String GENERATE_SERVICE_FACTORIES_NAME = "ServiceFactoriesInstance";
 
-    String GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME = GENERATE_SERVICE_PACKAGE_NAME + GENERATE_SERVICE_FACTORIES_NAME;
+    String GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME = GENERATE_SERVICE_PACKAGE_NAME + "/" + GENERATE_SERVICE_FACTORIES_NAME;
 
     String GENERATE_SERVICE_SUFFIX = "gen_ServiceFactory";
 
@@ -30,14 +30,14 @@ public interface Constant extends Opcodes {
 
     String GENERATE_INIT_SERVICES_NAME = "InitServiceManagerInstance";
 
-    String GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME = GENERATE_SERVICE_PACKAGE_NAME + GENERATE_INIT_SERVICES_NAME;
+    String GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME = GENERATE_SERVICE_PACKAGE_NAME + "/" + GENERATE_INIT_SERVICES_NAME;
 
     /** PathServices **/
     String SERVICE_PATH_SERVICES_ASM_NAME = "chao/java/tools/servicepool/PathServices";
 
     String GENERATE_PATH_SERVICES_NAME = "PathServicesInstance";
 
-    String GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME = GENERATE_SERVICE_PACKAGE_NAME + GENERATE_PATH_SERVICES_NAME;
+    String GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME = GENERATE_SERVICE_PACKAGE_NAME + "/" + GENERATE_PATH_SERVICES_NAME;
 
 
 
@@ -66,6 +66,14 @@ public interface Constant extends Opcodes {
 
 
     String INIT_DESC = "Lchao/java/tools/servicepool/annotation/Init;";
+
+
+    String SERVICE_ANNOTATION = "chao.java.tools.servicepool.annotation.Service";
+
+    String SERVICES_ANNOTATION = "chao.java.tools.servicepool.annotation.Services";
+
+
+    String SERVICE_POOL_PACKAGE_NAME = "chao.java.tools.servicepool";
 
 
     /** Event **/

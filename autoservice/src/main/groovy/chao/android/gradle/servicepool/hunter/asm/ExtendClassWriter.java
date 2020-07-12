@@ -14,6 +14,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import chao.android.gradle.servicepool.compiler.Constant;
+import chao.java.tools.servicepool.IService;
+
 
 /**
  * Created by quinn on 30/08/2018
@@ -109,8 +112,13 @@ public class ExtendClassWriter extends ClassWriter {
         return OBJECT;
     }
 
-    private boolean isImplements(final String interfaceName, final ClassReader classReader) {
+    public boolean isImplements(final String interfaceName, final ClassReader classReader) {
+//        System.out.println("" + interfaceName + " implementation " + classReader.getClassName());
         ClassReader classInfo = classReader;
+
+        if (classReader.getClassName().equals(Constant.SERVICE_ASM_NAME)) {
+            return false;
+        }
 
         while (classInfo != null) {
             final String[] interfaceNames = classInfo.getInterfaces();
@@ -137,7 +145,6 @@ public class ExtendClassWriter extends ClassWriter {
             }
             classInfo = getClassReader(superClassName);
         }
-
         return false;
     }
 
@@ -181,13 +188,14 @@ public class ExtendClassWriter extends ClassWriter {
         return classReader.getSuperName();
     }
 
-    private ClassReader getClassReader(final String className) {
+    public ClassReader getClassReader(final String className) {
         InputStream inputStream = urlClassLoader.getResourceAsStream(className + ".class");
         try {
             if (inputStream != null) {
                 return new ClassReader(inputStream);
             }
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             if (inputStream != null) {
                 try {
@@ -211,7 +219,7 @@ public class ExtendClassWriter extends ClassWriter {
                 }
             }
         } catch (Throwable e) {
-            //ignore
+            e.printStackTrace();
         }
         return false;
     }

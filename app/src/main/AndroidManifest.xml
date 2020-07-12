@@ -17,6 +17,9 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity android:name=".MainActivity">
+        </activity>
+
+        <activity android:name=".LauncherActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,12 +27,14 @@
             </intent-filter>
         </activity>
 
+
         <activity android:name=".sample.SimpleBaseActivity"/>
 
         <activity android:name=".init.InitSampleActivity"/>
 
 
-        <activity android:name=".SecondActivity"/>
+        <activity android:name=".SecondActivity">
+        </activity>
 
         <activity android:name=".route.TestRouteActivity"/>
 

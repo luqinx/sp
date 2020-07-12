@@ -7,7 +7,6 @@ import chao.java.tools.servicepool.IService;
  * @since 2019/5/5
  */
 public class TestAbsImplService extends TestAbsService implements IService, II {
-    @Override
     public String tag() {
         return null;
     }

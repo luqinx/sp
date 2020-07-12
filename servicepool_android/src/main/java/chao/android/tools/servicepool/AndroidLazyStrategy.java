@@ -2,6 +2,7 @@ package chao.android.tools.servicepool;
 
 import android.util.Log;
 
+
 import com.android.dx.dex.DexOptions;
 import com.android.dx.dex.cf.CfOptions;
 
@@ -26,7 +27,7 @@ public enum AndroidLazyStrategy implements TypeResolutionStrategy, TypeResolutio
      */
     INSTANCE;
 
-    File NO_OP_DEX_DIR = new File(AndroidServicePool.getContext().getFilesDir(), "dexs");
+    File NO_OP_DEX_DIR = new File(AndroidServicePool.getContext().getFilesDir(), "autoservice_dexs");
 
 
     private AndroidClassLoadingStrategy loadingStrategy = null;

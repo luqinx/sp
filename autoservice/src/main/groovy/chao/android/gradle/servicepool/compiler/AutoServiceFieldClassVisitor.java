@@ -86,7 +86,7 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
                         field.annotationValue = field.desc;
                     }
                     mv.visitLdcInsn(Type.getType(field.annotationValue));
-                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
+                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/IService;", false);
                     mv.visitTypeInsn(CHECKCAST, field.asmFullName);
                     mv.visitFieldInsn(PUTSTATIC, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
                 }
@@ -138,7 +138,7 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
                         field.annotationValue = field.desc;
                     }
                     mv.visitLdcInsn(Type.getType(field.annotationValue));
-                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
+                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/IService;", false);
                     mv.visitTypeInsn(CHECKCAST, field.asmFullName);
                     mv.visitFieldInsn(PUTFIELD, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
                 }
@@ -174,7 +174,7 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
                         field.annotationValue = field.desc;
                     }
                     mv.visitLdcInsn(Type.getType(field.annotationValue));
-                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
+                    mv.visitMethodInsn(INVOKESTATIC, "chao/java/tools/servicepool/ServicePool", "getService", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/IService;", false);
                     mv.visitTypeInsn(CHECKCAST, field.asmFullName);
                     mv.visitFieldInsn(PUTSTATIC, AutoServiceFieldClassVisitor.this.owner, field.name, field.desc);
                 }

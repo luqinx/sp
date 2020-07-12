@@ -14,7 +14,7 @@ package chao.java.tools.servicepool;
  * @author luqin
  * @since 2019-09-26
  */
-public interface InitServiceManager {
+public interface InitServiceManager extends IService {
 
     void initService();
 

@@ -10,6 +10,7 @@ import com.android.build.api.transform.Transform;
 import com.android.build.api.transform.TransformException;
 import com.android.build.api.transform.TransformInput;
 import com.android.build.api.transform.TransformOutputProvider;
+import com.android.build.gradle.internal.pipeline.ExtendedContentType;
 import com.android.build.gradle.internal.pipeline.TransformManager;
 import com.android.ide.common.internal.WaitableExecutor;
 import com.google.common.io.Files;
@@ -190,7 +191,7 @@ public class HunterTransform extends Transform {
         scopes.add(SUB_PROJECTS);
 
         File dest = outputProvider.getContentLocation(
-                "sp$$autoservice.jar",
+                "autoservice",
                 contentTypes,
                 scopes,
                 Format.JAR);

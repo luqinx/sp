@@ -2,6 +2,7 @@ package chao.android.tools.service_pools.test;
 
 import android.os.SystemClock;
 
+import chao.app.ami.Ami;
 import chao.java.tools.servicepool.IInitService;
 import chao.java.tools.servicepool.annotation.Init;
 import chao.java.tools.servicepool.annotation.Service;
@@ -15,7 +16,9 @@ import chao.java.tools.servicepool.annotation.Service;
 public class InitService5 implements IInitService {
     @Override
     public void onInit() {
+        Ami.log("start");
         SystemClock.sleep(1000);
+        Ami.log("done");
     }
 }
 

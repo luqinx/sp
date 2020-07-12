@@ -7,8 +7,4 @@ import chao.java.tools.servicepool.IService;
  * @since 2019/5/5
  */
 public class TestWeakService implements IService {
-    @Override
-    public String tag() {
-        return null;
-    }
 }

@@ -1,5 +1,6 @@
 package chao.android.gradle.servicepool.compiler
 
+import chao.android.gradle.servicepool.Logger
 import chao.android.gradle.servicepool.hunter.asm.BaseWeaver
 import chao.android.gradle.servicepool.hunter.asm.ExtendClassWriter
 import chao.java.tools.servicepool.IService
@@ -59,9 +60,24 @@ class AutoServiceWeaver extends BaseWeaver {
     }
 
     private ClassVisitor collectServiceInfo(ExtendClassWriter classWriter, AutoServiceAnnotationDetect classNode) {
-//        logger.log(classNode.className)
+        Logger logger = new Logger()
+//        logger.log("class: " + classNode.className)
         //因为使用ServicePool.getService(xxx)获取时的可能是xxx的任意子类，所以这里注册所有子类
-        List<String> classes = classWriter.getSuperNames(classNode.className)
+        List<String> allclasses = classWriter.getSuperNames(classNode.className)
+
+        List<String> classes = new ArrayList<>()
+        for (String descName: allclasses) {
+            String className = descName.replaceAll("/", ".")
+//            logger.log(descName + " subclass: " + className)
+            boolean implementIService = classWriter.isImplements(Constant.SERVICE_ASM_NAME, classWriter.getClassReader(descName))
+            boolean hasAnnotationService = classWriter.typeHasAnnotation(className, Constant.SERVICE_ANNOTATION)
+            boolean hasAnnotationServices = classWriter.typeHasAnnotation(className, Constant.SERVICES_ANNOTATION)
+//            logger.log(className + " implemention IService ? " + implementIService + ", has Service? " + hasAnnotationService + ", has Services: " + hasAnnotationServices)
+            if (implementIService || hasAnnotationService || hasAnnotationServices) {
+                classes.add(className)
+//                logger.log(descName + " subclasses: " + classes)
+            }
+        }
 //        List<String> classes = Collections.singletonList(classNode.className)
         ServiceInfo serviceInfo = new ServiceInfo(classNode.className)
         serviceInfo.parse(classNode.typeServiceAnnotation)
@@ -75,10 +91,9 @@ class AutoServiceWeaver extends BaseWeaver {
         println("AutoService: Find service class " + serviceInfo)
 
         for (String clazz: classes) {
-            if (IService.class.name.replaceAll("\\.", "/") == clazz) {
+            if (IService.class.name == clazz) {
                 continue
             }
-            clazz = clazz.replaceAll("/", ".")
             int last = clazz.lastIndexOf('.')
             String pkgName = last == -1 ? clazz : clazz.substring(0, last)
 
@@ -122,18 +137,34 @@ class AutoServiceWeaver extends BaseWeaver {
 
     void transformFinished(File destJar) {
 
+//        new Logger().log(serviceInfoMap.toString())
+
         ZipOutputStream outputZip = new ZipOutputStream(new BufferedOutputStream(
                 Files.newOutputStream(destJar.toPath())))
 
         try {
+            String generateServicePkg = Constant.SERVICE_POOL_PACKAGE_NAME
+            List<ServiceInfo> buildIns = serviceInfoMap.get(generateServicePkg)
+            if (buildIns == null) {
+                buildIns = new ArrayList<>()
+                serviceInfoMap.put(generateServicePkg, buildIns)
+            }
+
             //生成 ServiceFactoriesInstance
             writeGenerateServiceFactories(outputZip)
+            ServiceInfo factoriesInfo = new ServiceInfo(Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME)
+            buildIns.add(factoriesInfo)
+
 
             //生成 InitServicesInstance
             writeGenerateInitServices(outputZip)
+            ServiceInfo initInfo = new ServiceInfo(Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME)
+            buildIns.add(initInfo)
             
             //生成 PathServicesInstance
             writeGeneratePathServices(outputZip)
+            ServiceInfo pathInfo = new ServiceInfo(Constant.GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME)
+            buildIns.add(pathInfo)
 
 
             for (String pkgName : serviceInfoMap.keySet()) {
@@ -154,7 +185,7 @@ class AutoServiceWeaver extends BaseWeaver {
     private void writeGenerateInitServices(ZipOutputStream outputZip) {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
 
-        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME, null, Constant.SERVICE_INIT_SERVICES_ASM_NAME)
+        classWriter.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME, null, Constant.SERVICE_INIT_SERVICES_ASM_NAME, Constant.SERVICE_ASM_NAME)
         classWriter.visitSource(Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME, null)
 
         MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
@@ -189,7 +220,7 @@ class AutoServiceWeaver extends BaseWeaver {
     private void writeGeneratePathServices(ZipOutputStream outputZip) {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
 
-        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, Constant.GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME, null, Constant.SERVICE_PATH_SERVICES_ASM_NAME)
+        classWriter.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, Constant.GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME, null, Constant.SERVICE_PATH_SERVICES_ASM_NAME, Constant.SERVICE_ASM_NAME)
         classWriter.visitSource(Constant.GENERATE_PATH_SERVICE_INSTANCE_ASM_NAME, null)
 
         MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
@@ -236,7 +267,7 @@ class AutoServiceWeaver extends BaseWeaver {
     private void writeGenerateServiceFactories(ZipOutputStream outputZip) {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
 
-        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, null, Constant.SERVICE_FACTORIES_ASM_NAME, null)
+        classWriter.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, null, Constant.SERVICE_FACTORIES_ASM_NAME, Constant.SERVICE_ASM_NAME)
         classWriter.visitSource(Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME, null)
 
         MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
@@ -248,6 +279,7 @@ class AutoServiceWeaver extends BaseWeaver {
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
             methodVisitor.visitLdcInsn(pkgName)
             String serviceFactory = pkgName.replaceAll("\\.", "/") + "/" + Constant.GENERATE_SERVICE_SUFFIX
+            serviceFactory = serviceFactory.replaceAll("//", "/")
             methodVisitor.visitTypeInsn(Opcodes.NEW, serviceFactory)
             methodVisitor.visitInsn(Opcodes.DUP)
             methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, serviceFactory, "<init>", "()V", false)
@@ -446,7 +478,8 @@ class AutoServiceWeaver extends BaseWeaver {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES)
 
         String className = pkgName.replaceAll("\\.", "/") + "/" + Constant.GENERATE_SERVICE_SUFFIX
-        classWriter.visit(Opcodes.ASM6, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", Constant.SERVICE_FACTORY_ASM_NAME)
+        className = className.replaceAll("//", "/")
+        classWriter.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, className, null, "java/lang/Object", Constant.SERVICE_FACTORY_ASM_NAME)
 
         //classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
         MethodVisitor initMv = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)

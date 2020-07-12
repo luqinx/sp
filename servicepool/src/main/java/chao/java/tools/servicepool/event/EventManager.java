@@ -8,6 +8,7 @@ import java.util.Map;
 import chao.android.tools.interceptor.Interceptor;
 import chao.android.tools.interceptor.OnInvoke;
 import chao.java.tools.servicepool.ILogger;
+import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -18,7 +19,6 @@ public class EventManager {
 
     private static final String TAG = "sp.EventManager";
 
-    @Service
     private ILogger logger;
 
 //    private List<WeakReference<EventService>> weakServices;
@@ -27,6 +27,7 @@ public class EventManager {
 
 
     public EventManager() {
+        logger = ServicePool.getService(ILogger.class);
 //        weakServices = new ArrayList<>();
         weakServiceMap = new HashMap<>();
     }

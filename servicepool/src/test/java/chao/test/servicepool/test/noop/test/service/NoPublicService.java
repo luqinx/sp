@@ -10,8 +10,4 @@ class NoPublicService implements IService {
 
 //    public NoPublicService() {}
 
-    @Override
-    public String tag() {
-        return null;
-    }
 }

@@ -73,12 +73,12 @@ public class ServicePool {
             }
         }
 
-        IServiceFactories factories = controller.getServiceByClass(IServiceFactories.class);
-        if (factories instanceof NoOpInstance) {
-            Debug.addError("IServiceFactories not found !!!");
-            throw new ServicePoolException("sp internal err.");
-        }
-        controller.addFactories(factories);
+//        IServiceFactories factories = controller.getServiceByClass(IServiceFactories.class);
+//        if (factories == null || factories instanceof NoOpInstance) {
+//            Debug.addError("IServiceFactories not found !!!");
+//            throw new ServicePoolException("sp internal err.");
+//        }
+//        controller.addFactories(factories);
         controller.loadFinished();
         loaded = true;
 
@@ -103,7 +103,7 @@ public class ServicePool {
      * @return  service实例对象, 如果没有获取到具体的实现，
      *          会通过 {@link NoOpInstanceFactory} 返回一个 {@link NoOpInstance} Mock实例
      */
-    public static <T> T getService(Class<T> serviceClass) {
+    public static <T extends IService> T getService(Class<T> serviceClass) {
         try {
             checkLoader();
             return controller.getServiceByClass(serviceClass);
@@ -177,6 +177,7 @@ public class ServicePool {
                     try {
                         loadServices();
                     } catch (Throwable e) {
+                        e.printStackTrace();
                         if (exceptionHandler != null) {
                             exceptionHandler.onException(e, e.getMessage());
                         }

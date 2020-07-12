@@ -6,7 +6,7 @@ import java.util.List;
  * @author qinchao
  * @since 2019/4/30
  */
-public interface DependencyManager {
+public interface DependencyManager extends IService {
 //    void addService(IInitService service);
 //
 //    void servicesInit();

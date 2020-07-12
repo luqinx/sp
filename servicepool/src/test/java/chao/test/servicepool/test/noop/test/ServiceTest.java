@@ -47,16 +47,4 @@ public class ServiceTest extends SampleCase {
     public void testNoPublicServcie() throws ClassNotFoundException {
         ServicePool.getService(Class.forName("chao.test.servicepool.test.noop.test.service.NoPublicService").asSubclass(IService.class));
     }
-
-    @Test
-    public void testAbsService() {
-        assertInstanceOf(ServicePool.getService(TestAbsService.class, TestAbsImplService.class), TestAbsImplService.class);
-        assertNotInstanceOf(ServicePool.getService(TestAbsService.class, TestAbsImplService.class), NoOpInstance.class);
-    }
-
-    @Test
-    public void testInterfaceService() {
-        assertInstanceOf(ServicePool.getService(II.class, TestAbsImplService.class), TestAbsImplService.class);
-        assertNotInstanceOf(ServicePool.getService(II.class, TestAbsImplService.class), NoOpInstance.class);
-    }
 }

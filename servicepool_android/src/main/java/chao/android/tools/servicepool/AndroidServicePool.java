@@ -8,6 +8,7 @@ import android.os.Looper;
 import chao.android.tools.servicepool.route.RouteBuilder;
 import chao.android.tools.servicepool.route.RouteManager;
 import chao.java.tools.servicepool.ServicePool;
+import dalvik.system.DexClassLoader;
 
 /**
  * @author qinchao
@@ -17,6 +18,9 @@ public class AndroidServicePool extends ServicePool {
 
     @SuppressLint("StaticFieldLeak")
     private static Context sContext;
+
+
+    private static ClassLoader mockClassLoader;
 
     public static Context getContext() {
         return sContext;

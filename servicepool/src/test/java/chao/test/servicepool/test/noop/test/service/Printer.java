@@ -1,8 +1,5 @@
 package chao.test.servicepool.test.noop.test.service;
 
-import chao.java.tools.servicepool.IInitService;
-import java.util.List;
-
 /**
  * @author qinchao
  * @since 2019/4/30
@@ -22,11 +19,6 @@ public class Printer implements IPrinter {
     }
 
     @Override
-    public String tag() {
-        return null;
-    }
-
-    @Override
     public void onInit() {
         try {
             Thread.sleep((long) (Math.random() * 3000));
@@ -35,13 +27,4 @@ public class Printer implements IPrinter {
         }
     }
 
-    @Override
-    public boolean async() {
-        return false;
-    }
-
-    @Override
-    public List<IInitService> dependencies() {
-        return null;
-    }
 }

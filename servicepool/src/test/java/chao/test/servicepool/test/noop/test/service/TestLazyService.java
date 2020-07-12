@@ -7,18 +7,4 @@ import chao.java.tools.servicepool.IService;
  * @since 2019/5/4
  */
 public class TestLazyService implements IService {
-    @Override
-    public String tag() {
-        return null;
-    }
-
-    @Override
-    public int priority() {
-        return 0;
-    }
-
-    @Override
-    public int scope() {
-        return 0;
-    }
 }
