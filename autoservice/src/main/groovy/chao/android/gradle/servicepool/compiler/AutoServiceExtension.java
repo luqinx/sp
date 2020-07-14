@@ -15,6 +15,8 @@ public class AutoServiceExtension {
 
     private List<String> excludes;
 
+    private boolean inheritedOn;
+
     public AutoServiceExtension() {
         excludes = new ArrayList<>();
         //排除掉android framework包， android support, androidx
@@ -29,6 +31,8 @@ public class AutoServiceExtension {
 
         excludes.add("io.reactivex.");
         excludes.add("org.apache.");
+
+        inheritedOn = true; //默认打开
     }
 
     public List<String> excludes() {
@@ -45,5 +49,13 @@ public class AutoServiceExtension {
 
     public boolean isDebuggable() {
         return debuggable;
+    }
+
+    public boolean isInheritedOn() {
+        return inheritedOn;
+    }
+
+    public void setInheritedOn(boolean inheritedOn) {
+        this.inheritedOn = inheritedOn;
     }
 }

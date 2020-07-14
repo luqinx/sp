@@ -40,6 +40,10 @@
 
         <activity android:name=".route.TestRouteTargetActivity"/>
 
+        <activity android:name=".inherited.InheritedInheritedActivity1"/>
+
+        <activity android:name=".inherited.InheritedInheritedActivity2"/>
+
         <meta-data
             android:name="com.openinstall.APP_KEY"
             android:value="y60srl"/>

@@ -43,7 +43,11 @@ public class TestRouteActivity extends BaseActivity {
     private Parcelable pv;
 
     @Service
-    private ILogger logger;
+    private static ILogger logger;
+
+    public TestRouteActivity() {
+        System.out.println("haha ");
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

@@ -45,6 +45,8 @@ autoservice {
     exclude "any dependencies full name"
     exclude "any dependencies name prefix"
 
+    inheritedOn true  //默认打开, 打开weave时长是关闭时长的1.5倍
+
 }
 
 dependencies {

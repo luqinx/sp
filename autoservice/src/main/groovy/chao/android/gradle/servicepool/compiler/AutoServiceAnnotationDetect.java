@@ -48,6 +48,8 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
 
     private String[] interfaces;
 
+    private boolean inherited;
+
     private ExtendClassWriter ecw;
 
     public AutoServiceAnnotationDetect(ExtendClassWriter ecw) {
@@ -56,6 +58,20 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         fieldEventAnnotations = new HashMap<>();
         eventInterfaces = new ArrayList<>();
         this.ecw = ecw;
+    }
+
+    public AutoServiceAnnotationDetect(String className, AutoServiceAnnotationDetect copy) {
+        super(ASM6, null);
+        this.className = className;
+        this.hasStaticField = copy.hasStaticField;
+        this.hasEventAnnotation = copy.hasEventAnnotation;
+        this.eventInterfaces = new ArrayList<>(copy.eventInterfaces);
+        this.fieldEventAnnotations = new HashMap<>(copy.fieldEventAnnotations);
+        this.fieldServiceAnnotations = new HashMap<>(copy.fieldServiceAnnotations);
+
+        this.typeServiceAnnotation = new ArrayList<>(copy.typeServiceAnnotation);
+//        this.typeInitAnnotation = new ArrayList<>(copy.typeInitAnnotation);
+        this.inherited = copy.inherited;
     }
 
     @Override
@@ -112,6 +128,18 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         return new AutoServiceAnnotationFieldDetect(fv, field);
     }
 
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public boolean isInherited() {
+        return inherited;
+    }
+
+    public void setInherited(boolean inherited) {
+        this.inherited = inherited;
+    }
+
     public List<Object> getTypeServiceAnnotation() {
         return typeServiceAnnotation;
     }
@@ -156,6 +184,10 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
             if (typeServiceAnnotation != null) {
                 typeServiceAnnotation.add(name);
                 typeServiceAnnotation.add(value);
+            }
+
+            if ("inherited".equals(name) && Boolean.parseBoolean(String.valueOf(value))) {
+                inherited = true;
             }
         }
     }

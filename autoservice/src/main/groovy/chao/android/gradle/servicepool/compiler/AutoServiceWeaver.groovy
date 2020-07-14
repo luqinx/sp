@@ -29,6 +29,22 @@ class AutoServiceWeaver extends BaseWeaver {
         super.weaveJarStarted(jarId)
     }
 
+    private AutoServiceAnnotationDetect detectSuper(String className, ExtendClassWriter classWriter) {
+
+        if (className == null || ExtendClassWriter.OBJECT == className.replaceAll("/", ".")) {
+            return null
+        }
+        ClassReader classReader = classWriter.getClassReader(className)
+        AutoServiceAnnotationDetect detect = new AutoServiceAnnotationDetect(classWriter)
+        classReader.accept(detect, 0)
+
+        if (detect.typeServiceAnnotation) {
+            return detect
+        } else {
+            return detectSuper(classReader.getSuperName(), classWriter)
+        }
+    }
+
     @Override
     byte[] weaveSingleClassToByteArray(int jarId, InputStream inputStream) throws IOException {
         ClassReader classReader = new ClassReader(inputStream)
@@ -44,6 +60,13 @@ class AutoServiceWeaver extends BaseWeaver {
         //RetentionPolicy.RUNTIME是可见， 其他为不可见
         if (detect.typeServiceAnnotation != null) {
             visitor = collectServiceInfo(classWriter, detect)
+        } else if (extension.inheritedOn){
+            String superClassName = classReader.getSuperName()
+            AutoServiceAnnotationDetect superDetect = detectSuper(superClassName, classWriter)
+            if (superDetect != null) {
+                superDetect.setClassName(classReader.getClassName())
+                collectServiceInfo(classWriter, superDetect)
+            }
         }
 
         if (detect.hasEventAnnotation) {

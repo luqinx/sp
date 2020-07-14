@@ -193,7 +193,7 @@ public class DefaultServiceController implements ServiceController {
     }
 
 
-    public <T extends IService> T getServiceByClass(Class<T> t, T defaultService) {
+    public <T> T getServiceByClass(Class<T> t, T defaultService) {
         ServiceProxy serviceProxy = getService(t);
         T instance = null;
         if (serviceProxy != null) {

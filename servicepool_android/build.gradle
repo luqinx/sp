@@ -29,6 +29,7 @@ abkit {
         artifactId 'servicepool-android'
         groupId 'chao.java.tools'
         versionName '1.2.0'
+        publish2Local true
     }
 }
 

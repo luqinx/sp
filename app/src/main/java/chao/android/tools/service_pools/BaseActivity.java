@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import chao.app.ami.base.AMIActivity;
+import chao.java.tools.servicepool.IService;
 
 /**
  * @author luqin
@@ -14,7 +15,7 @@ import chao.app.ami.base.AMIActivity;
  */
 
 @SuppressLint("Registered")
-public class BaseActivity extends AMIActivity {
+public class BaseActivity extends AMIActivity implements IService {
 
     private Unbinder unbinder;
 

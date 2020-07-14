@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 import chao.android.gradle.servicepool.compiler.Constant;
-import chao.java.tools.servicepool.IService;
 
 
 /**
@@ -25,7 +24,7 @@ public class ExtendClassWriter extends ClassWriter {
 
     public static final String TAG = "ExtendClassWriter";
 
-    private static final String OBJECT = "java/lang/Object";
+    public static final String OBJECT = "java/lang/Object";
 
     private ClassLoader urlClassLoader;
 
@@ -205,6 +204,10 @@ public class ExtendClassWriter extends ClassWriter {
             }
         }
         return null;
+    }
+
+    public InputStream getInputStream(String className) {
+        return urlClassLoader.getResourceAsStream(className + ".class");
     }
 
     public boolean typeHasAnnotation(String itf, String ant) {

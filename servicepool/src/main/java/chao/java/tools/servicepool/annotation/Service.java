@@ -1,6 +1,7 @@
 package chao.java.tools.servicepool.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,6 +19,7 @@ import chao.java.tools.servicepool.IService;
  * RetentionPolicy.RUNTIME 说明:
  * 在和AutoService配合使用时，Service使用RetentionPolicy.Class就够了
  * 在不适用AutoService时,需要使用RetentionPolicy.RUNTIME来获取priority, scope, tag等信息
+ *
  *
  * @author qinchao
  * @since 2019/6/21
@@ -51,5 +53,8 @@ public @interface Service {
 
     Class<?> value() default Void.class;
 
-
+    /**
+     *  当inherited为true时, 被Service标记的类的子类也会被当做一个Service
+     */
+    boolean inherited() default false;
 }
