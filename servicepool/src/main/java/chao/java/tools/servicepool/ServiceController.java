@@ -8,11 +8,11 @@ public interface ServiceController {
 
     void addService(Class<? extends IService> serviceClass);
 
-    <T> T getServiceByClass(Class<T> t);
+    <T extends IService> T getServiceByClass(Class<T> t);
 
     void loadFinished();
 
-    ServiceProxy getProxy(Class<?> clazz);
+    ServiceProxy<? extends IService> getProxy(Class<? extends IService> clazz);
 
     void recycleService(Class clazz);
 }

@@ -12,7 +12,7 @@ public interface IServiceFactory {
 
     HashSet<ServiceProxy> createServiceProxies(Class<?> clazz);
 
-    ServiceProxy createServiceProxy(Class<?> clazz);
+    ServiceProxy<? extends IService> createServiceProxy(Class<?> clazz);
 
     IService createInstance(Class<?> clazz);
 }

@@ -19,13 +19,15 @@ public class ServicePool {
 
     private volatile static boolean loaded = false;
 
-    private static ExceptionHandler exceptionHandler;
+    public static ExceptionHandler exceptionHandler;
 
     public static ILogger logger = new Logger();
 
     private static EventManager eventManager = new EventManager();
 
     public static CombineThreadExecutor executor;
+
+    private static NoOpInstanceFactory noOpFactory;
 
     public static boolean isLoaded() {
         return loaded;
@@ -55,6 +57,8 @@ public class ServicePool {
             return;
         }
         controller = new DefaultServiceController();
+
+        noOpFactory = new NoOpInstanceFactory();
         long start = System.currentTimeMillis();
         ServiceLoader<IService> loader = ServiceLoader.load(IService.class);
         long end = System.currentTimeMillis();
@@ -104,16 +108,20 @@ public class ServicePool {
      * @return  service实例对象, 如果没有获取到具体的实现，
      *          会通过 {@link NoOpInstanceFactory} 返回一个 {@link NoOpInstance} Mock实例
      */
-    public static <T> T getService(Class<T> serviceClass) {
+    public static <T extends IService> T getService(Class<T> serviceClass) {
+        T instance = null;
         try {
             checkLoader();
-            return controller.getServiceByClass(serviceClass);
+            instance = controller.getServiceByClass(serviceClass);
         } catch (Throwable e) {
             if (exceptionHandler != null) {
                 exceptionHandler.onException(e, String.valueOf(serviceClass));
             }
         }
-        return null;
+        if (instance == null) {
+            return noOpFactory.newInstance(serviceClass);
+        }
+        return instance;
     }
 
     /**
@@ -124,7 +132,7 @@ public class ServicePool {
      * @param <T>   service实例对象类型
      * @return  service实例对象
      */
-    public static <T> T getService(Class<T> tClass, T defaultService) {
+    public static <T extends IService> T getService(Class<T> tClass, T defaultService) {
         try {
             checkLoader();
             return controller.getServiceByClass(tClass, defaultService);
@@ -136,7 +144,7 @@ public class ServicePool {
         return null;
     }
 
-    public static <T> T getService(String path) {
+    public static <T extends IService> T getService(String path) {
         Class<? extends IService> clazz = controller.getServiceByPath(path);
         if (clazz == null) {
             return null;
@@ -190,7 +198,7 @@ public class ServicePool {
         }
     }
 
-    public static ServiceProxy getProxy(Class<?> clazz) {
+    public static ServiceProxy getProxy(Class<? extends IService> clazz) {
         try {
             checkLoader();
             return controller.getProxy(clazz);
@@ -204,7 +212,6 @@ public class ServicePool {
 
     public static void setExceptionHandler(ExceptionHandler _exceptionHandler) {
         exceptionHandler = _exceptionHandler;
-        controller.setExceptionHandler(_exceptionHandler);
     }
 
     public static void registerEventService(EventService eventService) {

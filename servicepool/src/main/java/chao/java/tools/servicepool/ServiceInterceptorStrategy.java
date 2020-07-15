@@ -48,6 +48,11 @@ public class ServiceInterceptorStrategy implements CombineStrategy {
             if (callback != null && !holder.intercept) {
                 callback.onContinue(method, args);
             }
+        } else {
+            IServiceInterceptorCallback callback = (IServiceInterceptorCallback) args[3];
+            if (callback != null) {
+                callback.onContinue(method, args);
+            }
         }
         return true;
     }

@@ -23,6 +23,7 @@ import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.android.tools.servicepool.AndroidServicePool;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
+import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Event;
@@ -104,12 +105,17 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 //        testPluginService = ServicePool.getService(TestPluginService.class);
 //        testPluginService.print();
 
+        IService iService = ServicePool.getService("/app/path2");
+        System.out.println("iService instance of PathService2:" + (iService instanceof PathService2));
+
+
         pathService.print();
 
         pathService2.print();
 
 //
         abs.method();
+
         System.out.println("abs instance of NoInstance:" + (abs instanceof NoOpInstance));
 //
         commonService.print();

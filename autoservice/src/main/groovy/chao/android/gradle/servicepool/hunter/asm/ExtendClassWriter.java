@@ -222,7 +222,7 @@ public class ExtendClassWriter extends ClassWriter {
                 }
             }
         } catch (Throwable e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return false;
     }

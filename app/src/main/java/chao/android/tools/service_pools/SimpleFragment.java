@@ -3,6 +3,7 @@ package chao.android.tools.service_pools;
 import android.view.View;
 
 import chao.app.ami.base.AmiSimpleFragment;
+import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -17,5 +18,7 @@ public class SimpleFragment extends AmiSimpleFragment {
     @Override
     public void onClick(View v) {
         printer.print();
+
+        ServicePool.getService(Printer.class).print();
     }
 }

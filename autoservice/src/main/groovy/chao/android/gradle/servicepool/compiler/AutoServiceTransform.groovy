@@ -5,6 +5,7 @@ import com.android.build.api.transform.Context
 import com.android.build.api.transform.TransformException
 import com.android.build.api.transform.TransformInput
 import com.android.build.api.transform.TransformOutputProvider
+import org.apache.commons.io.IOUtils
 import org.gradle.api.Project
 
 /**
@@ -29,6 +30,8 @@ class AutoServiceTransform extends HunterTransform {
     protected void transformFinished(File destJar) {
         System.out.println("transformFinished" + destJar.path)
         autoServiceWeaver.transformFinished(destJar)
+
+//        IOUtils.copy(new FileInputStream(destJar), new )
     }
 
     @Override

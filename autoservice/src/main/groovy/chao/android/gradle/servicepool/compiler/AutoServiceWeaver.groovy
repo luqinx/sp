@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
 
 import java.nio.file.Files
+import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -20,7 +21,7 @@ import java.util.zip.ZipOutputStream
  */
 class AutoServiceWeaver extends BaseWeaver {
 
-    private Map<String, List<ServiceInfo>> serviceInfoMap = new HashMap<>()
+    private Map<String, List<ServiceInfo>> serviceInfoMap = new ConcurrentHashMap<>()
 
     private AutoServiceExtension extension
 
@@ -35,6 +36,12 @@ class AutoServiceWeaver extends BaseWeaver {
             return null
         }
         ClassReader classReader = classWriter.getClassReader(className)
+        if (classReader == null) {
+            if (extension.debuggable) {
+                println("AutoService.W: cannot find " + className)
+            }
+            return null
+        }
         AutoServiceAnnotationDetect detect = new AutoServiceAnnotationDetect(classWriter)
         classReader.accept(detect, 0)
 
@@ -48,9 +55,9 @@ class AutoServiceWeaver extends BaseWeaver {
     @Override
     byte[] weaveSingleClassToByteArray(int jarId, InputStream inputStream) throws IOException {
         ClassReader classReader = new ClassReader(inputStream)
-        if (classReader.interfaces.contains(IService.class.getName())) {
-            return IOUtils.toByteArray(inputStream)
-        }
+//        if (classReader.interfaces.contains(IService.class.getName())) {
+//            return IOUtils.toByteArray(inputStream)
+//        }
         ExtendClassWriter classWriter = new ExtendClassWriter(classLoader, ClassWriter.COMPUTE_MAXS)
         ClassVisitor visitor = classWriter
 
@@ -89,6 +96,9 @@ class AutoServiceWeaver extends BaseWeaver {
         List<String> allclasses = classWriter.getSuperNames(classNode.className)
 
         List<String> classes = new ArrayList<>()
+
+        //过滤，只有实现了IService的类或接口才会通过包名注入字节码,
+        //才能通过ServicePool.getService()实现对象注入
         for (String descName: allclasses) {
             String className = descName.replaceAll("/", ".")
 //            logger.log(descName + " subclass: " + className)

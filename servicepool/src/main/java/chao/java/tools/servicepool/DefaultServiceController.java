@@ -1,14 +1,10 @@
 package chao.java.tools.servicepool;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import chao.android.tools.interceptor.Interceptor;
-import chao.android.tools.interceptor.OnInvoke;
 import chao.java.tools.servicepool.combine.CombineManager;
 import chao.java.tools.servicepool.combine.CombineStrategy;
 import chao.java.tools.servicepool.debug.Debug;
@@ -19,11 +15,10 @@ import chao.java.tools.servicepool.debug.Debug;
  */
 public class DefaultServiceController implements ServiceController {
 
-    private Map<String, ServiceProxy> serviceCache = new ConcurrentHashMap<>();
+    private Map<String, ServiceProxy<? extends IService>> serviceCache = new ConcurrentHashMap<>();
 
-    private Map<String, ServiceProxy> historyCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
+    private Map<String, ServiceProxy<? extends IService>> historyCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
 
-    private NoOpInstanceFactory noOpFactory;
 
     private List<IServiceFactories> factoriesList = new ArrayList<>(1);
 
@@ -32,16 +27,8 @@ public class DefaultServiceController implements ServiceController {
     private final Object serviceLock = new Object();
 
 
-    private ServiceInterceptorStrategy strategy;
-
-    private ExceptionHandler exceptionHandler;
-
     public DefaultServiceController() {
-        noOpFactory = new NoOpInstanceFactory();
-
         combineManager = new CombineManager();
-
-        strategy = new ServiceInterceptorStrategy();
     }
 
     @Override
@@ -49,7 +36,7 @@ public class DefaultServiceController implements ServiceController {
 
         ServiceProxy proxy = serviceCache.get(serviceClass.getName());
         if (proxy == null) {
-            proxy = new ServiceProxy(serviceClass);
+            proxy = new ServiceProxy<>(serviceClass);
         }
 
         cacheService(serviceClass, proxy);
@@ -58,7 +45,7 @@ public class DefaultServiceController implements ServiceController {
 
     }
 
-    private void cacheService(Class<?> serviceClass, ServiceProxy proxy) {
+    private void cacheService(Class<?> serviceClass, ServiceProxy<? extends IService> proxy) {
         if (serviceClass == Object.class) {
             return;
         }
@@ -72,7 +59,7 @@ public class DefaultServiceController implements ServiceController {
         }
     }
 
-    private void cacheSubClasses(Class<?> clazz, ServiceProxy serviceProxy) {
+    private void cacheSubClasses(Class<?> clazz, ServiceProxy<? extends IService> serviceProxy) {
         if (clazz == Object.class) {
             return;
         }
@@ -106,21 +93,21 @@ public class DefaultServiceController implements ServiceController {
     }
 
 
-    private ServiceProxy getService(Class<?> serviceClass) {
+    private ServiceProxy<? extends IService> getService(Class<? extends IService> serviceClass) {
 
         long getServiceStart = System.currentTimeMillis();
 
-        ServiceProxy record = historyCache.get(serviceClass.getName());
+        ServiceProxy<? extends IService> record = historyCache.get(serviceClass.getName());
         if (record != null) {
             return record;
         }
 
-        ServiceProxy cachedProxy = serviceCache.get(serviceClass.getName());
+        ServiceProxy<? extends IService> cachedProxy = serviceCache.get(serviceClass.getName());
         //申请的Service和缓存的Service同类型，属于最高优先级，直接返回
         if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass)) {
             return cachedProxy;
         }
-        ServiceProxy proxy = null;
+        ServiceProxy<? extends IService> proxy = null;
         synchronized (serviceLock) {
             record = historyCache.get(serviceClass.getName());
             if (record != null) {
@@ -147,6 +134,7 @@ public class DefaultServiceController implements ServiceController {
                 }
                 proxy = factory.createServiceProxy(serviceClass);
                 if (proxy != null) {
+                    proxy.setOriginClass(serviceClass);
                     cacheService(proxy.getServiceClass(), proxy);
                     addService(proxy.getServiceClass());
                     proxy = serviceCache.get(proxy.getServiceClass().getName());
@@ -180,21 +168,18 @@ public class DefaultServiceController implements ServiceController {
     }
 
     @Override
-    public <T> T getServiceByClass(Class<T> t) {
+    public <T extends IService> T getServiceByClass(Class<T> t) {
         T instance = null;
         ServiceProxy serviceProxy = getService(t);
         if (serviceProxy != null) {
             instance = t.cast(serviceProxy.getService());
         }
-        if (instance == null) {
-            return noOpFactory.newInstance(t);
-        }
-        return getServiceByClassInternal(t, instance);
+        return instance;
     }
 
 
-    public <T> T getServiceByClass(Class<T> t, T defaultService) {
-        ServiceProxy serviceProxy = getService(t);
+    public <T extends IService> T getServiceByClass(Class<T> t, T defaultService) {
+        ServiceProxy<? extends IService> serviceProxy = getService(t);
         T instance = null;
         if (serviceProxy != null) {
             instance = t.cast(serviceProxy.getService());
@@ -202,45 +187,7 @@ public class DefaultServiceController implements ServiceController {
         if (instance == null) {
             return defaultService;
         }
-        return getServiceByClassInternal(t, instance);
-    }
-
-    private <T> T getServiceByClassInternal(Class<T> t, T instance) {
-        if (t.isInterface()) {
-            final T finalInstance = instance;
-            return Interceptor.of(instance, t).intercepted(true).invoke(new OnInvoke<T>() {
-
-                class ResultHolder {
-                    Object result;
-                }
-                @Override
-                public Object onInvoke(T source, final Method method, final Object[] args) {
-                    final ResultHolder holder = new ResultHolder();
-                    getCombineService(IServiceInterceptor.class, strategy).intercept(finalInstance, method, args, new IServiceInterceptorCallback() {
-                        @Override
-                        public void onContinue(Method interceptorMethod, Object... interceptorArgs) {
-                            try {
-                                holder.result = method.invoke(finalInstance, args);
-                            } catch (Throwable e) {
-                                if (exceptionHandler != null) {
-                                    exceptionHandler.onException(e, e.getMessage());
-                                }
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onInterrupt(Object lastResult) {
-                            holder.result = lastResult;
-                        }
-                    });
-                    return holder.result;
-                }
-
-            }).newInstance();
-        } else {
-            return instance;
-        }
+        return instance;
     }
 
     public void addFactories(IServiceFactories factories) {
@@ -248,7 +195,7 @@ public class DefaultServiceController implements ServiceController {
     }
 
     @Override
-    public ServiceProxy getProxy(Class<?> clazz) {
+    public ServiceProxy<? extends IService> getProxy(Class<? extends IService> clazz) {
         return getService(clazz);
     }
 
@@ -259,7 +206,7 @@ public class DefaultServiceController implements ServiceController {
     }
 
     public void cacheService(IService service) {
-        ServiceProxy proxy = new InnerProxy<>(service);
+        ServiceProxy<? extends IService> proxy = new InnerProxy<>(service);
         historyCache.put(service.getClass().getName(), proxy);
     }
 
@@ -272,8 +219,4 @@ public class DefaultServiceController implements ServiceController {
         return getServiceByClass(IPathService.class);
     }
 
-    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
-        this.combineManager.setExceptionHandler(exceptionHandler);
-    }
 }

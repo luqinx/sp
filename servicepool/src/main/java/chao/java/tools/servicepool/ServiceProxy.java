@@ -5,6 +5,10 @@ import java.util.List;
 
 import chao.java.tools.servicepool.annotation.Init;
 import chao.java.tools.servicepool.annotation.Service;
+import chao.java.tools.servicepool.cache.Global;
+import chao.java.tools.servicepool.cache.Once;
+import chao.java.tools.servicepool.cache.ServiceCacheStrategy;
+import chao.java.tools.servicepool.cache.Temp;
 
 /**
  * Service的代理
@@ -16,11 +20,11 @@ import chao.java.tools.servicepool.annotation.Service;
  * @author qinchao
  * @since 2019/5/5
  */
-public class ServiceProxy {
+public class ServiceProxy<T extends IService> {
 
-    private Class<? extends IService> serviceClass;
+    private Class<T> serviceClass;
 
-    private ServiceCacheStrategy strategy;
+    private ServiceCacheStrategy<T> strategy;
 
     private int priority;
 
@@ -32,7 +36,9 @@ public class ServiceProxy {
 
     private IServiceFactory serviceFactory;
 
-    ServiceProxy(Class<? extends IService> clazz) {
+    private Class<T> originClass;
+
+    ServiceProxy(Class<T> clazz) {
         serviceClass = clazz;
         priority = IService.Priority.NORMAL_PRIORITY;
         scope = IService.Scope.global;
@@ -49,7 +55,7 @@ public class ServiceProxy {
         }
     }
 
-    public ServiceProxy(Class<? extends IService> clazz, IServiceFactory serviceFactory,
+    public ServiceProxy(Class<T> clazz, IServiceFactory serviceFactory,
                         int priority, int scope,@Deprecated String tag, boolean async, List<Class<? extends IInitService>> dependencies) {
         this.serviceClass = clazz;
         this.serviceFactory = serviceFactory;
@@ -69,28 +75,28 @@ public class ServiceProxy {
 
     }
 
-    public IService getService() {
+    public T getService() {
         if (strategy == null) {
             synchronized (this) {
                 if (strategy == null) {
                     switch (scope()) {
                         case IService.Scope.global:
-                            strategy = new ServiceCacheStrategy.Global(serviceFactory);
+                            strategy = new Global<>(serviceFactory);
                             break;
                         case IService.Scope.once:
-                            strategy = new ServiceCacheStrategy.Once(serviceFactory);
+                            strategy = new Once<>(serviceFactory);
                             break;
                         case IService.Scope.temp:
-                            strategy = new ServiceCacheStrategy.Temp(serviceFactory);
+                            strategy = new Temp<>(serviceFactory);
                             break;
                         default:
-                            strategy = new ServiceCacheStrategy.Once(serviceFactory);
+                            strategy = new Once<>(serviceFactory);
                             break;
                     }
                 }
             }
         }
-        IService service = strategy.getService(serviceClass);
+        T service = strategy.getService(serviceClass, originClass);
         if (service instanceof IInitService) {
             DependencyManager dependencyManager = ServicePool.getService(DependencyManager.class);
             dependencyManager.tryInitService((IInitService) service, dependencies, async);
@@ -141,5 +147,10 @@ public class ServiceProxy {
     @Override
     public int hashCode() {
         return serviceClass != null ? serviceClass.hashCode() : 0;
+    }
+
+
+    public void setOriginClass(Class<? extends IService> originClass) {
+        this.originClass = (Class<T>) originClass;
     }
 }

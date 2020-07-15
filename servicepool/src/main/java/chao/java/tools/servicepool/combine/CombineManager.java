@@ -66,14 +66,6 @@ public class CombineManager {
 
                         List<ServiceProxy> proxies = _getCombinedServices(serviceClass, factories);
 
-                        //拦截器按优先级排序
-                        Collections.sort(proxies, new Comparator<ServiceProxy>() {
-                            @Override
-                            public int compare(ServiceProxy s1, ServiceProxy s2) {
-                                return s2.priority() - s1.priority();
-                            }
-                        });
-
                         if (COMBINE_METHOD_SIZE.equals(method.getName()) && (args == null || args.length == 0)) {
                             //Iterable.size()
                             return proxies.size();
@@ -145,6 +137,14 @@ public class CombineManager {
             }
             proxies.addAll(factoryProxies);
         }
+
+        //拦截器按优先级排序
+        Collections.sort(proxies, new Comparator<ServiceProxy>() {
+            @Override
+            public int compare(ServiceProxy s1, ServiceProxy s2) {
+                return s2.priority() - s1.priority();
+            }
+        });
         return proxies;
     }
 

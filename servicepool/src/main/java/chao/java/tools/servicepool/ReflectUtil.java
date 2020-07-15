@@ -6,9 +6,9 @@ import java.lang.reflect.Constructor;
  * @author qinchao
  * @since 2019/5/5
  */
-class ReflectUtil {
+public class ReflectUtil {
 
-    static <T> T newInstance(Class<T> serviceClass) {
+    public static <T> T newInstance(Class<T> serviceClass) {
         try {
             Constructor<?> constructor = serviceClass.getDeclaredConstructor();
             constructor.setAccessible(true);
@@ -19,7 +19,7 @@ class ReflectUtil {
         return null;
     }
 
-    static Object getDefaultValue(Class<?> type) {
+    public static Object getDefaultValue(Class<?> type) {
         if (Number.class.isAssignableFrom(type)) {
             if (Float.class.isAssignableFrom(type)) {
                 return 0.0f;
