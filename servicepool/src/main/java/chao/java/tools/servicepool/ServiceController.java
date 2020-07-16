@@ -6,7 +6,8 @@ package chao.java.tools.servicepool;
  */
 public interface ServiceController {
 
-    void addService(Class<? extends IService> serviceClass);
+
+    <T extends IService> T getFixedServiceByClass(Class<T> t);
 
     <T extends IService> T getServiceByClass(Class<T> t);
 

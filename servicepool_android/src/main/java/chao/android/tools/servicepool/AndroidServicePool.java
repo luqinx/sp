@@ -35,6 +35,7 @@ public class AndroidServicePool extends ServicePool {
                 loadInitService();
             }
         });
+        checkLoader();
         controller.cacheService(new RouteManager());
     }
 

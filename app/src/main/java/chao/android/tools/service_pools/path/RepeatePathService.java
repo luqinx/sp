@@ -3,6 +3,7 @@ package chao.android.tools.service_pools.path;
 import android.util.Log;
 
 import chao.android.tools.service_pools.Printer;
+import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -10,7 +11,7 @@ import chao.java.tools.servicepool.annotation.Service;
  * @since 2020-06-16
  */
 @Service(path = "/app/repeat")
-@Service(path = "/app/repeatable")
+@Service(path = "/app/repeatable", scope = IService.Scope.global)
 public class RepeatePathService implements Printer,IRepeat {
     @Override
     public void print() {

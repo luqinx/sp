@@ -23,7 +23,7 @@ public class ServicePool {
 
     public static ILogger logger = new Logger();
 
-    private static EventManager eventManager = new EventManager();
+    private static EventManager eventManager;
 
     public static CombineThreadExecutor executor;
 
@@ -38,6 +38,7 @@ public class ServicePool {
      */
     public static void loadInitService() {
         executor = new CombineThreadExecutor();
+        eventManager = new EventManager();
         InitServiceManager initServices = getService(InitServiceManager.class);
         try {
             if (initServices != null) {
@@ -141,7 +142,32 @@ public class ServicePool {
                 exceptionHandler.onException(e, String.valueOf(tClass));
             }
         }
-        return null;
+        return defaultService;
+    }
+
+    /**
+     * 根据serviceClass获取service实例
+     *
+     * 服务实例class和serviceClass一致，不是它的子类
+     *
+     * @param serviceClass  只可以是class
+     * @param <T> service实例对象类型
+     * @return  返回serviceClass类的服务实例
+     */
+    public static <T extends IService> T getFixedService(Class<T> serviceClass) {
+        T instance = null;
+        try {
+            checkLoader();
+            instance = controller.getFixedServiceByClass(serviceClass);
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, String.valueOf(serviceClass));
+            }
+        }
+        if (instance == null) {
+            return noOpFactory.newInstance(serviceClass);
+        }
+        return instance;
     }
 
     public static <T extends IService> T getService(String path) {
@@ -149,8 +175,9 @@ public class ServicePool {
         if (clazz == null) {
             return null;
         }
-        return (T) getService(clazz);
+        return (T) getFixedService(clazz);
     }
+
 
     public static void registerPaths(Map<String, Class<? extends IService>> serviceMaps) {
         try {
@@ -178,7 +205,7 @@ public class ServicePool {
 //        return controller.newService(serviceClass);
 //    }
 
-    private static void checkLoader() {
+    protected static void checkLoader() {
         if (controller == null) {
             synchronized (ServicePool.class) {
                 if (controller == null) {

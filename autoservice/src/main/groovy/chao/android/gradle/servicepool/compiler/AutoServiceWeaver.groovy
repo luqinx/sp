@@ -326,22 +326,10 @@ class AutoServiceWeaver extends BaseWeaver {
         writeZipEntry(Constant.GENERATE_SERVICE_FACTORIES_INSTANCE_ASM_NAME + Constant.GENERATE_FILE_NAME_SUFFIX, classWriter.toByteArray(), outputZip)
     }
 
-    /**
-     * 自动生成方法 xxx_ServiceFactory#createServiceProxy
-     * @param classWriter
-     * @param infoList
-     */
-    private static void generateCreateServiceProxy(ClassWriter classWriter, List<ServiceInfo> infoList) {
-        MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "createServiceProxy", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/ServiceProxy;", null, null)
+
+    private static void generateCreateFixedServiceProxy(ClassWriter classWriter, List<ServiceInfo> infoList) {
+        MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "createFixedServiceProxy", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/ServiceProxy;", null, null)
         methodVisitor.visitCode()
-
-        infoList.sort(new Comparator<ServiceInfo>() {
-            @Override
-            int compare(ServiceInfo s1, ServiceInfo s2) {
-                return s2.priority - s1.priority
-            }
-        })
-
 
         //有限判断是否相等， 申请类名和Service实体类名一致时，是最高优先级
         for (ServiceInfo info : infoList) {
@@ -375,7 +363,31 @@ class AutoServiceWeaver extends BaseWeaver {
             methodVisitor.visitInsn(Opcodes.ARETURN)
             methodVisitor.visitLabel(li)
         }
-        //再判断
+
+        methodVisitor.visitInsn(Opcodes.ACONST_NULL)
+        methodVisitor.visitInsn(Opcodes.ARETURN)
+        methodVisitor.visitMaxs(12, 3)
+        methodVisitor.visitEnd()
+    }
+
+
+    /**
+     * 自动生成方法 xxx_ServiceFactory#createServiceProxy
+     * @param classWriter
+     * @param infoList
+     */
+    private static void generateCreateServiceProxy(ClassWriter classWriter, List<ServiceInfo> infoList) {
+        MethodVisitor methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "createServiceProxy", "(Ljava/lang/Class;)Lchao/java/tools/servicepool/ServiceProxy;", null, null)
+        methodVisitor.visitCode()
+
+        infoList.sort(new Comparator<ServiceInfo>() {
+            @Override
+            int compare(ServiceInfo s1, ServiceInfo s2) {
+                return s2.priority - s1.priority
+            }
+        })
+
+
         for (ServiceInfo info : infoList) {
             Label li = new Label()
 
@@ -524,6 +536,8 @@ class AutoServiceWeaver extends BaseWeaver {
         initMv.visitEnd()
 
         generateCreateServiceProxy(classWriter, infoList)
+
+        generateCreateFixedServiceProxy(classWriter, infoList)
 
         generateCreateServiceProxies(classWriter, infoList)
 

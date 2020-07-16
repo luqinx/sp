@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.google.common.base.Stopwatch;
 
+import java.lang.annotation.Repeatable;
 import java.util.concurrent.TimeUnit;
 
 import chao.android.tools.service_pools.abs.Abs;
@@ -18,9 +19,12 @@ import chao.android.tools.service_pools.init.InitSampleActivity;
 import chao.android.tools.service_pools.init.InitSyncSampleFragment;
 import chao.android.tools.service_pools.path.PathService;
 import chao.android.tools.service_pools.path.PathService2;
+import chao.android.tools.service_pools.path.RepeatePathService;
+import chao.android.tools.service_pools.route.interceptor.RouteContinueInterceptor5;
 import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.android.tools.servicepool.AndroidServicePool;
+import chao.android.tools.servicepool.route.RouteInterceptor;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.IService;
@@ -133,8 +137,27 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 
         main.print();
 
+
+        RouteInterceptor global1 = ServicePool.getService(RouteContinueInterceptor5.class);
+        RouteInterceptor global2 = ServicePool.getService(RouteInterceptor.class);
+        if (ServicePool.getService(RouteContinueInterceptor5.class) != ServicePool.getService(RouteInterceptor.class)) {
+            System.out.println(global1);
+            System.out.println(global2);
+            throw new RuntimeException();
+        }
+
+
         //测试Scope为global
         if (ServicePool.getService("/app/path") != ServicePool.getService("/app/path")) {
+            throw new RuntimeException();
+        }
+
+        //测试Scope为global, 通过path拿到的service和通过class拿到的service是同一个对象
+        if (ServicePool.getService("/app/path") != ServicePool.getService(PathService.class)) {
+            throw new RuntimeException();
+        }
+
+        if (ServicePool.getService(RepeatePathService.class) != ServicePool.getService("/app/repeatable")) {
             throw new RuntimeException();
         }
 

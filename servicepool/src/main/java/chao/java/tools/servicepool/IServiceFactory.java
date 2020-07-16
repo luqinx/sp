@@ -12,6 +12,8 @@ public interface IServiceFactory {
 
     HashSet<ServiceProxy> createServiceProxies(Class<?> clazz);
 
+    ServiceProxy<? extends IService> createFixedServiceProxy(Class<?> clazz);
+
     ServiceProxy<? extends IService> createServiceProxy(Class<?> clazz);
 
     IService createInstance(Class<?> clazz);

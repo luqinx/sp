@@ -15,9 +15,11 @@ import chao.java.tools.servicepool.debug.Debug;
  */
 public class DefaultServiceController implements ServiceController {
 
-    private Map<String, ServiceProxy<? extends IService>> serviceCache = new ConcurrentHashMap<>();
+    private Map<Class<? extends IService>, String> pathCache = new ConcurrentHashMap<>();
 
     private Map<String, ServiceProxy<? extends IService>> historyCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
+
+    private Map<String, ServiceProxy<? extends IService>> fixedCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
 
 
     private List<IServiceFactories> factoriesList = new ArrayList<>(1);
@@ -31,35 +33,18 @@ public class DefaultServiceController implements ServiceController {
         combineManager = new CombineManager();
     }
 
-    @Override
-    public void addService(Class<? extends IService> serviceClass) {
-
-        ServiceProxy proxy = serviceCache.get(serviceClass.getName());
-        if (proxy == null) {
-            proxy = new ServiceProxy<>(serviceClass);
-        }
-
-        cacheService(serviceClass, proxy);
-
-//        cacheSubClasses(serviceClass, proxy);
-
-    }
-
-    private void cacheService(Class<?> serviceClass, ServiceProxy<? extends IService> proxy) {
-        if (serviceClass == Object.class) {
+    private void cacheService(Class<?> serviceClass, ServiceProxy<? extends IService> serviceProxy) {
+        if (serviceClass == Object.class || serviceClass == null) {
             return;
         }
-        ServiceProxy oldProxy = serviceCache.get(serviceClass.getName());
-        //1. service还不存在
-        //2. 申请的serviceClass和缓存key一致时，属于第一优先级
-        //3. service已存在，但是当前的service优先级更高
-        if (oldProxy == null || (!oldProxy.getServiceClass().equals(serviceClass)
-            && (proxy.priority() > oldProxy.priority()) || proxy.getServiceClass().equals(serviceClass))) {
-            serviceCache.put(serviceClass.getName(), proxy);
-        }
+        cacheService(serviceClass.getName(), serviceProxy);
     }
 
-    private void cacheSubClasses(Class<?> clazz, ServiceProxy<? extends IService> serviceProxy) {
+    private void cacheService(String name, ServiceProxy<? extends IService> serviceProxy) {
+        historyCache.put(name, serviceProxy);
+    }
+
+    private void cacheSubServices(Class<?> clazz, ServiceProxy<? extends IService> serviceProxy) {
         if (clazz == Object.class) {
             return;
         }
@@ -70,18 +55,22 @@ public class DefaultServiceController implements ServiceController {
             if (IInitService.class.equals(subInterface)) {
                 continue;
             }
-            cacheService(subInterface, serviceProxy);
-            cacheSubClasses(subInterface, serviceProxy);
+            if (!IService.class.isAssignableFrom(clazz)) {
+                continue;
+            }
+            cacheService(subInterface.getName(), serviceProxy);
+            cacheSubServices(subInterface, serviceProxy);
         }
         Class superClass = clazz.getSuperclass();
-        if (superClass == Object.class) {
+        if (superClass == Object.class || superClass == null) {
             return;
         }
-        if (superClass != null) {
 
-            cacheService(superClass, serviceProxy);
-            cacheSubClasses(superClass, serviceProxy);
+        if (!IService.class.isAssignableFrom(superClass)) {
+            return;
         }
+        cacheService(superClass.getName(), serviceProxy);
+        cacheSubServices(superClass, serviceProxy);
     }
 
     public <T extends IService> T getCombineService(Class<T> serviceClass) {
@@ -92,32 +81,27 @@ public class DefaultServiceController implements ServiceController {
         return combineManager.getCombineService(serviceClass, factoriesList, strategy);
     }
 
-
+    /**
+     *
+     * 获取一个serviceClass的代理对象, 最后的serviceClass由这个代理通过不同策略来生成。
+     *
+     *
+     * @param serviceClass 查找源class
+     * @return ServiceProxy
+     */
     private ServiceProxy<? extends IService> getService(Class<? extends IService> serviceClass) {
-
-        long getServiceStart = System.currentTimeMillis();
 
         ServiceProxy<? extends IService> record = historyCache.get(serviceClass.getName());
         if (record != null) {
             return record;
         }
 
-        ServiceProxy<? extends IService> cachedProxy = serviceCache.get(serviceClass.getName());
-        //申请的Service和缓存的Service同类型，属于最高优先级，直接返回
-        if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass)) {
-            return cachedProxy;
-        }
-        ServiceProxy<? extends IService> proxy = null;
+        ServiceProxy<? extends IService> newRecord = null;
         synchronized (serviceLock) {
+            //同步后再查询一次， double check
             record = historyCache.get(serviceClass.getName());
-            if (record != null) {
+            if (record != null && record.getOriginClass() == serviceClass) {
                 return record;
-            }
-
-            cachedProxy = serviceCache.get(serviceClass.getName());
-            //申请的Service和缓存的Service同类型，属于最高优先级，直接返回
-            if (cachedProxy != null && (cachedProxy.getServiceClass() == serviceClass)) {
-                return cachedProxy;
             }
 
             //目前只有一个ServiceFactories
@@ -132,31 +116,82 @@ public class DefaultServiceController implements ServiceController {
                 if (factory == null) {
                     continue;
                 }
-                proxy = factory.createServiceProxy(serviceClass);
-                if (proxy != null) {
-                    proxy.setOriginClass(serviceClass);
-                    cacheService(proxy.getServiceClass(), proxy);
-                    addService(proxy.getServiceClass());
-                    proxy = serviceCache.get(proxy.getServiceClass().getName());
+                newRecord = factory.createServiceProxy(serviceClass);
+                if (newRecord == null) {
+                    continue;
                 }
-            }
-            if (proxy == null) {
-                proxy = cachedProxy;
-            }
-            long getServiceEnd = System.currentTimeMillis();
-            if (proxy != null) {
-                historyCache.put(serviceClass.getName(), proxy);
-                System.out.println("get service " + serviceClass.getName() + " spent:" + (getServiceEnd - getServiceStart));
+                newRecord.setOriginClass(serviceClass);
+
+                ServiceProxy<? extends IService> fixedRecord = fixedCache.get(serviceClass.getName());
+                if (fixedRecord != null && fixedRecord.getOriginClass() == serviceClass) {
+                    newRecord = fixedRecord; //如果proxy已经通过fixed创建， 直接使用fixed proxy, 避免创建重复proxy
+                }
+
+                cacheService(serviceClass.getName(), newRecord);
+                cacheSubServices(serviceClass, newRecord);
+                break;
             }
         }
-        return proxy;
+        return newRecord;
+    }
+
+    private ServiceProxy<? extends IService> getFixedService(Class<? extends IService> serviceClass) {
+        // 1. 先去fixed缓存去拿
+        ServiceProxy<? extends IService> record = fixedCache.get(serviceClass.getName());
+        if (record != null) {
+            return record;
+        }
+
+        // 2. 尝试去history缓存去拿， 但是需要确认history缓存的originClass和serviceClass是一致的
+        record = historyCache.get(serviceClass.getName());
+        if (record != null && record.getOriginClass() == serviceClass) {
+            fixedCache.put(serviceClass.getName(), record);
+            return record;
+        }
+
+        // 3.如果history缓存没有，或者history缓存的originClass和serviceClass不一致
+        ServiceProxy<? extends IService> newRecord = null;
+        synchronized (serviceLock) {
+            //同步后再查询一次， double check
+            record = fixedCache.get(serviceClass.getName());
+            if (record != null && record.getOriginClass() == serviceClass) {
+                return record;
+            }
+
+            //目前只有一个ServiceFactories
+            for (IServiceFactories factories : factoriesList) {
+                String name = serviceClass.getName();
+                int last = name.lastIndexOf('.');
+                if (last == -1) {
+                    continue;
+                }
+                String pkgName = name.substring(0, last);
+                IServiceFactory factory = factories.getServiceFactory(pkgName);
+                if (factory == null) {
+                    continue;
+                }
+                newRecord = factory.createFixedServiceProxy(serviceClass);
+                if (newRecord == null) {
+                    continue;
+                }
+                newRecord.setOriginClass(serviceClass);
+
+
+                fixedCache.put(serviceClass.getName(), newRecord);
+                break;
+            }
+        }
+        return newRecord;
     }
 
 
     public void addServices(Iterable<Class<? extends IService>> services) {
-        for (Class<? extends IService> serviceClass: services) {
+        for (Class<? extends IService> serviceClass : services) {
             Debug.addError("cache factories service: " + serviceClass);
-            addService(serviceClass);
+            ServiceProxy<? extends IService> proxy = new ServiceProxy<>(serviceClass);
+            cacheService(serviceClass, proxy);
+            cacheSubServices(serviceClass, proxy);
+
             if (IServiceFactories.class.isAssignableFrom(serviceClass)) {
                 addFactories((IServiceFactories) getServiceByClass(serviceClass));
             }
@@ -165,6 +200,16 @@ public class DefaultServiceController implements ServiceController {
 
     @Override
     public void loadFinished() {
+    }
+
+    @Override
+    public <T extends IService> T getFixedServiceByClass(Class<T> t) {
+        T instance = null;
+        ServiceProxy serviceProxy = getFixedService(t);
+        if (serviceProxy != null) {
+            instance = t.cast(serviceProxy.getService());
+        }
+        return instance;
     }
 
     @Override
@@ -202,17 +247,20 @@ public class DefaultServiceController implements ServiceController {
     @Override
     public void recycleService(Class clazz) {
         historyCache.remove(clazz.getName());
-        serviceCache.remove(clazz.getName());
     }
 
     public void cacheService(IService service) {
         ServiceProxy<? extends IService> proxy = new InnerProxy<>(service);
-        historyCache.put(service.getClass().getName(), proxy);
+        cacheService(service.getClass().getName(), proxy);
     }
 
     public Class<? extends IService> getServiceByPath(String path) {
-        IPathService pathServices = getPathService();
-        return pathServices.get(path);
+        IPathService pathService = getPathService();
+        Class<? extends IService> service = pathService.get(path);
+        if (service != null) {
+            pathCache.put(service, path);
+        }
+        return service;
     }
 
     public IPathService getPathService() {

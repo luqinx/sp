@@ -18,7 +18,12 @@ public class TestLazyServiceFactory implements IServiceFactory {
     }
 
     @Override
-    public ServiceProxy createServiceProxy(Class<?> clazz) {
+    public ServiceProxy<? extends IService> createFixedServiceProxy(Class<?> clazz) {
+        return null;
+    }
+
+    @Override
+    public ServiceProxy<? extends IService> createServiceProxy(Class<?> clazz) {
         return null;
     }
 

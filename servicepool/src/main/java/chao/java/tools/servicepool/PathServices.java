@@ -1,7 +1,7 @@
 package chao.java.tools.servicepool;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author luqin
@@ -12,7 +12,7 @@ public abstract class PathServices extends DefaultService implements IPathServic
     private Map<String, Class<? extends IService>> pathServices;
 
     public PathServices() {
-        pathServices = new HashMap<>();
+        pathServices = new ConcurrentHashMap<>();
     }
 
     @Override

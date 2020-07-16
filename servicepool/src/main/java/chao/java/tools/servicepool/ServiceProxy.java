@@ -22,6 +22,9 @@ import chao.java.tools.servicepool.cache.Temp;
  */
 public class ServiceProxy<T extends IService> {
 
+    /**
+     *  最终查找到的实现类Service class
+     */
     private Class<T> serviceClass;
 
     private ServiceCacheStrategy<T> strategy;
@@ -36,6 +39,9 @@ public class ServiceProxy<T extends IService> {
 
     private IServiceFactory serviceFactory;
 
+    /**
+     *  原始class
+     */
     private Class<T> originClass;
 
     ServiceProxy(Class<T> clazz) {
@@ -152,5 +158,9 @@ public class ServiceProxy<T extends IService> {
 
     public void setOriginClass(Class<? extends IService> originClass) {
         this.originClass = (Class<T>) originClass;
+    }
+
+    public Class<T> getOriginClass() {
+        return originClass;
     }
 }
