@@ -3,11 +3,17 @@
 module("servicepool")
         .remote("chao.java.tools:servicepool:1.2.1")
         .project(':servicepool')
-//        .include()
+        .include()
 module("servicepool_android")
         .remote("chao.java.tools:servicepool-android:1.2.1")
         .project(':servicepool_android')
         .include()
+
+module("sprpc")
+        .remote("chao.android.tools:sprpc:0.0.1")
+        .project(":sprpc")
+        .include()
+
 
 module("A").project(":applib1")
         .include()
@@ -23,11 +29,12 @@ module("app").project(":app").include()
 module("appservice").project(":appservice").include()
 module("testpluginlib").project(":testpluginlib").include()
 module("pool").project(":pool").include()
+module("gson").remote("com.google.code.gson:gson:2.8.5")
 
 
 
 
-remote("interceptor", "chao.android.tools:interceptor:0.0.2.dev2")
+remote("interceptor", "chao.android.tools:interceptor:0.0.3")
 remote("ami", "chao.android.tools:ami:1.0.2")
 
 remote("guava", "com.google.guava:guava:19.0")

@@ -15,6 +15,43 @@ import chao.java.tools.servicepool.event.EventService;
  */
 public class ServicePool {
 
+
+    /**
+     * 低优先级
+     */
+    public static final int MIN_PRIORITY = 0;
+
+    /**
+     * 普通优先级, 默认
+     */
+    public static final int NORMAL_PRIORITY = 3;
+
+    /**
+     * 高优先级
+     */
+    public static final int MAX_PRIORITY = 5;
+
+
+
+    /**
+     *  全局缓存, 创建后不会被回收，直到进程结束
+     *
+     */
+    public static final int SCOPE_GLOBAL = 0;
+
+    /**
+     *  临时缓存， 只要不被gc回收，服务对象一直存在
+     *  如果被gc回收, 则重新创建
+     */
+    public static final int SCOPE_TEMP = 1;
+
+    /**
+     *  不会缓存， 每次获取都会重新创建
+     *
+     *  默认Scope
+     */
+    public static final int SCOPE_ONCE = 2;
+
     protected static DefaultServiceController controller;
 
     private volatile static boolean loaded = false;
@@ -255,5 +292,9 @@ public class ServicePool {
 
     public static <T extends IService> T getCombineService(Class<T> combineClass, CombineStrategy strategy) {
         return controller.getCombineService(combineClass, strategy);
+    }
+
+    public static <T extends IService> void cacheService(Class<T> serviceClass, InnerProxy<T> innerProxy) {
+        controller.cacheService(serviceClass, innerProxy);
     }
 }

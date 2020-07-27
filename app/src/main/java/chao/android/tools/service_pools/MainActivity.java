@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.google.common.base.Stopwatch;
 
-import java.lang.annotation.Repeatable;
 import java.util.concurrent.TimeUnit;
 
 import chao.android.tools.service_pools.abs.Abs;
@@ -21,6 +20,7 @@ import chao.android.tools.service_pools.path.PathService;
 import chao.android.tools.service_pools.path.PathService2;
 import chao.android.tools.service_pools.path.RepeatePathService;
 import chao.android.tools.service_pools.route.interceptor.RouteContinueInterceptor5;
+import chao.android.tools.service_pools.rpc.RPCSampleFragment;
 import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.android.tools.servicepool.AndroidServicePool;
@@ -176,6 +176,10 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 
         findViewById(R.id.init).setOnClickListener(v -> {
             UI.show(this, InitSampleActivity.class);
+        });
+
+        findViewById(R.id.rpc).setOnClickListener(v -> {
+            UI.show(this, RPCSampleFragment.class);
         });
 
         new ASMStaticClass().printer();

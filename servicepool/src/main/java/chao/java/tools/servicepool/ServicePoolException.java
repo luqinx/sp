@@ -6,11 +6,11 @@ package chao.java.tools.servicepool;
  */
 public class ServicePoolException extends RuntimeException {
 
-    public ServicePoolException(String message, Object... args) {
-        super(String.format(message, args));
+    public ServicePoolException(String message) {
+        super(message);
     }
 
-    public ServicePoolException(Throwable t, String message, Object... args) {
-        super(String.format(message, args), t);
+    public ServicePoolException(String message, Throwable t) {
+        super(message, t);
     }
 }

@@ -33,5 +33,5 @@ public interface CombineStrategy extends IService {
      *
      * @return 处理完成返回true, 否则返回false
      */
-    boolean invoke(List<ServiceProxy> proxies, Class serviceClass, Method method, Object[] args);
+    Object invoke(List<ServiceProxy> proxies, Class serviceClass, Method method, Object[] args);
 }

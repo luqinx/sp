@@ -34,6 +34,8 @@ public class CombineManager {
 
     private static final String COMBINE_METHOD_ITERATOR = "iterator";
 
+    private static final String COMBINE_METHOD_TOSTRING = "toString";
+
 
     private Logger logger = new Logger();
 
@@ -41,15 +43,17 @@ public class CombineManager {
 
     private ExceptionHandler exceptionHandler;
 
+    private DefaultCombineStrategy defaultCombineStrategy = new DefaultCombineStrategy();
 
     public CombineManager() {
+
     }
 
     public <T extends IService> T getCombineService(final Class<T> serviceClass, final List<IServiceFactories> factories) {
         return getCombineService(serviceClass, factories, null);
     }
 
-    public <T extends IService> T getCombineService(final Class<T> serviceClass, final List<IServiceFactories> factories, final CombineStrategy strategy) {
+    public <T extends IService> T getCombineService(final Class<T> serviceClass, final List<IServiceFactories> factories, final CombineStrategy _strategy) {
         if (serviceClass == null) {
             throw new IllegalArgumentException("argument 'serviceClass' should not be null.");
         }
@@ -74,43 +78,41 @@ public class CombineManager {
                             return proxies.get((Integer) args[0]);
                         } else if (COMBINE_METHOD_ITERATOR.equals(method.getName()) && (args == null || args.length == 0)) {
                             //Iterable.iterator()
-                            return proxies.iterator();
+                            List<IService> services = new ArrayList<>();
+                            for (ServiceProxy proxy: proxies) {
+                                services.add(proxy.getService());
+                            }
+                            return services.iterator();
+                        } else if (COMBINE_METHOD_TOSTRING.equals(method.getName()) && (args == null || args.length == 0)) {
+                            //Object.toString()
+                            return String.valueOf(source);
                         }
 
-                        if(strategy != null
-                                && !(strategy instanceof NoOpInstance)
-                                && strategy.filter(serviceClass, method, args)
-                                && strategy.invoke(proxies, serviceClass, method, args)) {
+                        if (proxies.size() == 0) {
                             return null;
                         }
 
-                        Object result = null;
-                        //默认按优先级顺序依次执行
-                        for (ServiceProxy proxy : proxies) {
-                            try {
-                                result = method.invoke(proxy.getService(), args);
-                            } catch (Throwable e) {
-                                if (exceptionHandler != null) {
-                                    exceptionHandler.onException(e, e.getMessage());
-                                }
-                                e.printStackTrace();
+                        List<CombineStrategy> services;
+                        if (_strategy == null) {
+                            services = new ArrayList<>();
+                            Iterable<CombineStrategy> iterable = (Iterable<CombineStrategy>) ServicePool.getCombineService(CombineStrategy.class);
+                            for (CombineStrategy combineStrategy: iterable) {
+                                services.add(combineStrategy);
+                            }
+                        } else {
+                            services = Collections.singletonList(_strategy);
+                        }
+
+                        for (CombineStrategy strategy: services) {
+                            if(strategy != null
+                                    && !(strategy instanceof NoOpInstance)
+                                    && strategy.filter(serviceClass, method, args)) {
+                                return strategy.invoke(proxies, serviceClass, method, args);
                             }
                         }
-                        return result;
+                        return defaultCombineStrategy.invoke(proxies, serviceClass, method, args);
                     }
                 }).newInstance();
-    }
-
-    private void execute(List<ServiceProxy> proxies, int index, CancelableCountDownLatch counter, Method method, Object[] args) {
-        if (index >= proxies.size()) {
-            return;
-        }
-        ServiceProxy proxy = proxies.get(index);
-        try {
-            method.invoke(proxy.getService(), args);
-        } catch (Throwable e) {
-            logger.log("Combine service execution failed!!! " + e.getMessage());
-        }
     }
 
     private List<ServiceProxy> _getCombinedServices(Class<?> serviceClass, List<IServiceFactories> factoriesList) {

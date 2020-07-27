@@ -33,14 +33,14 @@ public class DefaultServiceController implements ServiceController {
         combineManager = new CombineManager();
     }
 
-    private void cacheService(Class<?> serviceClass, ServiceProxy<? extends IService> serviceProxy) {
+    public void cacheService(Class<?> serviceClass, ServiceProxy<? extends IService> serviceProxy) {
         if (serviceClass == Object.class || serviceClass == null) {
             return;
         }
         cacheService(serviceClass.getName(), serviceProxy);
     }
 
-    private void cacheService(String name, ServiceProxy<? extends IService> serviceProxy) {
+    public void cacheService(String name, ServiceProxy<? extends IService> serviceProxy) {
         historyCache.put(name, serviceProxy);
     }
 
@@ -185,16 +185,20 @@ public class DefaultServiceController implements ServiceController {
     }
 
 
-    public void addServices(Iterable<Class<? extends IService>> services) {
+    void addServices(Iterable<Class<? extends IService>> services) {
         for (Class<? extends IService> serviceClass : services) {
-            Debug.addError("cache factories service: " + serviceClass);
-            ServiceProxy<? extends IService> proxy = new ServiceProxy<>(serviceClass);
-            cacheService(serviceClass, proxy);
-            cacheSubServices(serviceClass, proxy);
+            addService(serviceClass);
+        }
+    }
 
-            if (IServiceFactories.class.isAssignableFrom(serviceClass)) {
-                addFactories((IServiceFactories) getServiceByClass(serviceClass));
-            }
+    private void addService(Class<? extends IService> serviceClass) {
+        ServiceProxy<? extends IService> proxy = new ServiceProxy<>(serviceClass);
+        cacheService(serviceClass, proxy);
+        cacheSubServices(serviceClass, proxy);
+
+        if (IServiceFactories.class.isAssignableFrom(serviceClass)) {
+            Debug.addError("cache factories service: " + serviceClass);
+            addFactories((IServiceFactories) getServiceByClass(serviceClass));
         }
     }
 
@@ -251,6 +255,7 @@ public class DefaultServiceController implements ServiceController {
 
     public void cacheService(IService service) {
         ServiceProxy<? extends IService> proxy = new InnerProxy<>(service);
+        proxy.setOriginClass(service.getClass());
         cacheService(service.getClass().getName(), proxy);
     }
 

@@ -5,10 +5,12 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import chao.android.tools.interceptor.Interceptor;
 import chao.android.tools.servicepool.route.RouteBuilder;
 import chao.android.tools.servicepool.route.RouteManager;
+import chao.java.tools.servicepool.IService;
+import chao.java.tools.servicepool.InnerProxy;
 import chao.java.tools.servicepool.ServicePool;
-import dalvik.system.DexClassLoader;
 
 /**
  * @author qinchao
@@ -20,15 +22,13 @@ public class AndroidServicePool extends ServicePool {
     private static Context sContext;
 
 
-    private static ClassLoader mockClassLoader;
-
     public static Context getContext() {
         return sContext;
     }
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
-        Handler handler = new Handler(Looper.myLooper());
+        Handler handler = new Handler(Looper.myLooper());  //todo bug
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -42,4 +42,6 @@ public class AndroidServicePool extends ServicePool {
     public static RouteBuilder build(String path) {
         return new RouteBuilder(path);
     }
+
+
 }

@@ -41,7 +41,6 @@ public class DefaultDependencyManager implements DependencyManager, Handler.Call
 
     private static final int KEEP_ALIVE_SECONDS = 30;
 
-
     private static final int MESSAGE_DISPATCH = 1;
 
     private Handler mHandler;
@@ -59,6 +58,8 @@ public class DefaultDependencyManager implements DependencyManager, Handler.Call
         threadExecutor = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE,
             KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
             sPoolWorkQueue, new ServiceThreadFactory());
+
+        threadExecutor.allowCoreThreadTimeOut(true);
 
         mHandler = new Handler(Looper.getMainLooper(), this);
     }

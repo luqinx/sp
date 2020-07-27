@@ -103,11 +103,15 @@ public class ServiceProxy<T extends IService> {
             }
         }
         T service = strategy.getService(serviceClass, originClass);
+        tryInitService(service);
+        return service;
+    }
+
+    private void tryInitService(IService service) {
         if (service instanceof IInitService) {
             DependencyManager dependencyManager = ServicePool.getService(DependencyManager.class);
             dependencyManager.tryInitService((IInitService) service, dependencies, async);
         }
-        return service;
     }
 
     Class<? extends IService> getServiceClass() {

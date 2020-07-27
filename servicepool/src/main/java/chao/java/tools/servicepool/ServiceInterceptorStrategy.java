@@ -1,6 +1,5 @@
 package chao.java.tools.servicepool;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -38,58 +37,53 @@ public class ServiceInterceptorStrategy implements CombineStrategy {
      * @return
      */
     @Override
-    public boolean invoke(List<ServiceProxy> proxies, Class serviceClass, Method method, Object[] args) {
+    public Object invoke(List<ServiceProxy> proxies, Class serviceClass, Method method, Object[] args) {
+        IServiceInterceptorCallback callback = (IServiceInterceptorCallback) args[4];
+        ResultHolder holder = new ResultHolder();
+        holder.callback = callback;
+        holder.interceptorCursor = 0;
         if (proxies.size() > 0) {
-            IServiceInterceptorCallback callback = (IServiceInterceptorCallback) args[3];
-            ResultHolder holder = new ResultHolder();
-            holder.callback = callback;
-
-            execute(proxies, 0, method, args, holder);
-            if (callback != null && !holder.intercept) {
-                callback.onContinue(method, args);
-            }
-        } else {
-            IServiceInterceptorCallback callback = (IServiceInterceptorCallback) args[3];
-            if (callback != null) {
-                callback.onContinue(method, args);
-            }
+            execute(proxies, holder.interceptorCursor, method, args, holder);
         }
-        return true;
+        if (callback != null && !holder.intercept) {
+            callback.onContinue(method, args);
+        }
+        return null;
     }
 
-    private ResultHolder execute(final List<ServiceProxy> proxies, final int index, final Method method, final Object[] args, final ResultHolder holder) {
+    private void execute(final List<ServiceProxy> proxies, int index, final Method method, final Object[] args, final ResultHolder holder) {
         if (index >= proxies.size()) {
-            return holder;
+            return;
         }
         try {
             ServiceProxy proxy = proxies.get(index);
-            Object source = args[0];
-            Method sourceMethod = (Method) args[1];
-            Object sourceArgs = args[2];
+            Class<?> sourceClass = (Class<?>) args[0];
+            Object source = args[1];
+            Method sourceMethod = (Method) args[2];
+            Object sourceArgs = args[3];
 
-            method.invoke(proxy.getService(), source, sourceMethod, sourceArgs, new IServiceInterceptorCallback() {
+            method.invoke(proxy.getService(), sourceClass, source, sourceMethod, sourceArgs, new IServiceInterceptorCallback() {
                 @Override
                 public void onContinue(Method sourceMethod, Object... sourceArgs) {
-                    execute(proxies, index + 1, method, args, holder);
+                    //支持通过拦截修改方法和参数
+                    args[2] = sourceMethod;
+                    args[3] = sourceArgs;
+                    execute(proxies, ++holder.interceptorCursor , method, args, holder);
                 }
 
                 @Override
                 public void onInterrupt(Object result) {
-                    holder.result = result;
                     holder.intercept = true;
                     holder.callback.onInterrupt(result);
                 }
             });
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
+            throw new ServicePoolException(e.getMessage(), e);
         }
-        return holder;
     }
 
     private class ResultHolder {
-        Object result;
+        int interceptorCursor;
         boolean intercept;
         IServiceInterceptorCallback callback;
     }

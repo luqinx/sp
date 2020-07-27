@@ -15,18 +15,14 @@ abstract class AbsServiceCacheStrategy<T extends IService> implements ServiceCac
     private static ServiceInterceptorStrategy strategy = new ServiceInterceptorStrategy();
 
 
-    protected T getProxyService(Class<T> originClazz, final T instance) {
+    protected T getProxyService(final Class<T> originClazz, final T instance) {
         if (originClazz != null && originClazz.isInterface()) {
             return Interceptor.of(instance, originClazz).intercepted(true).invoke(new OnInvoke<T>() {
-
-                class ResultHolder {
-                    Object result;
-                }
 
                 @Override
                 public Object onInvoke(T source, final Method method, final Object[] args) {
                     final ResultHolder holder = new ResultHolder();
-                    ServicePool.getCombineService(IServiceInterceptor.class, strategy).intercept(instance, method, args, new IServiceInterceptorCallback() {
+                    ServicePool.getCombineService(IServiceInterceptor.class, strategy).intercept(originClazz, source, method, args, new IServiceInterceptorCallback() {
                         @Override
                         public void onContinue(Method interceptorMethod, Object... interceptorArgs) {
                             try {
@@ -51,5 +47,9 @@ abstract class AbsServiceCacheStrategy<T extends IService> implements ServiceCac
         } else {
             return instance;
         }
+    }
+
+    private class ResultHolder {
+        Object result;
     }
 }

@@ -9,11 +9,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.ServicePoolException;
 import chao.java.tools.servicepool.ServiceProxy;
-import chao.java.tools.servicepool.annotation.Service;
 import chao.java.tools.servicepool.combine.CombineStrategy;
 import chao.java.tools.servicepool.thirdparty.CancelableCountDownLatch;
 
@@ -39,9 +37,9 @@ public class RouteCombineStrategyImpl implements CombineStrategy, Handler.Callba
     }
 
     @Override
-    public boolean invoke(final List<ServiceProxy> proxies, Class serviceClass, final Method method, final Object[] args) {
+    public Object invoke(final List<ServiceProxy> proxies, Class serviceClass, final Method method, final Object[] args) {
 
-        mHandler = new Handler(Looper.myLooper(), this);
+        mHandler = new Handler(Looper.myLooper(), this); //todo bug
 
         ServicePool.executor.execute(new Runnable() {
             @Override

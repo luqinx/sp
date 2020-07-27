@@ -1,0 +1,21 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="chao.app.remoteexample" >
+
+    <permission android:name="chao.android.tools.servicepool.remoteservice"/>
+
+    <application android:label="example" android:icon="@drawable/ic_launcher_foreground"
+        android:theme="@style/Theme.AppCompat"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <activity android:name=".LaunchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name=".ExampleService" android:exported="true"
+            android:permission="chao.android.tools.servicepool.remoteservice" />
+    </application>
+</manifest>

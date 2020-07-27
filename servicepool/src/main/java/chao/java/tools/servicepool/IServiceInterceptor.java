@@ -10,5 +10,5 @@ import java.lang.reflect.Method;
  * @since 2020-07-12
  */
 public interface IServiceInterceptor extends IService {
-    void intercept(Object source, Method method, Object[] args, IServiceInterceptorCallback callback);
+    void intercept(Class<? extends IService> originClass, IService source, Method method, Object[] args, IServiceInterceptorCallback callback);
 }
