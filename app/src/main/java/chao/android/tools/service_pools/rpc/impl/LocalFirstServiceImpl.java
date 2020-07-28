@@ -1,6 +1,6 @@
-package chao.app.remoteexample.service.impl;
+package chao.android.tools.service_pools.rpc.impl;
 
-import chao.app.remoteexample.service.LocalFirstService;
+import chao.app.remoteapi.LocalFirstService;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**

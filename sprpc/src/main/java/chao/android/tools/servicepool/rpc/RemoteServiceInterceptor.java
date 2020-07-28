@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.RemoteException;
 
 import java.lang.reflect.Method;
@@ -16,7 +15,6 @@ import chao.android.tools.servicepool.rpc.annotation.RemoteServiceConfig;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceInterceptor;
 import chao.java.tools.servicepool.IServiceInterceptorCallback;
-import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Service;
 
@@ -61,7 +59,7 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
             return;
         }
 
-        if (!remoteServiceConfig.forceMainThread() && Looper.myLooper() == Looper.getMainLooper()) {
+        if (!remoteServiceConfig.forceMainThread() && RemoteUtil.inMainThread()) {
             throw new RemoteServiceException("remote service should not call in main thread!");
         }
 
@@ -87,7 +85,12 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
             client.addMethod(callId, clientMethod);
             if (uselessRemotes.get(componentName.hashCode()) == null) { // 5秒之前没有唤起过这个远程service
                 if (bindRemoteService(client, remoteServiceConfig, method, args, callId, callback)) {
-                    client.awaitMethod(callId, remoteServiceConfig.timeout());
+                    // 非主线程时等待
+                    if (!RemoteUtil.inMainThread()) {
+                        client.awaitMethod(callId, remoteServiceConfig.timeout());
+                    } else {
+                        // onServiceConnected在主线程回调，这里是主线程时，等待会导致ServiceConnection无法接收到onServiceConnected消息
+                    }
                 } else {
                     mHandler.post(new Runnable() {
                         @Override

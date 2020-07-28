@@ -6,14 +6,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import chao.android.tools.servicepool.AndroidServicePool;
 import chao.android.tools.servicepool.rpc.SpRPC;
 import chao.app.ami.base.AmiSimpleFragment;
-import chao.app.remoteexample.service.IExampleService;
-import chao.java.tools.servicepool.IService;
-import chao.java.tools.servicepool.ServicePool;
+import chao.app.remoteapi.IExampleService;
 import chao.java.tools.servicepool.annotation.Service;
-import chao.java.tools.servicepool.combine.CombineStrategy;
 
 /**
  * @author luqin

@@ -1,6 +1,6 @@
 package chao.app.remoteexample.serviceimpl;
 
-import chao.app.remoteexample.service.LocalFirstService;
+import chao.app.remoteapi.LocalFirstService;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**

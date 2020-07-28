@@ -95,6 +95,8 @@ public class RemoteClient implements Handler.Callback {
 
     @Override
     public boolean handleMessage(Message msg) {
+        System.out.println("handleMessage in thread: " + Thread.currentThread().getName() + ", " + msg.what);
+
         int callId = msg.what;
         Bundle returnData = msg.getData();
         String returnType = returnData.getString(REMOTE_KEY_RETURN_TYPE);

@@ -2,7 +2,7 @@ package chao.app.remoteexample.serviceimpl;
 
 import java.util.List;
 
-import chao.app.remoteexample.service.IExampleService;
+import chao.app.remoteapi.IExampleService;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -37,8 +37,7 @@ public class ExampleServiceImpl implements IExampleService {
     }
 
     @Override
-    public int withList(int i, String s, List<String> sl) {
-        return 0;
+    public void withList(int i, String s, List<String> sl) {
     }
 
     @Override

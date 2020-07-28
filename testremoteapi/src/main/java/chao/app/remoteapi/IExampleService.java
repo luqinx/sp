@@ -1,13 +1,18 @@
-package chao.app.remoteexample.service;
+package chao.app.remoteapi;
 
 import java.util.List;
 
+import chao.android.tools.servicepool.rpc.annotation.RemoteServiceConfig;
 import chao.java.tools.servicepool.IService;
 
 /**
  * @author luqin
  * @since 2020-07-23
  */
+@RemoteServiceConfig(remotePackageName = "chao.app.remoteexample",
+        remoteComponentName = "chao.app.remoteexample.ExampleService",
+        timeout = 50000000
+)
 public interface IExampleService extends IService {
     int getInt();
 
@@ -19,8 +24,8 @@ public interface IExampleService extends IService {
 
     int withII(int i1, int i2);
 
-    int withList(int i, String s, List<String> sl);
-
     void withString(String s);
+
+    void withList(int i, String s, List<String> sl);
 
 }

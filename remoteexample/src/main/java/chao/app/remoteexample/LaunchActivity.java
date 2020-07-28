@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 import chao.android.tools.servicepool.AndroidServicePool;
 import chao.android.tools.servicepool.rpc.ClassTypeAdapter;
-import chao.app.remoteexample.service.IExampleService;
+import chao.app.remoteapi.IExampleService;
 
 /**
  * @author luqin

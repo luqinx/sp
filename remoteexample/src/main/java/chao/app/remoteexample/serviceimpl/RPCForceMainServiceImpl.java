@@ -2,7 +2,7 @@ package chao.app.remoteexample.serviceimpl;
 
 import java.util.List;
 
-import chao.app.remoteexample.service.RPCForceMainService;
+import chao.app.remoteapi.RPCForceMainService;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -13,7 +13,7 @@ import chao.java.tools.servicepool.annotation.Service;
 public class RPCForceMainServiceImpl implements RPCForceMainService {
     @Override
     public int getInt() {
-        return 0;
+        return 60;
     }
 
     @Override
@@ -28,17 +28,16 @@ public class RPCForceMainServiceImpl implements RPCForceMainService {
 
     @Override
     public int withInt(int i) {
-        return 0;
+        return 10;
     }
 
     @Override
     public int withII(int i1, int i2) {
-        return 0;
+        return 10;
     }
 
     @Override
-    public int withList(int i, String s, List<String> sl) {
-        return 0;
+    public void withList(int i, String s, List<String> sl){
     }
 
     @Override

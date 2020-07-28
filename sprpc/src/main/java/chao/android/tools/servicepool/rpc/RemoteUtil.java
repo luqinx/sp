@@ -1,6 +1,7 @@
 package chao.android.tools.servicepool.rpc;
 
 import android.os.Build;
+import android.os.Looper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -32,6 +33,10 @@ public class RemoteUtil {
             }
         }
         return hashCode;
+    }
+
+    public static boolean inMainThread() {
+        return Looper.myLooper() == Looper.getMainLooper();
     }
 
 }

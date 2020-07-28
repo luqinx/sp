@@ -14,6 +14,11 @@ module("sprpc")
         .project(":sprpc")
         .include()
 
+module("sprouter")
+    .remote("chao.android.tools:sprouter:0.0.1")
+    .project(":sprouter")
+    .include()
+
 
 module("A").project(":applib1")
         .include()

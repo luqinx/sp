@@ -5,11 +5,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import chao.android.tools.interceptor.Interceptor;
 import chao.android.tools.servicepool.route.RouteBuilder;
 import chao.android.tools.servicepool.route.RouteManager;
-import chao.java.tools.servicepool.IService;
-import chao.java.tools.servicepool.InnerProxy;
 import chao.java.tools.servicepool.ServicePool;
 
 /**
@@ -28,7 +25,7 @@ public class AndroidServicePool extends ServicePool {
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
-        Handler handler = new Handler(Looper.myLooper());  //todo bug
+        Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
             public void run() {

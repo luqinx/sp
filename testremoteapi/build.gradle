@@ -1,14 +1,9 @@
-apply plugin: 'com.android.application'
-apply plugin: 'sp.autoservice'
+apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
 
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -24,6 +19,7 @@ android {
     }
 
 }
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -32,12 +28,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation servicepool
-    implementation servicepool_android
-    implementation gson
     implementation sprpc
-
-    implementation project(":testremoteapi")
-
+    implementation servicepool
 }
-

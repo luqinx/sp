@@ -77,4 +77,6 @@ dependencies {
     implementation B
     implementation pool
     implementation sprpc
+
+    implementation project(":testremoteapi")
 }

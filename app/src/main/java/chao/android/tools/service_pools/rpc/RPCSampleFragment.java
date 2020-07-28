@@ -8,9 +8,9 @@ import chao.android.tools.service_pools.R;
 import chao.android.tools.servicepool.rpc.SpRPC;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMISupportFragment;
-import chao.app.remoteexample.service.IExampleService;
-import chao.app.remoteexample.service.LocalFirstService;
-import chao.app.remoteexample.service.RPCForceMainService;
+import chao.app.remoteapi.IExampleService;
+import chao.app.remoteapi.LocalFirstService;
+import chao.app.remoteapi.RPCForceMainService;
 import chao.java.tools.servicepool.ServicePoolException;
 
 /**

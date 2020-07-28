@@ -10,6 +10,16 @@ import java.lang.reflect.Method;
  * @since 2020-07-12
  */
 public interface IServiceInterceptorCallback {
+
+    /**
+     * 继续执行下一个拦截策略， 如果没有下一个拦截，执行源对象方法
+     */
     void onContinue(Method method, Object... args);
+
+    /**
+     *  拦截，并返回指定result
+     *
+     * @param result 拦截返回值
+     */
     void onInterrupt(Object result);
 }
