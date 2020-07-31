@@ -25,6 +25,16 @@ android {
 
 }
 
+
+abkit {
+    maven {
+        artifactId 'sprpc'
+        groupId 'chao.java.tools'
+        versionName '1.3.4'
+        publish2Local false
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 

@@ -2,13 +2,11 @@ package chao.android.tools.service_pools;
 
 import android.view.View;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
 
-import chao.android.tools.servicepool.rpc.SpRPC;
+import chao.android.tools.router.SpRouter;
+import chao.android.tools.service_pools.router2.RouteApi;
 import chao.app.ami.base.AmiSimpleFragment;
-import chao.app.remoteapi.IExampleService;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -22,58 +20,111 @@ public class SimpleFragment extends AmiSimpleFragment {
 
     @Override
     public void onClick(View v) {
-//        printer.print();
 
-
-//        ServicePool.getService(Printer.class).print();
-
-
-//        try {
-//            Method genericMethod = SimpleFragment.class.getMethod("getGenericList");
-//            System.out.println("genericMethod: " + genericMethod.getGenericReturnType().getTypeName());
-//            System.out.println("genericMethod: " + genericMethod.getReturnType().getName());
+//        int i = 5;
+//        Object oi = i;
+//        Integer I = (Integer) oi;
 //
-//
-//            Method method = SimpleFragment.class.getMethod("getList");
-//            System.out.println("genericMethod: " + method.getGenericReturnType().getTypeName());
-//            System.out.println("genericMethod: " + method.getReturnType().getName());
-//
-//
-//            Method m = AmiSimpleFragment.class.getDeclaredMethod("setupView", View.class);
-//            System.out.println(m.getDeclaringClass());
-//        } catch (Throwable e) {
-//            e.printStackTrace();
+//        int[] ints = new int[2];
+//        for (i = 0; i < ints.length; i++) {
+//            ints[i] = i + 1;
 //        }
+//        Object io = ints;
+//        System.out.println(Arrays.toString((Integer[]) io));
+//
+//
+//        Bundle bundle = new Bundle();
+//        bundle.putInt("I", I);
+//        bundle.putSerializable("i", i);
+//
+//        Integer[] integers = new Integer[2];
+//        for (i = 0; i < integers.length; i++ ) {
+//            integers[i] = i + 1;
+//        }
+//        Object o = integers;
+//        System.out.println(Arrays.toString((Integer[]) o));
+        ArrayList<String> slist = new ArrayList<>();
+        slist.add("a");
+        slist.add("b");
+        slist.add("c");
 
-        IExampleService exampleService = SpRPC.getService(IExampleService.class);
+        Integer I = 22;
 
+        ArrayList<SimpleContainer> containers = new ArrayList<>();
+        SimpleData data = new SimpleData();
+        data.setI(1);
+        data.setS("1s");
+        SimpleContainer container = new SimpleContainer();
+        container.setData(data);
+        containers.add(container);
 
-        new Thread(() -> {
-            System.out.println(exampleService.getString());
-            System.out.println(exampleService.getInt());
-            System.out.println(exampleService.withII(5, 8));
-            System.out.println(exampleService.withInt(10));
-            exampleService.withString("hi, caocao");
-            exampleService.function();
-            exampleService.withList(10, "ha ha", new ArrayList<>());
+        data = new SimpleData();
+        data.setI(2);
+        data.setS("2s");
+        container = new SimpleContainer();
+        container.setData(data);
+        containers.add(container);
 
-        }).start();
+        SpRouter.getService(RouteApi.class).startTestRouterActivity(
+                1,
+                new int[]{3, 5},
+                true,
+                2.0f,
+                3,
+                I,
+                "hi cao",
+                slist,
+                slist,
+                containers
+                );
+    }
 
+    public class SimpleData {
+        private int i;
+        private String s;
 
-        try {
-            Method m = IExampleService.class.getMethod("withII", int.class, int.class);
-
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        public int getI() {
+            return i;
         }
 
+        public void setI(int i) {
+            this.i = i;
+        }
+
+        public String getS() {
+            return s;
+        }
+
+        public void setS(String s) {
+            this.s = s;
+        }
+
+        @Override
+        public String toString() {
+            return "SimpleData{" +
+                    "i=" + i +
+                    ", s='" + s + '\'' +
+                    '}';
+        }
     }
 
-    public List<String> getGenericList() {
-        return null;
+    public class SimpleContainer {
+        private SimpleData data;
+
+        public SimpleData getData() {
+            return data;
+        }
+
+        public void setData(SimpleData data) {
+            this.data = data;
+        }
+
+        @Override
+        public String toString() {
+            return "SimpleContainer{" +
+                    "data=" + data +
+                    '}';
+        }
     }
 
-    public String getList() {
-        return null;
-    }
 }

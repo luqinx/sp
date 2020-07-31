@@ -74,7 +74,7 @@ public class DefaultServiceController implements ServiceController {
     }
 
     public <T extends IService> T getCombineService(Class<T> serviceClass) {
-        return combineManager.getCombineService(serviceClass, factoriesList);
+        return getCombineService(serviceClass,  null);
     }
 
     public <T extends IService> T getCombineService(Class<T> serviceClass, CombineStrategy strategy) {

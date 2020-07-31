@@ -77,6 +77,8 @@ dependencies {
     implementation B
     implementation pool
     implementation sprpc
+    implementation sprouter
+    implementation gson
 
     implementation project(":testremoteapi")
 }

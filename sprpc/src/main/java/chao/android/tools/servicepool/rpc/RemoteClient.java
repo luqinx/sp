@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.concurrent.ConcurrentHashMap;
 
+import chao.java.tools.servicepool.ClassTypeAdapter;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.ServicePool;
 

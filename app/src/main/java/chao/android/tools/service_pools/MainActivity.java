@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
                     .withFloat("float", 100.1f)
                     .withDouble("double", 100.2)
                     .withString("string", "hello luqin")
+                    .withSerializable("", new Integer[5])
 //                .withSerializable("parcelable")
                     .navigation(null);
         });

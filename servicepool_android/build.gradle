@@ -28,7 +28,7 @@ abkit {
     maven {
         artifactId 'servicepool-android'
         groupId 'chao.java.tools'
-        versionName '1.2.1'
+        versionName '1.3.4'
         publish2Local false
     }
 }

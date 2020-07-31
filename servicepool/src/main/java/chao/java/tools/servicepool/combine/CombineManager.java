@@ -14,11 +14,9 @@ import chao.java.tools.servicepool.ExceptionHandler;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceFactories;
 import chao.java.tools.servicepool.IServiceFactory;
-import chao.java.tools.servicepool.Logger;
 import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.ServiceProxy;
-import chao.java.tools.servicepool.thirdparty.CancelableCountDownLatch;
 
 
 /**
@@ -30,14 +28,14 @@ public class CombineManager {
 
     private static final String COMBINE_METHOD_GET = "get";
 
-    private static final String COMBINE_METHOD_SIZE = "add";
+    private static final String COMBINE_METHOD_SIZE = "size";
+
+    private static final String COMBINE_METHOD_EMPTY_HANDLER = "setEmptyHandler";
 
     private static final String COMBINE_METHOD_ITERATOR = "iterator";
 
     private static final String COMBINE_METHOD_TOSTRING = "toString";
 
-
-    private Logger logger = new Logger();
 
     private HashMap<Class, List<ServiceProxy>> combinedCache = new HashMap<>();
 
@@ -47,10 +45,6 @@ public class CombineManager {
 
     public CombineManager() {
 
-    }
-
-    public <T extends IService> T getCombineService(final Class<T> serviceClass, final List<IServiceFactories> factories) {
-        return getCombineService(serviceClass, factories, null);
     }
 
     public <T extends IService> T getCombineService(final Class<T> serviceClass, final List<IServiceFactories> factories, final CombineStrategy _strategy) {
@@ -67,6 +61,8 @@ public class CombineManager {
 
                     @Override
                     public Object onInvoke(T source, final Method method, final Object[] args) {
+
+                        CombineEmptyHandler<T> handler = null;
 
                         List<ServiceProxy> proxies = _getCombinedServices(serviceClass, factories);
 
@@ -86,9 +82,14 @@ public class CombineManager {
                         } else if (COMBINE_METHOD_TOSTRING.equals(method.getName()) && (args == null || args.length == 0)) {
                             //Object.toString()
                             return String.valueOf(source);
+                        } else if (COMBINE_METHOD_EMPTY_HANDLER.equals(method.getName()) && args != null && args.length == 1 && CombineEmptyHandler.class.isAssignableFrom(args[0].getClass()) ) {
+                            handler = (CombineEmptyHandler) args[0];
                         }
 
                         if (proxies.size() == 0) {
+                            if (handler != null) {
+                                handler.onHandleEmpty(source, method, args);
+                            }
                             return null;
                         }
 

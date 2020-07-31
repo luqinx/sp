@@ -1,0 +1,71 @@
+package chao.android.tools.router;
+
+import android.app.Activity;
+import android.content.Intent;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
+import java.lang.reflect.Type;
+
+import chao.android.tools.interceptor.Interceptor;
+import chao.java.tools.servicepool.IService;
+import chao.java.tools.servicepool.InnerProxy;
+import chao.java.tools.servicepool.ServicePool;
+
+/**
+ * @author luqin
+ * @since 2020-07-28
+ */
+public class SpRouter {
+
+    static final String TAG = "SpRouter";
+
+    public static final String ROUTER_KEY_PREFIX = "SpRouter##";
+
+    static final Gson gson = new Gson();
+
+
+    public static <T extends IService> T getService(Class<T> serviceClass) {
+        if (!serviceClass.isInterface()) {
+            throw new IllegalArgumentException("serviceClass must be a interface class.");
+        }
+        T routerService = ServicePool.getService(serviceClass, null);
+        if (routerService == null) {
+            T service = Interceptor
+                    .of(null, serviceClass)
+                    .intercepted(true)
+                    .interfaces(RouterService.class)
+                    .newInstance();
+            InnerProxy<T> innerProxy = new InnerProxy<>(service);
+            innerProxy.setOriginClass(serviceClass);
+
+            ServicePool.cacheService(serviceClass, innerProxy);
+            routerService = innerProxy.getService();
+        }
+        return routerService;
+    }
+
+
+    public static <T> T getExtra(Activity activity, String key, Type type) {
+        JsonElement element = getExtraInner(activity, key);
+        if (element == null || element.isJsonNull()) {
+            return null;
+        }
+        return gson.fromJson(element, type);
+    }
+
+
+    private static JsonElement getExtraInner(Activity activity, String key) {
+        Intent intent = activity.getIntent();
+        if (intent == null) {
+            return null;
+        }
+        String vs = intent.getStringExtra(ROUTER_KEY_PREFIX + key);
+        if (vs == null) {
+            return null;
+        }
+        return new JsonParser().parse(vs);
+    }
+}

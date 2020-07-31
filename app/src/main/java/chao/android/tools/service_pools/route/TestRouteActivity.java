@@ -6,11 +6,18 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.google.gson.reflect.TypeToken;
+
 import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.OnClick;
+import chao.android.tools.router.SpRouter;
 import chao.android.tools.service_pools.BaseActivity;
 import chao.android.tools.service_pools.R;
+import chao.android.tools.service_pools.SimpleFragment;
 import chao.android.tools.servicepool.AndroidServicePool;
 import chao.android.tools.servicepool.route.RouteBuilder;
 import chao.android.tools.servicepool.route.RouteNavigationCallback;
@@ -55,16 +62,36 @@ public class TestRouteActivity extends BaseActivity {
 
         Intent intent = getIntent();
 
-        iv = intent.getIntExtra("int",0);
+        iv = intent.getIntExtra("int",-1);
         bv = intent.getBooleanExtra("boolean", true);
-        fv = intent.getFloatExtra("float", 1.1f);
-        dv = intent.getDoubleExtra("double", 0.1);
+        fv = intent.getFloatExtra("float", -1);
+        dv = intent.getDoubleExtra("double", -1);
         sv = intent.getStringExtra("string");
         serializable = intent.getSerializableExtra("serializable");
         pv = intent.getParcelableExtra("parcelable");
 
-        logger.log(iv, bv, fv, dv, sv, serializable, pv);
+        int[] liv = intent.getIntArrayExtra("int[]");
 
+        ArrayList<String> slist = intent.getStringArrayListExtra("slist");
+
+        Integer I = intent.getIntExtra("Integer", -1);
+
+        Type type = new TypeToken<ArrayList<SimpleFragment.SimpleContainer>>(){}.getType();
+
+        ArrayList<SimpleFragment.SimpleContainer> containers  = SpRouter.getExtra(this, "simple", type);
+
+
+        logger.log(iv, bv, fv, dv, sv, serializable, pv, Arrays.toString(liv), slist, I, containers);
+
+        logger.log("" + SpRouter.getExtra(this,"int", int.class));
+        logger.log("" + SpRouter.getExtra(this,"boolean", boolean.class));
+        logger.log("" + SpRouter.getExtra(this,"float", float.class));
+        logger.log("" + SpRouter.getExtra(this,"double", double.class));
+        logger.log("" + SpRouter.getExtra(this,"string", String.class));
+        logger.log("" + SpRouter.getExtra(this,"slist", new TypeToken<ArrayList<String>>(){}.getType()));
+        logger.log("" + SpRouter.getExtra(this,"serializable", new TypeToken<ArrayList<String>>(){}.getType()));
+        logger.log("" + SpRouter.getExtra(this,"parcelable", Parcelable.class));
+        logger.log("" + SpRouter.getExtra(this,"int[]", int[].class));
     }
 
     @OnClick({R.id.not_found, R.id.interceptor_all_pass, R.id.interceptor_interrupt, R.id.interceptor_thr_e})
@@ -117,5 +144,6 @@ public class TestRouteActivity extends BaseActivity {
                 .withContext(this)
                 .navigation(null);
     }
+
 
 }

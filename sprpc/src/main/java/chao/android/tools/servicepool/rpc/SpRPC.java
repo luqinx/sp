@@ -25,6 +25,9 @@ public class SpRPC {
      *
      */
     public static <T extends IService> T getService(Class<T> serviceClass) {
+        if (!serviceClass.isInterface()) {
+            throw new RemoteServiceException("serviceClass must be a interface class.");
+        }
 
         //1. 如果本地服务存在， 优先取本地服务
         //2. 如果缓存存在直接取缓存

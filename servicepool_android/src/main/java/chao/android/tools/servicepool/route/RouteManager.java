@@ -1,7 +1,6 @@
 package chao.android.tools.servicepool.route;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,6 +9,7 @@ import chao.android.tools.servicepool.AndroidServicePool;
 import chao.java.tools.servicepool.IPathService;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.annotation.Service;
+import chao.java.tools.servicepool.combine.CombineService;
 
 import static chao.java.tools.servicepool.ServicePool.getCombineService;
 import static chao.java.tools.servicepool.ServicePool.logger;
@@ -52,27 +52,38 @@ public class RouteManager implements IService {
             if (callback != null) {
                 callback.onFound(service, route);
             }
-            getCombineService(RouteInterceptor.class, routeCombineStrategy).intercept(route, new RouteInterceptorCallback() {
-                @Override
-                public void onContinue(final RouteBuilder route) {
-                    runInMainThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            _navigationActivity(route, (Class<? extends Activity>) service, callback);
-                        }
-                    });
-                }
-
-                @Override
-                public void onInterrupt(Throwable e) {
-                    if (callback != null) {
-                        callback.onInterrupt(route, e);
+            CombineService combineService = (CombineService) getCombineService(RouteInterceptor.class, routeCombineStrategy);
+            if (combineService.size() == 0) {
+                runInMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        _navigationActivity(route, (Class<? extends Activity>) service, callback);
                     }
-                    logger.log("Router Interceptor interrupted!!! " + e);
-                }
-            });
+                });
+            } else {
+                RouteInterceptor routeInterceptor = (RouteInterceptor) combineService;
+                routeInterceptor.intercept(route, new RouteInterceptorCallback() {
+                    @Override
+                    public void onContinue(final RouteBuilder route) {
+                        runInMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                _navigationActivity(route, (Class<? extends Activity>) service, callback);
+                            }
+                        });
+                    }
 
-            return null;
+                    @Override
+                    public void onInterrupt(Throwable e) {
+                        if (callback != null) {
+                            callback.onInterrupt(route, e);
+                        }
+                        logger.log("Router Interceptor interrupted!!! " + e);
+                    }
+                });
+
+                return null;
+            }
         } else {
             if (callback != null) {
                 callback.onLost(route);
@@ -93,6 +104,7 @@ public class RouteManager implements IService {
         } else if (route.type != null) {
             intent.setType(route.type);
         }
+        intent.setAction(route.action);
         intent.setClass(route.context, activity);
         if (route.context instanceof Activity) {
             if (route.exitAnim != -1 || route.enterAnim != -1) {

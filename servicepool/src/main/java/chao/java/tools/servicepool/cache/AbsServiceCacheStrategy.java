@@ -9,6 +9,7 @@ import chao.java.tools.servicepool.IServiceInterceptor;
 import chao.java.tools.servicepool.IServiceInterceptorCallback;
 import chao.java.tools.servicepool.ServiceInterceptorStrategy;
 import chao.java.tools.servicepool.ServicePool;
+import chao.java.tools.servicepool.combine.CombineService;
 
 abstract class AbsServiceCacheStrategy<T extends IService> implements ServiceCacheStrategy<T> {
 
@@ -22,24 +23,38 @@ abstract class AbsServiceCacheStrategy<T extends IService> implements ServiceCac
                 @Override
                 public Object onInvoke(T source, final Method method, final Object[] args) {
                     final ResultHolder holder = new ResultHolder();
-                    ServicePool.getCombineService(IServiceInterceptor.class, strategy).intercept(originClazz, source, method, args, new IServiceInterceptorCallback() {
-                        @Override
-                        public void onContinue(Method interceptorMethod, Object... interceptorArgs) {
-                            try {
-                                holder.result = method.invoke(instance, args);
-                            } catch (Throwable e) {
-                                if (ServicePool.exceptionHandler != null) {
-                                    ServicePool.exceptionHandler.onException(e, e.getMessage());
-                                }
-                                e.printStackTrace();
-                            }
-                        }
 
-                        @Override
-                        public void onInterrupt(Object lastResult) {
-                            holder.result = lastResult;
+                    CombineService combineService = (CombineService) ServicePool.getCombineService(IServiceInterceptor.class, strategy);
+                    if (combineService.size() == 0) {
+                        try {
+                            holder.result = method.invoke(instance, args);
+                        } catch (Throwable e) {
+                            if (ServicePool.exceptionHandler != null) {
+                                ServicePool.exceptionHandler.onException(e, e.getMessage());
+                            }
+                            e.printStackTrace();
                         }
-                    });
+                    } else {
+                        IServiceInterceptor interceptor = (IServiceInterceptor) combineService;
+                        interceptor.intercept(originClazz, source, method, args, new IServiceInterceptorCallback() {
+                            @Override
+                            public void onContinue(Method interceptorMethod, Object... interceptorArgs) {
+                                try {
+                                    holder.result = method.invoke(instance, args);
+                                } catch (Throwable e) {
+                                    if (ServicePool.exceptionHandler != null) {
+                                        ServicePool.exceptionHandler.onException(e, e.getMessage());
+                                    }
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onInterrupt(Object lastResult) {
+                                holder.result = lastResult;
+                            }
+                        });
+                    }
                     return holder.result;
                 }
 

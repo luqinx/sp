@@ -24,6 +24,8 @@ public class RouteBuilder {
 
     Context context;
 
+    public String action;
+
     public final String path;
 
     public Bundle extras;
@@ -72,6 +74,13 @@ public class RouteBuilder {
     public RouteBuilder with(Bundle bundle) {
         if (bundle != null) {
             extras = bundle;
+        }
+        return this;
+    }
+
+    public RouteBuilder withAll(Bundle bundle) {
+        if (bundle != null) {
+            extras.putAll(bundle);
         }
         return this;
     }
@@ -126,6 +135,8 @@ public class RouteBuilder {
         extras.putStringArrayList(key, sArg);
         return this;
     }
+
+
 
     
     public RouteBuilder withBoolean(String key, boolean bArg) {
@@ -240,6 +251,11 @@ public class RouteBuilder {
         return this;
     }
 
+    public RouteBuilder withParcelableArray(String key, Parcelable[] parcelableArray) {
+        extras.putParcelableArray(key, parcelableArray);
+        return this;
+    }
+
     
     public RouteBuilder withFlag(int flags) {
         this.flags |= flags;
@@ -258,11 +274,24 @@ public class RouteBuilder {
         return this;
     }
 
+    public RouteBuilder withAction(String action) {
+        this.action = action;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "RouteBuilder{" +
                 "path='" + path + '\'' +
                 ", uri=" + uri +
                 '}';
+    }
+
+    public void withCharSequenceList(String key, ArrayList<CharSequence> arg) {
+        extras.putCharSequenceArrayList(key, arg);
+    }
+
+    public void withIntegerList(String key, ArrayList<Integer> arg) {
+        extras.putIntegerArrayList(key, arg);
     }
 }

@@ -4,7 +4,7 @@ package chao.android.tools.servicepool.route;
  * @author luqin
  * @since 2019-10-09
  */
-class RouteArgs {
+public class RouteArgs {
 
     static final int INTERCEPTOR_CODE_USER = -2;
 

@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import chao.android.tools.servicepool.AndroidServicePool;
-import chao.android.tools.servicepool.rpc.ClassTypeAdapter;
+import chao.java.tools.servicepool.ClassTypeAdapter;
 import chao.app.remoteapi.IExampleService;
 
 /**

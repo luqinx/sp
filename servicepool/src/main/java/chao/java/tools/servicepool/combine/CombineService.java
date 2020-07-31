@@ -6,6 +6,9 @@ package chao.java.tools.servicepool.combine;
  * @since 2019-09-30
  */
 public interface CombineService<T> extends Iterable<T> {
-    void size();
+    int size();
+
     T get(int index);
+
+    T setEmptyHandler(CombineEmptyHandler<T> handler);
 }
