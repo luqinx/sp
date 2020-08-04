@@ -42,6 +42,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
     @Override
     public void intercept(Class<? extends IService> originClass, IService source, Method method, Object[] args, IServiceInterceptorCallback callback) {
         if (!(source instanceof RouterService)) {
+            callback.onContinue(method, args);
             return;
         }
         Route routeConfig = method.getAnnotation(Route.class);

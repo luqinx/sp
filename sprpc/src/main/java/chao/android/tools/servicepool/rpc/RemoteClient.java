@@ -73,7 +73,7 @@ public class RemoteClient implements Handler.Callback {
 
     public void sendMessage(Method method, Object[] args, int callId) throws RemoteException {
 
-        int methodHash = RemoteUtil.methodHashCode(method);
+        int methodHash = RemoteUtil.checkAndHashMethod(method);
 
 
         Message message = Message.obtain(mHandler, callId);
@@ -96,7 +96,7 @@ public class RemoteClient implements Handler.Callback {
 
     @Override
     public boolean handleMessage(Message msg) {
-        System.out.println("handleMessage in thread: " + Thread.currentThread().getName() + ", " + msg.what);
+//        System.out.println("handleMessage in thread: " + Thread.currentThread().getName() + ", " + msg.what);
 
         int callId = msg.what;
         Bundle returnData = msg.getData();
@@ -113,7 +113,7 @@ public class RemoteClient implements Handler.Callback {
         Method currentMethod = clientMethod.method;
 
         //check the hash
-        if (methodHash != RemoteUtil.methodHashCode(currentMethod)) {
+        if (methodHash != RemoteUtil.checkAndHashMethod(currentMethod)) {
             return false;
         }
 
@@ -128,6 +128,11 @@ public class RemoteClient implements Handler.Callback {
 
         //check the return type
         if (returnJson != null) {
+
+            if (clientMethod.callbackHandler != null) {
+                clientMethod.callbackHandler.resolve(gson.fromJson(returnJson, clientMethod.callbackResolveType));
+            }
+
             Type realReturnType = currentMethod.getReturnType();
 
             if (realReturnType == Void.class || realReturnType == void.class) {

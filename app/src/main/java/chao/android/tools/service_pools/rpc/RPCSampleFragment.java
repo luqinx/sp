@@ -5,6 +5,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import chao.android.tools.service_pools.R;
+import chao.android.tools.servicepool.rpc.RemoteCallbackHandler;
 import chao.android.tools.servicepool.rpc.SpRPC;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMISupportFragment;
@@ -48,13 +49,19 @@ public class RPCSampleFragment extends AMISupportFragment {
     }
 
     private void call(IExampleService exampleService) {
-        System.out.println(exampleService.getString());
-        System.out.println(exampleService.getInt());
-        System.out.println(exampleService.withII(5, 8));
-        System.out.println(exampleService.withInt(10));
-        exampleService.withString("hi, caocao");
-        exampleService.function();
-        exampleService.withList(10, "ha ha", new ArrayList<>());
+//        System.out.println(exampleService.getString());
+//        System.out.println(exampleService.getInt());
+//        System.out.println(exampleService.withII(5, 8));
+//        System.out.println(exampleService.withInt(10));
+//        exampleService.withString("hi, caocao");
+//        exampleService.function();
+//        exampleService.withList(10, "ha ha", new ArrayList<>());
 
+        exampleService.withCallback(100, new RemoteCallbackHandler<String>() {
+            @Override
+            public void resolve(String result) {
+                System.out.println(result);
+            }
+        });
     }
 }

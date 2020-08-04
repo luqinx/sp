@@ -43,12 +43,12 @@ public class RemoteServer implements Handler.Callback {
     }
 
     @Override
-    public boolean handleMessage(Message msg) {
-        int callId = msg.what;
+    public boolean handleMessage(final Message msg) {
+        final int callId = msg.what;
         Bundle bundle = msg.getData();
-        int methodHash = bundle.getInt(RemoteClient.REMOTE_KEY_METHOD_HASH);
+        final int methodHash = bundle.getInt(RemoteClient.REMOTE_KEY_METHOD_HASH);
         String originClassName = bundle.getString(RemoteClient.REMOTE_KEY_ORIGIN_CLASS);
-        String methodName = bundle.getString(RemoteClient.REMOTE_KEY_METHOD_NAME);
+        final String methodName = bundle.getString(RemoteClient.REMOTE_KEY_METHOD_NAME);
         String methodArgsJson = bundle.getString(RemoteClient.REMOTE_KEY_ARGS);
         String methodArgTypesJson = bundle.getString(RemoteClient.REMOTE_KEY_ARG_TYPES);
         String methodReturnType = bundle.getString(RemoteClient.REMOTE_KEY_RETURN);
@@ -73,8 +73,8 @@ public class RemoteServer implements Handler.Callback {
 
             Method m = originClass.getMethod(methodName, types);
 
-            if (RemoteUtil.methodHashCode(m) != methodHash) {
-                replay(msg, callId, methodHash, Throwable.class.getName(), new RemoteException("method hash not matches"));
+            if (RemoteUtil.checkAndHashMethod(m) != methodHash) {
+                replay(msg.replyTo, callId, methodHash, Throwable.class.getName(), new RemoteException("method hash not matches"));
                 return true;
             }
 
@@ -89,28 +89,63 @@ public class RemoteServer implements Handler.Callback {
             int i = 0;
             Object[] args = new Object[argArray.size()];
             for (JsonElement argElement: argArray) {
-                args[i] = gson.fromJson(argElement, types[i]);
-                i = i + 1;
+                if (types[i] != RemoteCallbackHandler.class) {
+                    args[i] = gson.fromJson(argElement, types[i]);
+                    i = i + 1;
+                }
             }
+
 
             Object service = ServicePool.getService(originClass);
             if (service == null) {
                 return false;
             }
+
+            final Class returnType = m.getReturnType();
+
+            final String returnTypeName = returnType.getName();
+
+            boolean asyncCall = false;
+
+            RemoteCallbackHandler callbackHandler;
+            if (types.length > 0 && types[args.length - 1] == RemoteCallbackHandler.class) {
+                asyncCall = true;
+                final Messenger replyTo = msg.replyTo;
+                callbackHandler = new RemoteCallbackHandler() {
+
+                    @Override
+                    public void resolve(Object result) {
+                        try {
+                            replay(replyTo, callId, methodHash, returnTypeName, result);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                            if (onServerListener != null) {
+                                onServerListener.onServerDisconnected();
+                            }
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                args[args.length - 1] = callbackHandler;
+            }
+
             Object returnObject = m.invoke(service, args);
 
-            Class returnType = m.getReturnType();
 
-            replay(msg, callId, methodHash, returnType.getName(), returnObject);
+            if (!asyncCall) {
+                replay(msg.replyTo, callId, methodHash, returnType.getName(), returnObject);
+            }
 
         } catch (RemoteException e) {
+            e.printStackTrace();
             if (onServerListener != null) {
                 onServerListener.onServerDisconnected();
             }
         } catch (Throwable e) {
             e.printStackTrace();
             try {
-                replay(msg, callId, methodHash, Throwable.class.getName(), e);
+                replay(msg.replyTo, callId, methodHash, Throwable.class.getName(), e);
             } catch (RemoteException e1) {
                 if (onServerListener != null) {
                     onServerListener.onServerDisconnected();
@@ -123,14 +158,14 @@ public class RemoteServer implements Handler.Callback {
         return false;
     }
 
-    private void replay(Message msg, int callId, int methodHash, String returnType, Object returnObject) throws RemoteException {
+    private void replay(Messenger replyTo, int callId, int methodHash, String returnType, Object returnObject) throws RemoteException {
         Message sendMessage = Message.obtain(mHandler, callId);
         Bundle sendData = new Bundle();
         sendData.putString(RemoteClient.REMOTE_KEY_RETURN, gson.toJson(returnObject));
         sendData.putInt(RemoteClient.REMOTE_KEY_METHOD_HASH, methodHash);
         sendData.putString(RemoteClient.REMOTE_KEY_RETURN_TYPE, returnType);
         sendMessage.setData(sendData);
-        msg.replyTo.send(sendMessage);
+        replyTo.send(sendMessage);
     }
 
     public void setOnServerListener(OnServerListener onServerListener) {

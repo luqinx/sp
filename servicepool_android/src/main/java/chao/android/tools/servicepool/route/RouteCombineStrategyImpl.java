@@ -25,8 +25,7 @@ public class RouteCombineStrategyImpl implements CombineStrategy, Handler.Callba
 
     private static final int MSG_WHAT_INTERRUPT = 2;
 
-    //callback返回时应该使用调用线程
-    private Handler mHandler;
+    private Handler mHandler = new Handler(Looper.getMainLooper(), this);
 
     @Override
     public boolean filter(Class serviceClass, Method method, Object[] args) {
@@ -39,7 +38,6 @@ public class RouteCombineStrategyImpl implements CombineStrategy, Handler.Callba
     @Override
     public Object invoke(final List<ServiceProxy> proxies, Class serviceClass, final Method method, final Object[] args) {
 
-        mHandler = new Handler(Looper.myLooper(), this); //todo bug
 
         ServicePool.executor.execute(new Runnable() {
             @Override

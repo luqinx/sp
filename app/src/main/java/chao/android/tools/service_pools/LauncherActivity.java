@@ -17,7 +17,7 @@ public class LauncherActivity extends AMIActivity {
     public void setupView(Bundle savedInstanceState) {
         super.setupView(savedInstanceState);
 
-        UI.show(this, MainActivity.class);
+        UI.show(this, RPCSampleFragment.class);
         finish();
     }
 }

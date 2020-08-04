@@ -2,6 +2,7 @@ package chao.app.remoteexample.serviceimpl;
 
 import java.util.List;
 
+import chao.android.tools.servicepool.rpc.RemoteCallbackHandler;
 import chao.app.remoteapi.IExampleService;
 import chao.java.tools.servicepool.annotation.Service;
 
@@ -38,6 +39,11 @@ public class ExampleServiceImpl implements IExampleService {
 
     @Override
     public void withList(int i, String s, List<String> sl) {
+    }
+
+    @Override
+    public void withCallback(int i, RemoteCallbackHandler<String> handler) {
+        handler.resolve("with callback method: " + i);
     }
 
     @Override

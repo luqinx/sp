@@ -23,7 +23,7 @@ abkit {
     maven {
         artifactId 'sprouter'
         groupId 'chao.java.tools'
-        versionName '1.3.4'
+        versionName '1.3.5'
         publish2Local false
     }
 }

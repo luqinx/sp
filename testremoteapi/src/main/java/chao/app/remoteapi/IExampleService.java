@@ -2,6 +2,7 @@ package chao.app.remoteapi;
 
 import java.util.List;
 
+import chao.android.tools.servicepool.rpc.RemoteCallbackHandler;
 import chao.android.tools.servicepool.rpc.annotation.RemoteServiceConfig;
 import chao.java.tools.servicepool.IService;
 
@@ -27,5 +28,7 @@ public interface IExampleService extends IService {
     void withString(String s);
 
     void withList(int i, String s, List<String> sl);
+
+    void withCallback(int i, RemoteCallbackHandler<String> handler);
 
 }

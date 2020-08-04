@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -76,9 +77,10 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
 
         RemoteClient client = clientCache.get(componentName);
 
-        int callId = RemoteUtil.methodHashCode(method) ^ Thread.currentThread().hashCode();
+        int callId = RemoteUtil.checkAndHashMethod(method) ^ Thread.currentThread().hashCode();
 
-        RemoteClientMethod clientMethod = new RemoteClientMethod(method, callback);
+        RemoteClientMethod clientMethod = new RemoteClientMethod(method, args, callback);
+
 
         if (client == null) {
             client = new RemoteClient(originClass, componentName);

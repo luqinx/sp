@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
  */
 public class RemoteUtil {
 
-    public static int methodHashCode(Method method) {
+    public static int checkAndHashMethod(Method method) {
         String returnTypeName;
         Type[] parameterTypeNames;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -25,12 +25,24 @@ public class RemoteUtil {
         String methodName = method.getName();
 
         int hashCode = methodName.hashCode() ^ returnTypeName.hashCode();
+
+        int callbackHandlerCount = 0;
         for (Type type: parameterTypeNames) {
+            if (type == RemoteCallbackHandler.class) {
+                callbackHandlerCount++;
+                continue;
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 hashCode ^= type.getTypeName().hashCode();
             } else if (type instanceof Class) {
                 hashCode ^= ((Class) type).getName().hashCode();
             }
+        }
+        if (callbackHandlerCount > 1) {
+            throw new RemoteServiceException("more than one parameter of RemoteCallbackHandler.");
+        }
+        if (callbackHandlerCount == 1 && parameterTypeNames[parameterTypeNames.length - 1] != RemoteCallbackHandler.class) {
+            throw new RemoteServiceException("RemoteCallbackHandler should be the last parameter.");
         }
         return hashCode;
     }

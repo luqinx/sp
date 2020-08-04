@@ -35,7 +35,16 @@ public class RouteManager implements IService {
         routeCombineStrategy = new RouteCombineStrategyImpl();
     }
 
-    Object navigation(final RouteBuilder route, final RouteNavigationCallback callback) {
+    public void navigation(final RouteBuilder route, final RouteNavigationCallback callback) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                _navigation(route, callback);
+            }
+        });
+    }
+
+    private void _navigation(final RouteBuilder route, final RouteNavigationCallback callback) {
         if (route.context == null) {
             route.context = AndroidServicePool.getContext();//Application Context
         }
@@ -45,7 +54,7 @@ public class RouteManager implements IService {
                 callback.onLost(route);
             }
             logger.log("Router [%s] not found !!! ", route.path);
-            return null;
+            return;
         }
 
         if (Activity.class.isAssignableFrom(service)) {
@@ -82,7 +91,6 @@ public class RouteManager implements IService {
                     }
                 });
 
-                return null;
             }
         } else {
             if (callback != null) {
@@ -90,7 +98,6 @@ public class RouteManager implements IService {
             }
             logger.log("Router [%s] not found !!! ", route.path);
         }
-        return null;
     }
 
     private void _navigationActivity(RouteBuilder route, Class<? extends Activity> activity, RouteNavigationCallback callback) {
