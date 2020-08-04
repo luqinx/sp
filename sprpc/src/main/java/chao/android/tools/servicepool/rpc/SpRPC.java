@@ -44,4 +44,9 @@ public class SpRPC {
 
         return remoteService;
     }
+
+    public static <T extends IService> boolean remoteServiceExist(Class<T> serviceClass) {
+        RemoteService remoteService = (RemoteService) getService(serviceClass);
+        return remoteService.remoteExist();
+    }
 }

@@ -7,5 +7,5 @@ import chao.java.tools.servicepool.IService;
  * @since 2020-07-27
  */
 public interface RemoteService extends IService {
-    void start();
+    boolean remoteExist();
 }

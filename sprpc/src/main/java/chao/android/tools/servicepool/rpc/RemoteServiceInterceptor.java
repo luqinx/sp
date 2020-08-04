@@ -54,6 +54,14 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
         }
 
         String packageName = remoteServiceConfig.remotePackageName();
+
+
+        if (method.getDeclaringClass() == RemoteService.class
+                && "remoteExist".equals(method.getName())) {
+            callback.onInterrupt(RemoteUtil.remoteExist(packageName));
+            return;
+        }
+
         //忽略同进程下的拦截, 否则可能导致循环拦截
         if (AndroidServicePool.getContext().getPackageName().equals(packageName)) {
             callback.onContinue(method, args);
