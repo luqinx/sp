@@ -30,8 +30,8 @@ abkit {
     maven {
         artifactId 'sprpc'
         groupId 'chao.java.tools'
-        versionName '1.3.5'
-        publish2Local true
+        versionName '1.3.6'
+        publish2Local false
     }
 }
 
