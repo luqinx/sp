@@ -1,4 +1,4 @@
-package chao.android.tools.servicepool.route;
+package chao.android.tools.router;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.annotation.Service;
 import chao.java.tools.servicepool.combine.CombineService;
 
+import static chao.java.tools.servicepool.ServicePool.SCOPE_GLOBAL;
 import static chao.java.tools.servicepool.ServicePool.getCombineService;
 import static chao.java.tools.servicepool.ServicePool.logger;
 
@@ -18,6 +19,7 @@ import static chao.java.tools.servicepool.ServicePool.logger;
  * @author luqin
  * @since 2019-09-03
  */
+@Service(scope = SCOPE_GLOBAL)
 public class RouteManager implements IService {
 
     private static final String SUPPORT_FRAGMENT = "android.support.v4.app.Fragment";
@@ -49,6 +51,7 @@ public class RouteManager implements IService {
             route.context = AndroidServicePool.getContext();//Application Context
         }
         final Class<? extends IService> service = pathService.get(route.path);
+
         if (service == null) {
             if (callback != null) {
                 callback.onLost(route);

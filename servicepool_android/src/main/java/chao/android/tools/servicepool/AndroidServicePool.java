@@ -5,8 +5,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import chao.android.tools.servicepool.route.RouteBuilder;
-import chao.android.tools.servicepool.route.RouteManager;
 import chao.java.tools.servicepool.ServicePool;
 
 /**
@@ -33,12 +31,6 @@ public class AndroidServicePool extends ServicePool {
             }
         });
         checkLoader();
-        controller.cacheService(new RouteManager());
     }
-
-    public static RouteBuilder build(String path) {
-        return new RouteBuilder(path);
-    }
-
 
 }

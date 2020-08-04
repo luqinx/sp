@@ -68,4 +68,14 @@ public class SpRouter {
         }
         return new JsonParser().parse(vs);
     }
+
+
+    /**
+     *  推荐使用{@link #getService} 的方式
+     */
+    @Deprecated
+    public static RouteBuilder build(String path) {
+        return new RouteBuilder(path);
+    }
+
 }

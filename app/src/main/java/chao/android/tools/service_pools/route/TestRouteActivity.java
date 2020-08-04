@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.OnClick;
+import chao.android.tools.router.RouteBuilder;
+import chao.android.tools.router.RouteNavigationCallback;
 import chao.android.tools.router.SpRouter;
 import chao.android.tools.service_pools.BaseActivity;
 import chao.android.tools.service_pools.R;
 import chao.android.tools.service_pools.SimpleFragment;
 import chao.android.tools.servicepool.AndroidServicePool;
-import chao.android.tools.servicepool.route.RouteBuilder;
-import chao.android.tools.servicepool.route.RouteNavigationCallback;
 import chao.app.ami.Ami;
 import chao.app.ami.annotations.LayoutID;
 import chao.java.tools.servicepool.ILogger;
@@ -113,7 +113,7 @@ public class TestRouteActivity extends BaseActivity {
     }
 
     private void testInterceptor(int interceptor) {
-        AndroidServicePool.build("/app/routeTarget")
+        SpRouter.build("/app/routeTarget")
                 .withContext(this)
                 .withInt("interceptor", interceptor)
                 .navigation(new RouteNavigationCallback() {
@@ -140,7 +140,7 @@ public class TestRouteActivity extends BaseActivity {
     }
 
     private void testNotExistPath() {
-        AndroidServicePool.build("/app/notExist")
+        SpRouter.build("/app/notExist")
                 .withContext(this)
                 .navigation(null);
     }

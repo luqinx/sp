@@ -1,4 +1,4 @@
-package chao.android.tools.servicepool.route;
+package chao.android.tools.router;
 
 import android.content.Context;
 import android.net.Uri;
@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import chao.java.tools.servicepool.IService;
+import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Service;
 
 /**
@@ -19,7 +21,6 @@ public class RouteBuilder {
 
     private static final int ROUTE_DEFAULT_REQUEST_CODE = 0xf000;
 
-    @Service
     private RouteManager routeManager;
 
     Context context;
@@ -51,6 +52,7 @@ public class RouteBuilder {
         if (TextUtils.isEmpty(this.path)) {
             throw new IllegalArgumentException("route path should not be empty.");
         }
+        routeManager = ServicePool.getService(RouteManager.class);
     }
 
     public void navigation() {

@@ -8,6 +8,7 @@ import com.google.common.base.Stopwatch;
 
 import java.util.concurrent.TimeUnit;
 
+import chao.android.tools.router.SpRouter;
 import chao.android.tools.service_pools.abs.Abs;
 import chao.android.tools.service_pools.event.EventSample;
 import chao.android.tools.service_pools.event.HisEvent;
@@ -24,7 +25,7 @@ import chao.android.tools.service_pools.rpc.RPCSampleFragment;
 import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
 import chao.android.tools.servicepool.AndroidServicePool;
-import chao.android.tools.servicepool.route.RouteInterceptor;
+import chao.android.tools.router.RouteInterceptor;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.IService;
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 //        innerService.print();
 
         findViewById(R.id.router).setOnClickListener(v -> {
-            AndroidServicePool.build("/app/testRoute")
+            SpRouter.build("/app/testRoute")
                     .withContext(this)
                     .withInt("int", 100)
                     .withBoolean("boolean", true)

@@ -5,7 +5,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import chao.java.tools.servicepool.IService;
+
 /**
+ *
+ *
  * @author luqin
  * @since 2020-07-28
  */
