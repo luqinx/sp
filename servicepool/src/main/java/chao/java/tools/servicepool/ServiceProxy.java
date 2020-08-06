@@ -5,10 +5,10 @@ import java.util.List;
 
 import chao.java.tools.servicepool.annotation.Init;
 import chao.java.tools.servicepool.annotation.Service;
+import chao.java.tools.servicepool.cache.AbsServiceCacheStrategy;
 import chao.java.tools.servicepool.cache.custom.Custom;
 import chao.java.tools.servicepool.cache.Global;
 import chao.java.tools.servicepool.cache.Once;
-import chao.java.tools.servicepool.cache.ServiceCacheStrategy;
 import chao.java.tools.servicepool.cache.Weak;
 import chao.java.tools.servicepool.cache.custom.CustomCacheStrategy;
 
@@ -29,7 +29,7 @@ public class ServiceProxy<T extends IService> {
      */
     private Class<T> serviceClass;
 
-    private ServiceCacheStrategy<T> strategy;
+    private AbsServiceCacheStrategy<T> strategy;
 
     private int priority;
 
@@ -45,6 +45,8 @@ public class ServiceProxy<T extends IService> {
      *  原始class
      */
     private Class<T> originClass;
+
+    private boolean disableIntercept;
 
     ServiceProxy(Class<T> clazz) {
         serviceClass = clazz;
@@ -64,13 +66,14 @@ public class ServiceProxy<T extends IService> {
     }
 
     public ServiceProxy(Class<T> clazz, IServiceFactory serviceFactory,
-                        int priority, int scope,@Deprecated String tag, boolean async, List<Class<? extends IInitService>> dependencies) {
+                        int priority, int scope, boolean disableIntercept, boolean async, List<Class<? extends IInitService>> dependencies) {
         this.serviceClass = clazz;
         this.serviceFactory = serviceFactory;
         this.priority = priority;
         this.scope = scope;
         this.async = async;
         this.dependencies = dependencies;
+        this.disableIntercept = disableIntercept;
 
 //        int modifiers = serviceClass.getModifiers();
 //        //非静态内部类不允许使用global缓存策略
@@ -107,6 +110,7 @@ public class ServiceProxy<T extends IService> {
                 }
             }
         }
+        strategy.setDisableIntercept(disableIntercept);
         T service = strategy.getService(serviceClass, originClass);
         tryInitService(service);
         return service;
@@ -152,6 +156,13 @@ public class ServiceProxy<T extends IService> {
 
     public boolean async() {
         return async;
+    }
+
+    public void setDisableIntercept(boolean disableIntercept) {
+        this.disableIntercept = disableIntercept;
+        if (strategy != null) {
+            strategy.setDisableIntercept(disableIntercept);
+        }
     }
 
     @Override

@@ -23,8 +23,7 @@ public class ServiceInfo implements Constant {
 
     private int priority;
 
-    @Deprecated
-    private String path;
+    private boolean disableIntercept;
 
     private List<String> paths;
 
@@ -47,7 +46,7 @@ public class ServiceInfo implements Constant {
         this.pkgName = last == -1 ? service : service.substring(0, last);
         this.scope = 0xf0000000 | 2; //默认scope
         this.priority = 3;
-        this.path = "";
+        this.disableIntercept = false;
         this.paths = new ArrayList<>();
     }
 
@@ -75,9 +74,8 @@ public class ServiceInfo implements Constant {
         return priority;
     }
 
-    @Deprecated
-    public String getPath() {
-        return path;
+    public boolean isDisableIntercept() {
+        return disableIntercept;
     }
 
     public String getAsmName() {
@@ -137,8 +135,9 @@ public class ServiceInfo implements Constant {
                 priority = (int) value;
             } else if (METHOD_SCOPE.equals(key)) {
                 scope = (int) value;
-            } else if (METHOD_PATH.equals(key)) {
-                path = String.valueOf(value);
+            } else if (METHOD_DISABLE_INTERCEPT.equals(key)) {
+                disableIntercept = (boolean) value;
+            } else if (METHOD_PATH.equals(key)){
                 paths.add(String.valueOf(value));
             } else if (METHOD_ASYNC.equals(key)) {
                 async = (boolean) value;

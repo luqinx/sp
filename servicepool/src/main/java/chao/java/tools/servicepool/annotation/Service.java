@@ -56,4 +56,6 @@ public @interface Service {
      *  当inherited为true时, 被Service标记的类的子类也会被当做一个Service
      */
     boolean inherited() default false;
+
+    boolean disableIntercept() default false;
 }

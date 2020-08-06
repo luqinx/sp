@@ -13,11 +13,11 @@ public final class Custom<T extends IService> extends AbsServiceCacheStrategy<T>
 
     private final int customScope;
 
-    private final IServiceFactory factory;
+    private IServiceFactory factory;
 
     public Custom(int customScope, IServiceFactory factory) {
-        this.customScope = customScope;
         this.factory = factory;
+        this.customScope = customScope;
     }
 
     /**

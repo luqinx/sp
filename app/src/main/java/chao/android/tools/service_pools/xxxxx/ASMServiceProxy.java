@@ -21,7 +21,7 @@ public class ASMServiceProxy {
         services.add(InitService1.class);
         services.add(InitService2.class);
 
-        ServiceProxy proxy = new ServiceProxy(InitService3.class, null, 100, 200, "hah", true, services);
+        ServiceProxy proxy = new ServiceProxy<>(InitService3.class, null, 100, 200, false, true, services);
 
         ASMStaticClass  clzz = new ASMStaticClass();
     }

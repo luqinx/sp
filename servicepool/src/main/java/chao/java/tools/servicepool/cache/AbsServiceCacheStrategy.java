@@ -15,8 +15,17 @@ public abstract class AbsServiceCacheStrategy<T extends IService> implements Ser
 
     private static ServiceInterceptorStrategy strategy = new ServiceInterceptorStrategy();
 
+    private boolean disableIntercept;
+
+    public void setDisableIntercept(boolean disableIntercept) {
+        this.disableIntercept = disableIntercept;
+    }
+
 
     protected T getProxyService(final Class<T> originClazz, final T instance) {
+        if (disableIntercept) {
+            return instance;
+        }
         if (originClazz != null && originClazz.isInterface()) {
             return Interceptor.of(instance, originClazz).intercepted(true).invoke(new OnInvoke<T>() {
 

@@ -9,7 +9,7 @@ import chao.java.tools.servicepool.ReflectUtil;
 /**
  * 如果不被gc回收，则不会重新创建
  */
-public final class Weak<T extends IService> implements ServiceCacheStrategy<T> {
+public final class Weak<T extends IService> extends AbsServiceCacheStrategy<T> {
 
     private IServiceFactory factory;
 
@@ -33,6 +33,6 @@ public final class Weak<T extends IService> implements ServiceCacheStrategy<T> {
                 }
             }
         }
-        return weakService.get();
+        return getProxyService(originClass, weakService.get());
     }
 }

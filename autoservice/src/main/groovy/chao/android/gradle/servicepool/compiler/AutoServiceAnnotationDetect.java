@@ -6,7 +6,6 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -301,7 +300,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
                 if (METHOD_VALUE.equals(name)) {
                     Type valueType = (Type) value;
                     field.annotationValue = valueType.getDescriptor();
-                } else if (METHOD_PATH.equals(name)) {
+                } else if (METHOD_DISABLE_INTERCEPT.equals(name)) {
                     field.annotationPath = String.valueOf(value);
                 }
             }

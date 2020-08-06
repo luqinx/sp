@@ -2,6 +2,7 @@ package chao.android.tools.service_pools;
 
 import android.os.Bundle;
 
+import chao.android.tools.service_pools.router2.RouteFragment;
 import chao.android.tools.service_pools.rpc.RPCSampleFragment;
 import chao.app.ami.UI;
 import chao.app.ami.base.AMIActivity;
@@ -17,7 +18,7 @@ public class LauncherActivity extends AMIActivity {
     public void setupView(Bundle savedInstanceState) {
         super.setupView(savedInstanceState);
 
-        UI.show(this, SimpleFragment.class);
+        UI.show(this, RouteFragment.class);
         finish();
     }
 }

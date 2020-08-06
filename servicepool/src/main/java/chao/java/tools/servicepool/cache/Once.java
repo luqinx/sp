@@ -9,7 +9,7 @@ import chao.java.tools.servicepool.ReflectUtil;
  */
 public final class Once<T extends IService> extends AbsServiceCacheStrategy<T> {
 
-    private final IServiceFactory factory;
+    private IServiceFactory factory;
 
     public Once(IServiceFactory factory) {
         this.factory = factory;

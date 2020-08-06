@@ -48,6 +48,8 @@ public interface Constant extends Opcodes {
 
     String METHOD_PRIORITY = "priority";
 
+    String METHOD_DISABLE_INTERCEPT = "disableIntercept";
+
     String METHOD_PATH = "path";
 
     String METHOD_VALUE = "value";

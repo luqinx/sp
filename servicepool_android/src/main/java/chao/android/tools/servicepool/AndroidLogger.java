@@ -9,7 +9,7 @@ import chao.java.tools.servicepool.annotation.Service;
  * @author luqin
  * @since 2019-08-06
  */
-@Service
+@Service(disableIntercept = true)
 public class AndroidLogger implements ILogger {
 
     private static final String TAG = "spa";
@@ -51,7 +51,10 @@ public class AndroidLogger implements ILogger {
             if (name.contains("dalvik") || name.contains("java.lang")) {
                 continue;
             }
-            if (!name.contains(AndroidLogger.class.getName())) {
+            if (!name.contains(AndroidLogger.class.getName())
+                && !name.contains("AbsServiceCacheStrategy")
+                && !name.contains("ServiceInterceptorStrategy")
+                && !name.contains("ServiceProxy")) {
                 className = element.getClassName();
                 className = className.substring(className.lastIndexOf(".") + 1);
                 method = element.getMethodName();

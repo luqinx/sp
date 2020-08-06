@@ -355,11 +355,11 @@ class AutoServiceWeaver extends BaseWeaver {
             methodVisitor.visitLdcInsn(info.getPriority())
             methodVisitor.visitLdcInsn(info.getScope())
 
-            methodVisitor.visitLdcInsn(info.getPath())
+            methodVisitor.visitInsn(info.disableIntercept ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitInsn(info.async ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
 //            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;)V", false)
-            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;ZLjava/util/List;)V", false)
+            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IIZZLjava/util/List;)V", false)
 
             methodVisitor.visitInsn(Opcodes.ARETURN)
             methodVisitor.visitLabel(li)
@@ -412,15 +412,14 @@ class AutoServiceWeaver extends BaseWeaver {
             methodVisitor.visitInsn(Opcodes.DUP)
             methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-            System.out.println("priority: " + info.getPriority())
             methodVisitor.visitLdcInsn(info.getPriority())
             methodVisitor.visitLdcInsn(info.getScope())
-            methodVisitor.visitLdcInsn(info.getPath())
+            methodVisitor.visitInsn(info.disableIntercept ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitInsn(info.async ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
 
 //            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;)V", false)
-            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;ZLjava/util/List;)V", false)
+            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IIZZLjava/util/List;)V", false)
             methodVisitor.visitInsn(Opcodes.ARETURN)
             methodVisitor.visitLabel(li)
         }
@@ -466,12 +465,12 @@ class AutoServiceWeaver extends BaseWeaver {
 //            methodVisitor.visitInsn(info.getScope() + 3)
             methodVisitor.visitLdcInsn(info.getPriority())
             methodVisitor.visitLdcInsn(info.getScope())
-            methodVisitor.visitLdcInsn(info.getPath())
+            methodVisitor.visitInsn(info.disableIntercept ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitInsn(info.async ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
 
 //            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;)V", false)
-            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IILjava/lang/String;ZLjava/util/List;)V", false)
+            methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "chao/java/tools/servicepool/ServiceProxy", "<init>", "(Ljava/lang/Class;Lchao/java/tools/servicepool/IServiceFactory;IIZZLjava/util/List;)V", false)
             methodVisitor.visitVarInsn(Opcodes.ASTORE, 4)
 
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 3)// HashSet

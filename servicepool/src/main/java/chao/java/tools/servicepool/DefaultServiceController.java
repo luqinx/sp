@@ -253,11 +253,6 @@ public class DefaultServiceController implements ServiceController {
         historyCache.remove(clazz.getName());
     }
 
-    public void cacheService(IService service) {
-        ServiceProxy<? extends IService> proxy = new InnerProxy<>(service);
-        proxy.setOriginClass(service.getClass());
-        cacheService(service.getClass().getName(), proxy);
-    }
 
     public Class<? extends IService> getServiceByPath(String path) {
         IPathService pathService = getPathService();
