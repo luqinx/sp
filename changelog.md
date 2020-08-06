@@ -1,3 +1,9 @@
+1.4.0
+1. 版本规范化、名称规范化 
+2. scope增加custom类型, 支持开发者自定义scope 
+3. 增加disableIntercept属性, 支持禁用service方法调用拦截
+4. 扩大scope, priority取值范围
+
 1.3.6
 1. 新增sprouter模块, 扩展路由能力
 2. 新增sprpc模块, 增加rpc能力
