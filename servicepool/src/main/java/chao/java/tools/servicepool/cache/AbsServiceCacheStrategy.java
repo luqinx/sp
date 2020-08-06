@@ -11,7 +11,7 @@ import chao.java.tools.servicepool.ServiceInterceptorStrategy;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.combine.CombineService;
 
-abstract class AbsServiceCacheStrategy<T extends IService> implements ServiceCacheStrategy<T> {
+public abstract class AbsServiceCacheStrategy<T extends IService> implements ServiceCacheStrategy<T> {
 
     private static ServiceInterceptorStrategy strategy = new ServiceInterceptorStrategy();
 

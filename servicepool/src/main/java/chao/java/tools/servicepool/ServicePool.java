@@ -33,24 +33,29 @@ public class ServicePool {
 
 
 
+    static final int SCOPE_MASK = 0xf0000000;
+
     /**
      *  全局缓存, 创建后不会被回收，直到进程结束
      *
      */
-    public static final int SCOPE_GLOBAL = 0;
+    public static final int SCOPE_GLOBAL = SCOPE_MASK;
 
     /**
      *  临时缓存， 只要不被gc回收，服务对象一直存在
      *  如果被gc回收, 则重新创建
      */
-    public static final int SCOPE_TEMP = 1;
+    public static final int SCOPE_WEAK = SCOPE_MASK | 1;
 
     /**
      *  不会缓存， 每次获取都会重新创建
      *
      *  默认Scope
      */
-    public static final int SCOPE_ONCE = 2;
+    public static final int SCOPE_ONCE = SCOPE_MASK | 2;
+
+
+
 
     protected static DefaultServiceController controller;
 

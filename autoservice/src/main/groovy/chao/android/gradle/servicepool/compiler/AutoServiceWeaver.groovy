@@ -3,8 +3,6 @@ package chao.android.gradle.servicepool.compiler
 import chao.android.gradle.servicepool.Logger
 import chao.android.gradle.servicepool.hunter.asm.BaseWeaver
 import chao.android.gradle.servicepool.hunter.asm.ExtendClassWriter
-import chao.java.tools.servicepool.IService
-import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
 
 import java.nio.file.Files
@@ -124,7 +122,7 @@ class AutoServiceWeaver extends BaseWeaver {
         println("AutoService: Find service class " + serviceInfo)
 
         for (String clazz: classes) {
-            if (IService.class.name == clazz) {
+            if (Constant.SERVICE_FULL_NAME == clazz) {
                 continue
             }
             int last = clazz.lastIndexOf('.')
@@ -352,8 +350,11 @@ class AutoServiceWeaver extends BaseWeaver {
             methodVisitor.visitInsn(Opcodes.DUP)
             methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-            methodVisitor.visitInsn(info.getPriority() + 3)
-            methodVisitor.visitInsn(info.getScope() + 3)
+//            methodVisitor.visitInsn(info.getPriority() + 3)
+//            methodVisitor.visitInsn(info.getScope() + 3)
+            methodVisitor.visitLdcInsn(info.getPriority())
+            methodVisitor.visitLdcInsn(info.getScope())
+
             methodVisitor.visitLdcInsn(info.getPath())
             methodVisitor.visitInsn(info.async ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
@@ -411,8 +412,9 @@ class AutoServiceWeaver extends BaseWeaver {
             methodVisitor.visitInsn(Opcodes.DUP)
             methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-            methodVisitor.visitInsn(info.getPriority() + 3)
-            methodVisitor.visitInsn(info.getScope() + 3)
+            System.out.println("priority: " + info.getPriority())
+            methodVisitor.visitLdcInsn(info.getPriority())
+            methodVisitor.visitLdcInsn(info.getScope())
             methodVisitor.visitLdcInsn(info.getPath())
             methodVisitor.visitInsn(info.async ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
@@ -460,8 +462,10 @@ class AutoServiceWeaver extends BaseWeaver {
             methodVisitor.visitInsn(Opcodes.DUP)
             methodVisitor.visitLdcInsn(Type.getType(info.getDescriptor()))
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-            methodVisitor.visitInsn(info.getPriority() + 3)
-            methodVisitor.visitInsn(info.getScope() + 3)
+//            methodVisitor.visitInsn(info.getPriority() + 3)
+//            methodVisitor.visitInsn(info.getScope() + 3)
+            methodVisitor.visitLdcInsn(info.getPriority())
+            methodVisitor.visitLdcInsn(info.getScope())
             methodVisitor.visitLdcInsn(info.getPath())
             methodVisitor.visitInsn(info.async ? Opcodes.ICONST_1: Opcodes.ICONST_0)
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)

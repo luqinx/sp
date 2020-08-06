@@ -7,7 +7,7 @@ import chao.java.tools.servicepool.ReflectUtil;
 /**
  * 全局策略， 类似一个单例
  */
-public class Global<T extends IService> extends AbsServiceCacheStrategy<T> {
+public final class Global<T extends IService> extends AbsServiceCacheStrategy<T> {
 
     private T service;
 

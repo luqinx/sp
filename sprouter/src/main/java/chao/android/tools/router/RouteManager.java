@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
-import chao.android.tools.servicepool.AndroidServicePool;
+import chao.android.tools.servicepool.SPA;
 import chao.java.tools.servicepool.IPathService;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.annotation.Service;
@@ -48,7 +48,7 @@ public class RouteManager implements IService {
 
     private void _navigation(final RouteBuilder route, final RouteNavigationCallback callback) {
         if (route.context == null) {
-            route.context = AndroidServicePool.getContext();//Application Context
+            route.context = SPA.getContext();//Application Context
         }
         final Class<? extends IService> service = pathService.get(route.path);
 

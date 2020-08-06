@@ -1,4 +1,4 @@
-package chao.android.tools.servicepool.rpc;
+package chao.android.tools.rpc;
 
 import chao.android.tools.interceptor.Interceptor;
 import chao.java.tools.servicepool.IService;

@@ -27,7 +27,7 @@ public enum AndroidLazyStrategy implements TypeResolutionStrategy, TypeResolutio
      */
     INSTANCE;
 
-    File NO_OP_DEX_DIR = new File(AndroidServicePool.getContext().getFilesDir(), "autoservice_dexs");
+    File NO_OP_DEX_DIR = new File(SPA.getContext().getFilesDir(), "autoservice_dexs");
 
 
     private AndroidClassLoadingStrategy loadingStrategy = null;

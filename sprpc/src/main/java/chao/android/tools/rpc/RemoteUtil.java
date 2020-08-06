@@ -1,6 +1,5 @@
-package chao.android.tools.servicepool.rpc;
+package chao.android.tools.rpc;
 
-import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -9,7 +8,7 @@ import android.os.Looper;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import chao.android.tools.servicepool.AndroidServicePool;
+import chao.android.tools.servicepool.SPA;
 
 /**
  * @author luqin
@@ -58,7 +57,7 @@ public class RemoteUtil {
 
     public static boolean remoteExist(String packageName) {
         try {
-            PackageInfo packageInfo = AndroidServicePool.getContext().getPackageManager().getPackageInfo(packageName, 0);
+            PackageInfo packageInfo = SPA.getContext().getPackageManager().getPackageInfo(packageName, 0);
             return packageInfo != null;
         } catch (PackageManager.NameNotFoundException e) {
 //            e.printStackTrace();

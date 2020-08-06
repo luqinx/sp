@@ -1,7 +1,7 @@
 package chao.app.remoteexample;
 
 
-import chao.android.tools.servicepool.rpc.RemoteMessageService;
+import chao.android.tools.rpc.RemoteMessageService;
 
 /**
  * @author luqin

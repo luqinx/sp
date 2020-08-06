@@ -1,7 +1,7 @@
 package chao.android.tools.service_pools.rpc;
 
-import chao.android.tools.service_pools.SimpleFragment;
-import chao.android.tools.servicepool.rpc.RemoteCallbackHandler;
+import chao.android.tools.rpc.RemoteCallbackHandler;
+import chao.android.tools.service_pools.router2.RouteFragment;
 import chao.java.tools.servicepool.IService;
 
 /**
@@ -9,5 +9,5 @@ import chao.java.tools.servicepool.IService;
  * @since 2020-08-03
  */
 public interface TestService extends IService {
-    void test(RemoteCallbackHandler<SimpleFragment.SimpleData> callbackHandler);
+    void test(RemoteCallbackHandler<RouteFragment.SimpleData> callbackHandler);
 }

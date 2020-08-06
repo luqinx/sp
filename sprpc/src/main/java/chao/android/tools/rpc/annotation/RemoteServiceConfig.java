@@ -1,4 +1,4 @@
-package chao.android.tools.servicepool.rpc.annotation;
+package chao.android.tools.rpc.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

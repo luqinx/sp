@@ -3,8 +3,6 @@ package chao.android.gradle.servicepool.compiler;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
-import chao.java.tools.servicepool.IService;
-
 /**
  *
  *
@@ -30,7 +28,7 @@ class AutoServiceVisitor extends ClassVisitor implements Constant{
         }
         String[] addInterfaces = new String[interfaces.length + 1];
         System.arraycopy(interfaces, 0, addInterfaces, 0, interfaces.length);
-        addInterfaces[addInterfaces.length - 1] = IService.class.getName().replaceAll("\\.", "/");
+        addInterfaces[addInterfaces.length - 1] = SERVICE_FULL_NAME.replaceAll("\\.", "/");
         super.visit(version, access, name, signature, superName, addInterfaces);
     }
 }

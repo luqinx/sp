@@ -2,7 +2,7 @@ package chao.app.remoteexample.serviceimpl;
 
 import java.util.List;
 
-import chao.android.tools.servicepool.rpc.RemoteCallbackHandler;
+import chao.android.tools.rpc.RemoteCallbackHandler;
 import chao.app.remoteapi.IExampleService;
 import chao.java.tools.servicepool.annotation.Service;
 

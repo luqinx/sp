@@ -7,16 +7,15 @@ import chao.java.tools.servicepool.IServiceFactory;
 import chao.java.tools.servicepool.ReflectUtil;
 
 /**
- * 临时策略， 如果不被gc回收，则不会重新创建
+ * 如果不被gc回收，则不会重新创建
  */
-@Deprecated
-public class Temp<T extends IService> implements ServiceCacheStrategy<T> {
+public final class Weak<T extends IService> implements ServiceCacheStrategy<T> {
 
     private IServiceFactory factory;
 
     private WeakReference<T> weakService;
 
-    public Temp(IServiceFactory factory) {
+    public Weak(IServiceFactory factory) {
         this.factory = factory;
     }
 

@@ -7,7 +7,7 @@ import chao.java.tools.servicepool.ReflectUtil;
 /**
  * 每次获取时创建一个新的对象
  */
-public class Once<T extends IService> extends AbsServiceCacheStrategy<T> {
+public final class Once<T extends IService> extends AbsServiceCacheStrategy<T> {
 
     private final IServiceFactory factory;
 

@@ -5,10 +5,12 @@ import java.util.List;
 
 import chao.java.tools.servicepool.annotation.Init;
 import chao.java.tools.servicepool.annotation.Service;
+import chao.java.tools.servicepool.cache.custom.Custom;
 import chao.java.tools.servicepool.cache.Global;
 import chao.java.tools.servicepool.cache.Once;
 import chao.java.tools.servicepool.cache.ServiceCacheStrategy;
-import chao.java.tools.servicepool.cache.Temp;
+import chao.java.tools.servicepool.cache.Weak;
+import chao.java.tools.servicepool.cache.custom.CustomCacheStrategy;
 
 /**
  * Service的代理
@@ -46,8 +48,8 @@ public class ServiceProxy<T extends IService> {
 
     ServiceProxy(Class<T> clazz) {
         serviceClass = clazz;
-        priority = IService.Priority.NORMAL_PRIORITY;
-        scope = IService.Scope.global;
+        priority = SP.NORMAL_PRIORITY;
+        scope = SP.SCOPE_GLOBAL;
 
         Service service = serviceClass.getAnnotation(Service.class);
         if (service != null) {
@@ -86,17 +88,20 @@ public class ServiceProxy<T extends IService> {
             synchronized (this) {
                 if (strategy == null) {
                     switch (scope()) {
-                        case IService.Scope.global:
+                        case SP.SCOPE_GLOBAL:
                             strategy = new Global<>(serviceFactory);
                             break;
-                        case IService.Scope.once:
+                        case SP.SCOPE_ONCE:
                             strategy = new Once<>(serviceFactory);
                             break;
-                        case IService.Scope.temp:
-                            strategy = new Temp<>(serviceFactory);
+                        case SP.SCOPE_WEAK:
+                            strategy = new Weak<>(serviceFactory);
                             break;
                         default:
-                            strategy = new Once<>(serviceFactory);
+                            if ((scope() & SP.SCOPE_MASK) != 0) {
+                                throw new ServicePoolException("scope with mask 0xf0000000 is reserved for scopes.");
+                            }
+                            strategy = new Custom<>(scope(), serviceFactory);
                             break;
                     }
                 }
@@ -130,9 +135,14 @@ public class ServiceProxy<T extends IService> {
      */
     public int scope() {
         if (IInitService.class.isAssignableFrom(serviceClass)
-                || IPathService.class.isAssignableFrom(serviceClass)) {
-            return IService.Scope.global;
+                || IPathService.class.isAssignableFrom(serviceClass)
+            || CustomCacheStrategy.class.isAssignableFrom(serviceClass)) {
+            return SP.SCOPE_GLOBAL;
         }
+        return scope;
+    }
+
+    public int realScope() {
         return scope;
     }
 

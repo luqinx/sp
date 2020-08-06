@@ -55,15 +55,15 @@ public interface IService {
          * @deprecated by {@link ServicePool#SCOPE_GLOBAL}
          */
         @Deprecated
-        int global = 0;
+        int global = SP.SCOPE_GLOBAL;
 
         /**
          *  临时缓存， 只要不被gc回收，服务对象一直存在
          *  如果被gc回收, 则重新创建
-         * @deprecated by {@link ServicePool#SCOPE_TEMP}
+         * @deprecated by {@link ServicePool#SCOPE_WEAK}
          */
         @Deprecated
-        int temp = 1;
+        int temp = SP.SCOPE_WEAK;
 
         /**
          *  不会缓存， 每次获取都会重新创建
@@ -72,6 +72,6 @@ public interface IService {
          * @deprecated by {@link ServicePool#SCOPE_ONCE}
          */
         @Deprecated
-        int once = 2;
+        int once = SP.SCOPE_ONCE;
     }
 }

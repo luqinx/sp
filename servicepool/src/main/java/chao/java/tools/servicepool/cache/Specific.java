@@ -6,7 +6,7 @@ import chao.java.tools.servicepool.IService;
  * @author luqin
  * @since 2020-07-23
  */
-public class Specific<T extends IService> extends AbsServiceCacheStrategy<T> {
+public final class Specific<T extends IService> extends AbsServiceCacheStrategy<T> {
 
     private T service;
 

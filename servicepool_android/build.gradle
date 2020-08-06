@@ -26,8 +26,8 @@ android {
 
 abkit {
     maven {
-        artifactId 'servicepool-android'
-        groupId 'chao.java.tools'
+        artifactId 'spa'
+        groupId 'chao.android.tools'
         versionName '1.3.6'
         publish2Local false
     }

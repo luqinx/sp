@@ -20,7 +20,7 @@ import chao.android.tools.router.annotation.RouteFlags;
 import chao.android.tools.router.annotation.RouteParam;
 import chao.android.tools.router.annotation.RouteRequestCode;
 import chao.android.tools.router.annotation.RouteType;
-import chao.android.tools.servicepool.AndroidServicePool;
+import chao.android.tools.servicepool.SPA;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceInterceptor;
 import chao.java.tools.servicepool.IServiceInterceptorCallback;
@@ -99,7 +99,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 if (arg instanceof String) {
                     action = String.valueOf(arg);
                 } else {
-                    AndroidServicePool.logger.e(TAG, "error type of the parameter @RouteAction, except String, but " + arg.getClass());
+                    SPA.logger.e(TAG, "error type of the parameter @RouteAction, except String, but " + arg.getClass());
                 }
                 continue;
             }
@@ -110,7 +110,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 } else if (arg instanceof Uri) {
                     dataUri = (Uri) arg;
                 } else {
-                    AndroidServicePool.logger.e(TAG, "error type of the parameter @RouteData, except String or Uri, but " + arg.getClass());
+                    SPA.logger.e(TAG, "error type of the parameter @RouteData, except String or Uri, but " + arg.getClass());
                 }
                 continue;
             }
@@ -119,7 +119,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 if (arg instanceof String) {
                     type = String.valueOf(type);
                 } else {
-                    AndroidServicePool.logger.e(TAG, "error type of the parameter @RouteType, except String, but " + arg.getClass());
+                    SPA.logger.e(TAG, "error type of the parameter @RouteType, except String, but " + arg.getClass());
                 }
                 continue;
             }
@@ -130,7 +130,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 } else if (Integer.class.isAssignableFrom(arg.getClass())) {
                     flags |= (Integer) arg;
                 } else {
-                    AndroidServicePool.logger.e(TAG, "error type of the parameter @RouteFlags, except int, but " + arg.getClass());
+                    SPA.logger.e(TAG, "error type of the parameter @RouteFlags, except int, but " + arg.getClass());
                 }
                 continue;
             }
@@ -218,7 +218,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 } else if (Integer.class.isAssignableFrom(arg.getClass())){
                     enterAnim = (Integer) arg;
                 } else {
-                    AndroidServicePool.logger.e(TAG, "error type of the parameter @RouteEnterAnim, except int, but " + arg.getClass());
+                    SPA.logger.e(TAG, "error type of the parameter @RouteEnterAnim, except int, but " + arg.getClass());
                 }
                 continue;
             }
@@ -230,7 +230,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 } else if (Integer.class.isAssignableFrom(arg.getClass())){
                     exitAnim = (Integer) arg;
                 } else {
-                    AndroidServicePool.logger.e(TAG, "error type of the parameter @RouteExitAnim, except int, but " + arg.getClass());
+                    SPA.logger.e(TAG, "error type of the parameter @RouteExitAnim, except int, but " + arg.getClass());
                 }
                 continue;
             }
@@ -241,7 +241,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 } else if (Integer.class.isAssignableFrom(arg.getClass())) {
                     requestCode = (Integer) arg;
                 } else {
-                    AndroidServicePool.logger.e(TAG, "error type of the parameter @RouteRequestCode, except int, but " + arg.getClass());
+                    SPA.logger.e(TAG, "error type of the parameter @RouteRequestCode, except int, but " + arg.getClass());
                 }
                 continue;
             }

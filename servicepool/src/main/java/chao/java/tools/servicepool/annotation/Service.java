@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import chao.java.tools.servicepool.IService;
+import chao.java.tools.servicepool.ServicePool;
 
 /**
  * 标记一个类是一个服务类Service
@@ -34,20 +35,18 @@ public @interface Service {
      *
      * 当一个服务接口存在多个实现时， 可以通过优先级来指定使用哪个接口
      *
-     * @see IService.Priority
      *
      * @return priority
      */
-    int priority() default IService.Priority.NORMAL_PRIORITY;
+    int priority() default ServicePool.NORMAL_PRIORITY;
 
     /**
      *  服务对象的缓存策略
      *
-     * @see IService.Scope
      *
      *  @return scope
      */
-    int scope() default IService.Scope.once;
+    int scope() default ServicePool.SCOPE_ONCE;
 
     String path() default "";
 

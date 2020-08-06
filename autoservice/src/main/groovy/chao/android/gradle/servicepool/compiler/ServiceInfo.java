@@ -5,8 +5,6 @@ import org.objectweb.asm.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import chao.java.tools.servicepool.IService;
-
 /**
  * @author luqin
  * @since  2019-07-13
@@ -47,8 +45,8 @@ public class ServiceInfo implements Constant {
         this.service = asmName.replaceAll("/", ".");
         int last = service.lastIndexOf('.');
         this.pkgName = last == -1 ? service : service.substring(0, last);
-        this.scope = IService.Scope.once;
-        this.priority = IService.Priority.NORMAL_PRIORITY;
+        this.scope = 0xf0000000 | 2; //默认scope
+        this.priority = 3;
         this.path = "";
         this.paths = new ArrayList<>();
     }

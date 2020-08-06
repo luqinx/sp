@@ -1,5 +1,7 @@
 package chao.android.tools.service_pools.router2;
 
+import android.content.Intent;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -14,7 +16,10 @@ import chao.java.tools.servicepool.IService;
  */
 public interface RouteApi extends IService {
 
-    @Route(path = "/app/testRoute")
+    @Route(path = "/app/testRoute",
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK,
+            requestCode = 1
+    )
     void startTestRouterActivity(
             @RouteParam("int") int iv,
             @RouteParam("int[]") int[] liv,
@@ -25,6 +30,6 @@ public interface RouteApi extends IService {
             @RouteParam("string") String sValue,
             @RouteParam("serializable") Serializable s,
             @RouteParam("slist")ArrayList<String> slist,
-            @RouteParam("simple") ArrayList<SimpleFragment.SimpleContainer> containers
+            @RouteParam("simple") ArrayList<RouteFragment.SimpleContainer> containers
             );
 }

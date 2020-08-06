@@ -1,4 +1,4 @@
-package chao.android.tools.servicepool.rpc;
+package chao.android.tools.rpc;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

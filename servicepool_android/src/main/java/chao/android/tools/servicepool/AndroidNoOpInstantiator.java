@@ -7,7 +7,6 @@ import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.NoOpInstantiator;
 import chao.java.tools.servicepool.NoOpInterceptor;
 import chao.java.tools.servicepool.annotation.Service;
-import dalvik.system.InMemoryDexClassLoader;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,7 +36,7 @@ public class AndroidNoOpInstantiator extends DefaultService implements NoOpInsta
             .intercept(MethodCall.invoke(constructor).with(params))
             .method(ElementMatchers.any()).intercept(MethodDelegation.to(NoOpInterceptor.class))
             .make(AndroidLazyStrategy.INSTANCE)
-            .load(AndroidServicePool.getContext().getClassLoader())
+            .load(SPA.getContext().getClassLoader())
             .getLoaded();
     }
 

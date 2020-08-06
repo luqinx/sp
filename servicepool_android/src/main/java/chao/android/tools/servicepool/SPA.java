@@ -8,10 +8,13 @@ import android.os.Looper;
 import chao.java.tools.servicepool.ServicePool;
 
 /**
+ *
+ * service pool for android
+ *
  * @author qinchao
  * @since 2019/6/19
  */
-public class AndroidServicePool extends ServicePool {
+public class SPA extends ServicePool {
 
     @SuppressLint("StaticFieldLeak")
     private static Context sContext;

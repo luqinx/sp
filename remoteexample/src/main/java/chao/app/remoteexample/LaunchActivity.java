@@ -11,7 +11,7 @@ import com.google.gson.JsonArray;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import chao.android.tools.servicepool.AndroidServicePool;
+import chao.android.tools.servicepool.SPA;
 import chao.java.tools.servicepool.ClassTypeAdapter;
 import chao.app.remoteapi.IExampleService;
 
@@ -25,7 +25,7 @@ public class LaunchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidServicePool.init(this);
+        SPA.init(this);
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Class.class, new ClassTypeAdapter())

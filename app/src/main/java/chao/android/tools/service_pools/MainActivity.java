@@ -24,7 +24,6 @@ import chao.android.tools.service_pools.route.interceptor.RouteContinueIntercept
 import chao.android.tools.service_pools.rpc.RPCSampleFragment;
 import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
-import chao.android.tools.servicepool.AndroidServicePool;
 import chao.android.tools.router.RouteInterceptor;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;

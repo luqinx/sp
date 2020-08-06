@@ -2,8 +2,8 @@ package chao.app.remoteapi;
 
 import java.util.List;
 
-import chao.android.tools.servicepool.rpc.RemoteCallbackHandler;
-import chao.android.tools.servicepool.rpc.annotation.RemoteServiceConfig;
+import chao.android.tools.rpc.RemoteCallbackHandler;
+import chao.android.tools.rpc.annotation.RemoteServiceConfig;
 import chao.java.tools.servicepool.IService;
 
 /**

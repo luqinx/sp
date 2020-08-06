@@ -1,6 +1,6 @@
 package chao.app.remoteapi;
 
-import chao.android.tools.servicepool.rpc.annotation.RemoteServiceConfig;
+import chao.android.tools.rpc.annotation.RemoteServiceConfig;
 
 /**
  * @author luqin

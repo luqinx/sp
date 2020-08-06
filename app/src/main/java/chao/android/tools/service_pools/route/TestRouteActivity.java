@@ -20,7 +20,7 @@ import chao.android.tools.router.SpRouter;
 import chao.android.tools.service_pools.BaseActivity;
 import chao.android.tools.service_pools.R;
 import chao.android.tools.service_pools.SimpleFragment;
-import chao.android.tools.servicepool.AndroidServicePool;
+import chao.android.tools.service_pools.router2.RouteFragment;
 import chao.app.ami.Ami;
 import chao.app.ami.annotations.LayoutID;
 import chao.java.tools.servicepool.ILogger;
@@ -76,9 +76,9 @@ public class TestRouteActivity extends BaseActivity {
 
         Integer I = intent.getIntExtra("Integer", -1);
 
-        Type type = new TypeToken<ArrayList<SimpleFragment.SimpleContainer>>(){}.getType();
+        Type type = new TypeToken<ArrayList<RouteFragment.SimpleContainer>>(){}.getType();
 
-        ArrayList<SimpleFragment.SimpleContainer> containers  = SpRouter.getExtra(this, "simple", type);
+        ArrayList<RouteFragment.SimpleContainer> containers  = SpRouter.getExtra(this, "simple", type);
 
 
         logger.log(iv, bv, fv, dv, sv, serializable, pv, Arrays.toString(liv), slist, I, containers);

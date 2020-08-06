@@ -1,4 +1,4 @@
-package chao.android.tools.servicepool.rpc;
+package chao.android.tools.rpc;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -7,12 +7,11 @@ import android.os.IBinder;
 import android.os.RemoteException;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import chao.android.tools.servicepool.AndroidServicePool;
-import chao.android.tools.servicepool.rpc.annotation.RemoteServiceConfig;
+import chao.android.tools.rpc.annotation.RemoteServiceConfig;
+import chao.android.tools.servicepool.SPA;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceInterceptor;
 import chao.java.tools.servicepool.IServiceInterceptorCallback;
@@ -63,7 +62,7 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
         }
 
         //忽略同进程下的拦截, 否则可能导致循环拦截
-        if (AndroidServicePool.getContext().getPackageName().equals(packageName)) {
+        if (SPA.getContext().getPackageName().equals(packageName)) {
             callback.onContinue(method, args);
             return;
         }
@@ -148,7 +147,7 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
         Intent intent = new Intent();
         final String componentName = remoteServiceConfig.remoteComponentName();
         intent.setComponent(new ComponentName(remoteServiceConfig.remotePackageName(), componentName));
-        return AndroidServicePool.getContext().bindService(intent, new ServiceConnection() {
+        return SPA.getContext().bindService(intent, new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 client.bindRemote(service);

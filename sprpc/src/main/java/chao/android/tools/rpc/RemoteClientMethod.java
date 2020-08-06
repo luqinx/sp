@@ -1,4 +1,4 @@
-package chao.android.tools.servicepool.rpc;
+package chao.android.tools.rpc;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;

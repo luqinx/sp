@@ -2,11 +2,9 @@ package chao.android.tools.service_pools.rpc;
 
 import android.view.View;
 
-import java.util.ArrayList;
-
 import chao.android.tools.service_pools.R;
-import chao.android.tools.servicepool.rpc.RemoteCallbackHandler;
-import chao.android.tools.servicepool.rpc.SpRPC;
+import chao.android.tools.rpc.RemoteCallbackHandler;
+import chao.android.tools.rpc.SpRPC;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMISupportFragment;
 import chao.app.remoteapi.IExampleService;
