@@ -56,15 +56,16 @@ dependencies {
 -dontwarn com.google.common.**
 
 -dontwarn net.bytebuddy.**
--keep class net.bytebuddy.** {*;}
 
--keep class chao.android.tools.** {*;}
+-keep class net.bytebuddy.** {*;}
+-keep class com.android.** {*;}
 
 -keep @chao.java.tools.servicepool.annotation.* class *
+-keep @chao.android.tools.rpc.annotation.* class ** {*;}
 
+-keep class chao.android.tools.** {*;}
 -keep class chao.java.tools.** {*;}
 
--keep class com.android.** {*;}
 ```
 
 ### ServicePool使用方式

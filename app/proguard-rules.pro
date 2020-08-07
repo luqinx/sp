@@ -11,6 +11,7 @@
 -keep class chao.android.tools.servicepool.** {*;}
 
 -keep @chao.java.tools.servicepool.annotation.* class *
+-keep @chao.android.tools.rpc.annotation.* class ** {*;}
 
 -keep class chao.java.tools.** {*;}
 
