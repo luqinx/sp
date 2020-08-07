@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     @Service(path = "/app/path2")
     private static PathService2 pathService2;
 
-//    @Service
+    @Service
     private Abs abs;
 
     public MainActivity() {
