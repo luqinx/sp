@@ -47,6 +47,24 @@ dependencies {
 }
 ```
 
+混淆配置
+
+```
+
+-ignorewarnings
+
+-keep class net.bytebuddy.** {*;}
+
+-keep class com.android.** {*;}
+
+
+-keep class chao.android.tools.** {*;}
+
+-keep @chao.java.tools.servicepool.annotation.* class *
+
+-keep class chao.java.tools.** {*;}
+```
+
 ### ServicePool使用方式
 
 #### 在Application的onCreate()/onAttachBaseContext()方法中初始化 

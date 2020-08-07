@@ -9,7 +9,8 @@ dependencies {
     testImplementation "junit:junit:4.12"
     testImplementation "chao.android.tools:testsuit:0.0.1.dev1"
     implementation interceptor
-    implementation "net.bytebuddy:byte-buddy:1.10.13"
+    implementation ("net.bytebuddy:byte-buddy:1.10.15") {
+    }
 //    implementation "net.bytebuddy:byte-buddy:1.9.6"
 
     implementation gson
@@ -22,6 +23,10 @@ abkit {
         versionName '1.4.0'
         publish2Local false
     }
+}
+
+jar {
+    exclude "META-INF/versions/9/module-info.class"
 }
 
 

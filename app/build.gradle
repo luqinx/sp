@@ -21,11 +21,13 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
 
         debug {
             debuggable true
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
             debuggable true
@@ -37,6 +39,7 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+
 }
 
 
@@ -48,6 +51,8 @@ autoservice {
     inheritedOn true  //默认打开, 打开weave时长是关闭时长的1.5倍
 
 }
+
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

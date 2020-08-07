@@ -15,8 +15,8 @@ public class SimpleFragment extends AmiSimpleFragment {
 
     @Override
     public void onClick(View v) {
-        for (int i = 0; i < 10; i++) {
-            System.out.println(SP.getService(IPoolInstance.class));
+        for (int i = 0; i < 1; i++) {
+            System.out.println(SP.getService(Printer.class));
         }
 
     }

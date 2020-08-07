@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
     @Service(path = "/app/path2")
     private static PathService2 pathService2;
 
-    @Service
+//    @Service
     private Abs abs;
 
     public MainActivity() {
@@ -118,9 +118,9 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
         pathService2.print();
 
 //
-        abs.method();
+//        abs.method();
 
-        System.out.println("abs instance of NoInstance:" + (abs instanceof NoOpInstance));
+//        System.out.println("abs instance of NoInstance:" + (abs instanceof NoOpInstance));
 //
         commonService.print();
 //

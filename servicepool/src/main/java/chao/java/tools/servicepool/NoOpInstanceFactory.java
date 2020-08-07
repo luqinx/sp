@@ -65,6 +65,7 @@ public class NoOpInstanceFactory {
                 return t;
             }
         } catch(Throwable e){
+            System.out.println("no op failed : " + clazz.getName());
             throw new RuntimeException("NoOpInstance创建失败, " + e.getMessage(), e);
         }
         throw new RuntimeException("NoOpInstance创建失败");
