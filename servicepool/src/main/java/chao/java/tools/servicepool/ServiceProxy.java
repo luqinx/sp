@@ -6,6 +6,7 @@ import java.util.List;
 import chao.java.tools.servicepool.annotation.Init;
 import chao.java.tools.servicepool.annotation.Service;
 import chao.java.tools.servicepool.cache.AbsServiceCacheStrategy;
+import chao.java.tools.servicepool.cache.Soft;
 import chao.java.tools.servicepool.cache.custom.Custom;
 import chao.java.tools.servicepool.cache.Global;
 import chao.java.tools.servicepool.cache.Once;
@@ -99,6 +100,9 @@ public class ServiceProxy<T extends IService> {
                             break;
                         case SP.SCOPE_WEAK:
                             strategy = new Weak<>(serviceFactory);
+                            break;
+                        case SP.SCOPE_SOFT:
+                            strategy = new Soft<>(serviceFactory);
                             break;
                         default:
                             if ((scope() & SP.SCOPE_MASK) != 0) {

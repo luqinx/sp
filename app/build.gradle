@@ -86,4 +86,6 @@ dependencies {
     implementation gson
 
     implementation project(":testremoteapi")
+
+    implementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 }

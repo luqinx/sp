@@ -14,7 +14,9 @@ import chao.java.tools.servicepool.ServiceProxy;
  */
 public class ASMServiceProxy {
 
-
+    static {
+        System.out.println("this is a clinit method.");
+    }
 
     private void newServiceProxy() {
         ArrayList<Class<? extends IInitService>> services = new ArrayList<>();

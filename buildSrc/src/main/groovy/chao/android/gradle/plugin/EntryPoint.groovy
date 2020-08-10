@@ -19,6 +19,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
+import org.gradle.invocation.DefaultGradle
 
 class EntryPoint implements Plugin<Project> {
 
@@ -29,6 +30,12 @@ class EntryPoint implements Plugin<Project> {
 
         if (project != project.rootProject) {
             return
+        }
+
+        if (SettingsInject.props  == null) {
+            SettingsInject.props = new Property()
+            SettingsInject.props.initStaticProperties(project.rootDir)
+            Env.properties(SettingsInject.props)
         }
 
         Env.rootProject project

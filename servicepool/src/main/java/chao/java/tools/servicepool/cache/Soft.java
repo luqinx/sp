@@ -1,5 +1,6 @@
 package chao.java.tools.servicepool.cache;
 
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 
 import chao.java.tools.servicepool.IService;
@@ -7,17 +8,17 @@ import chao.java.tools.servicepool.IServiceFactory;
 import chao.java.tools.servicepool.ReflectUtil;
 
 /**
- * 使用弱引用
+ * 使用软引用
  *
  * 如果不被gc回收，则不会重新创建
  */
-public final class Weak<T extends IService> extends AbsServiceCacheStrategy<T> {
+public final class Soft<T extends IService> extends AbsServiceCacheStrategy<T> {
 
     private IServiceFactory factory;
 
-    private WeakReference<T> weakService;
+    private SoftReference<T> weakService;
 
-    public Weak(IServiceFactory factory) {
+    public Soft(IServiceFactory factory) {
         this.factory = factory;
     }
 
@@ -28,9 +29,9 @@ public final class Weak<T extends IService> extends AbsServiceCacheStrategy<T> {
                 if (weakService == null || weakService.get() == null) {
 
                     if (factory != null) {
-                        weakService = new WeakReference<>(serviceClass.cast(factory.createInstance(serviceClass)));
+                        weakService = new SoftReference<>(serviceClass.cast(factory.createInstance(serviceClass)));
                     } else {
-                        weakService = new WeakReference<>(ReflectUtil.newInstance(serviceClass));
+                        weakService = new SoftReference<>(ReflectUtil.newInstance(serviceClass));
                     }
                 }
             }

@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import chao.android.tools.servicepool.SPA;
 import chao.app.ami.Ami;
+import leakcanary.LeakCanary;
 
 /**
  * todo 问题:

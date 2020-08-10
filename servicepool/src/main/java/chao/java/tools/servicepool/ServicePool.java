@@ -48,11 +48,17 @@ public class ServicePool {
     public static final int SCOPE_WEAK = SCOPE_MASK | 1;
 
     /**
+     *  临时缓存， 只要不被gc回收，服务对象一直存在
+     *  如果被gc回收, 则重新创建
+     */
+    public static final int SCOPE_SOFT = SCOPE_MASK | 2;
+
+    /**
      *  不会缓存， 每次获取都会重新创建
      *
      *  默认Scope
      */
-    public static final int SCOPE_ONCE = SCOPE_MASK | 2;
+    public static final int SCOPE_ONCE = SCOPE_MASK | 3;
 
 
 

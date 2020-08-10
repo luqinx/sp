@@ -4,7 +4,6 @@ import android.view.View;
 
 import java.util.concurrent.CountDownLatch;
 
-import butterknife.OnClick;
 import chao.android.tools.service_pools.R;
 import chao.android.tools.service_pools.test.InitService1;
 import chao.app.ami.Ami;
