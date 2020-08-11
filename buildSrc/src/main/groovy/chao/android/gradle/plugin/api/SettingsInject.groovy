@@ -20,7 +20,6 @@ import org.gradle.internal.resource.BasicTextResourceLoader
 import org.gradle.internal.resource.TextResource
 import org.gradle.invocation.DefaultGradle
 
-import java.lang.reflect.Array
 import java.lang.reflect.Field
 
 /**
@@ -33,7 +32,7 @@ class SettingsInject {
 
     private static final String MODULES_SETTINGS_FILE_KEY = "modules.gradle.file"
 
-    private static File modulesFile
+    private static File[] modulesFiles
 
     public static Property props
 
@@ -95,16 +94,28 @@ class SettingsInject {
         Env.properties(props)
 
 
-        String modulesFileName = DEFAULT_MODULES_SETTINGS_FILE
+        List<String> modulesFileNames = new ArrayList<>()
+        modulesFileNames.add(DEFAULT_MODULES_SETTINGS_FILE)
 
         if (props.hasProperty(MODULES_SETTINGS_FILE_KEY)) {
-            modulesFileName = props.propertyResult(MODULES_SETTINGS_FILE_KEY).value
-            if (!modulesFileName.endsWith(".gradle")) {
-                modulesFileName += ".gradle"
+            String modulesFileName = props.propertyResult(MODULES_SETTINGS_FILE_KEY).value
+
+            String[] names = modulesFileName.split(";")
+            for (int i = 0; i < names.size(); i++) {
+                if (!names[i].endsWith(".gradle")) {
+                    names[i] += ".gradle"
+                }
+                if (!modulesFileNames.contains(names[i])) {
+                    modulesFileNames.add(names[i])
+                }
             }
         }
-        println("abkit: modules config file:  " + modulesFileName)
-        modulesFile = new File(settings.rootDir, modulesFileName)
+        println("abkit: modules config files:  " + modulesFileNames)
+
+        modulesFiles = new File[modulesFileNames.size()]
+        for (int i = 0; i < modulesFileNames.size(); i++) {
+            modulesFiles[i] = new File(settings.rootDir, modulesFileNames.get(i))
+        }
 
         gradle.apply(new Action<ObjectConfigurationAction>() {
             @Override
@@ -133,14 +144,16 @@ class SettingsInject {
     }
 
     private static void applySettingsScript(ScriptHandlerFactory scriptHandlerFactory, ScriptPluginFactory configurerFactory, final SettingsInternal settings) {
-        TextResource settingsResource = (new BasicTextResourceLoader()).loadFile("settings file", modulesFile)
-        ScriptSource settingsScriptSource = new TextResourceScriptSource(settingsResource)
-        ClassLoaderScope settingsClassLoaderScope = settings.getClassLoaderScope()
-        ScriptHandler scriptHandler = scriptHandlerFactory.create(settingsScriptSource, settingsClassLoaderScope)
-        ScriptPlugin configurer = configurerFactory.create(settingsScriptSource, scriptHandler, settingsClassLoaderScope, settings.getRootClassLoaderScope(), true)
-        ModuleHandler handler = ModuleHandler.instance()
-        handler.setSettings(settings)
-        configurer.apply(handler)
+        for (File modulesFile: modulesFiles) {
+            TextResource settingsResource = (new BasicTextResourceLoader()).loadFile(modulesFile.getName(), modulesFile)
+            ScriptSource settingsScriptSource = new TextResourceScriptSource(settingsResource)
+            ClassLoaderScope settingsClassLoaderScope = settings.getClassLoaderScope()
+            ScriptHandler scriptHandler = scriptHandlerFactory.create(settingsScriptSource, settingsClassLoaderScope)
+            ScriptPlugin configurer = configurerFactory.create(settingsScriptSource, scriptHandler, settingsClassLoaderScope, settings.getRootClassLoaderScope(), true)
+            ModuleHandler handler = ModuleHandler.instance()
+            handler.setSettings(settings)
+            configurer.apply(handler)
+        }
     }
 
 }

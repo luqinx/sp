@@ -45,6 +45,12 @@ public class SpRPC {
         return remoteService;
     }
 
+    /**
+     * 检查远程服务是否存在
+     *
+     *
+     * @return 如果远程app没有安装，返回false
+     */
     public static <T extends IService> boolean remoteServiceExist(Class<T> serviceClass) {
         RemoteService remoteService = (RemoteService) getService(serviceClass);
         return remoteService.remoteExist();

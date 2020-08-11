@@ -39,7 +39,7 @@ class AssemblePlugin extends BasePlugin {
                 task.project.configurations.all { configuration ->
                     configuration.dependencies.all { dependency ->
                         if (dependency && dependency.version && dependency.version.endsWith("-SNAPSHOT")) {
-                            throw new PluginException("发布正式版本不允许使用SNAPSHOT版本依赖: ${dependency.group}:${dependency.name}:${dependency.version}")
+//                            throw new PluginException("发布正式版本不允许使用SNAPSHOT版本依赖: ${dependency.group}:${dependency.name}:${dependency.version}")
                         }
                     }
                 }

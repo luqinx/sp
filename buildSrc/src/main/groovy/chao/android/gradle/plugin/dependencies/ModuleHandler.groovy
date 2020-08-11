@@ -2,6 +2,8 @@ package chao.android.gradle.plugin.dependencies
 
 import chao.android.gradle.plugin.base.PluginException
 import chao.android.gradle.plugin.util.StringUtils
+import org.gradle.api.Project
+import org.gradle.api.initialization.ProjectDescriptor
 import org.gradle.api.initialization.Settings
 import org.gradle.initialization.DefaultSettings
 
@@ -48,6 +50,28 @@ class ModuleHandler {
     DefaultSettings getSettings() {
         return this.settings
     }
+
+    ProjectDescriptor getRootProject() {
+        return settings.rootProject
+    }
+
+
+    void include(String... projectPaths) {
+        settings.include(projectPaths)
+    }
+
+    void includeFlat(String... projectNames) {
+        settings.includeFlat(projectNames)
+    }
+
+    ProjectDescriptor project(String path) {
+        return settings.project(path)
+    }
+
+    ProjectDescriptor project(File file) {
+        return settings.project(file)
+    }
+
 
     ModuleBuilder module(String moduleName, String remoteName, String projectName) {
         checkModuleName(moduleName)
