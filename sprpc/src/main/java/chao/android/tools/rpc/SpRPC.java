@@ -65,7 +65,7 @@ public class SpRPC {
         IService service = getService(serviceClass);
         if (service instanceof RemoteService) {
             RemoteService remoteService = (RemoteService) service;
-            remoteService.remoteExist();
+            return remoteService.remoteExist();
         }
         return false;
     }

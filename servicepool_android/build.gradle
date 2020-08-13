@@ -39,8 +39,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation servicepool
-    implementation interceptor
+    api servicepool
+    api interceptor
     implementation ("net.bytebuddy:byte-buddy-android:1.10.14")
 //    implementation "net.bytebuddy:byte-buddy-android:1.9.6"
     implementation gson
