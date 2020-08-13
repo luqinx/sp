@@ -1,3 +1,9 @@
+1.5.0
+1. scope增加Soft, 对应Weak
+2. 命名规范, SP -> Sp, SPA -> Spa
+3. 增加混淆配置
+4. 其他优化
+
 1.4.0
 1. 版本规范化、名称规范化 
 2. scope增加custom类型, 支持开发者自定义scope 

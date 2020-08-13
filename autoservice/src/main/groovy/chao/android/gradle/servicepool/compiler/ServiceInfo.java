@@ -44,7 +44,7 @@ public class ServiceInfo implements Constant {
         this.service = asmName.replaceAll("/", ".");
         int last = service.lastIndexOf('.');
         this.pkgName = last == -1 ? service : service.substring(0, last);
-        this.scope = 0xf0000000 | 2; //默认scope
+        this.scope = 0xf0000000 | 3; //默认scope
         this.priority = 3;
         this.disableIntercept = false;
         this.paths = new ArrayList<>();

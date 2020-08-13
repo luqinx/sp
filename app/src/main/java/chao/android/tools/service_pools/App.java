@@ -1,14 +1,14 @@
 package chao.android.tools.service_pools;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.google.common.base.Stopwatch;
 
 import java.util.concurrent.TimeUnit;
 
-import chao.android.tools.servicepool.SPA;
+import chao.android.tools.servicepool.Spa;
 import chao.app.ami.Ami;
-import leakcanary.LeakCanary;
 
 /**
  * todo 问题:
@@ -42,18 +42,24 @@ public class App extends Application {
 //    @Service
 //    private ILogger logger;
 
-    public App() {
+    public static Context sContext;
 
+    public App() {
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        sContext = getApplicationContext();
+
         Stopwatch stopwatch = Stopwatch.createStarted();
 
-        SPA.init(this);
-        SPA.setExceptionHandler((e, message) -> {
+
+        new SimpleFragment().onClick(null);
+
+        Spa.init(this);
+        Spa.setExceptionHandler((e, message) -> {
 //            logger.log(message);
             e.printStackTrace();
             System.out.println("get service err: " + e);

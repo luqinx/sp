@@ -28,7 +28,7 @@ abkit {
     maven {
         artifactId 'spa'
         groupId 'chao.android.tools'
-        versionName '1.4.0'
+        versionName '1.5.0'
         publish2Local false
     }
 }
@@ -41,7 +41,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation servicepool
     implementation interceptor
-    implementation ("net.bytebuddy:byte-buddy-android:1.10.13")
+    implementation ("net.bytebuddy:byte-buddy-android:1.10.14")
 //    implementation "net.bytebuddy:byte-buddy-android:1.9.6"
     implementation gson
 }

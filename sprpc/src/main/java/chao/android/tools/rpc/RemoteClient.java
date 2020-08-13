@@ -44,7 +44,6 @@ public class RemoteClient implements Handler.Callback {
 
     private Messenger receiveMessenger;
 
-    private Class<? extends IService> originClass;
 
     private String componentName;
 
@@ -54,10 +53,9 @@ public class RemoteClient implements Handler.Callback {
 
     private RemoteHandler mHandler = new RemoteHandler(this);
 
-    public RemoteClient(Class<? extends IService> originClass, String componentName) {
+    public RemoteClient(String componentName) {
         this.componentName = componentName;
         this.receiveMessenger = new Messenger(mHandler);
-        this.originClass = originClass;
         clientMethods = new ConcurrentHashMap<>();
         gson = new GsonBuilder()
                 .registerTypeAdapter(Class.class, new ClassTypeAdapter())
@@ -71,7 +69,7 @@ public class RemoteClient implements Handler.Callback {
 
 
 
-    public void sendMessage(Method method, Object[] args, int callId) throws RemoteException {
+    public void sendMessage(Class<? extends IService> originClass, Method method, Object[] args, int callId) throws RemoteException {
 
         int methodHash = RemoteUtil.checkAndHashMethod(method);
 

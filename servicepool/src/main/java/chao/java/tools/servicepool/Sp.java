@@ -7,5 +7,5 @@ package chao.java.tools.servicepool;
  * @author luqin
  * @since 2020-08-06
  */
-public final class SP extends ServicePool {
+public final class Sp extends ServicePool {
 }

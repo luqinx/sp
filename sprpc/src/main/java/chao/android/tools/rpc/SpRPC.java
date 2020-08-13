@@ -1,6 +1,9 @@
 package chao.android.tools.rpc;
 
+import android.content.Context;
+
 import chao.android.tools.interceptor.Interceptor;
+import chao.android.tools.servicepool.Spa;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.InnerProxy;
 import chao.java.tools.servicepool.ServicePool;
@@ -10,6 +13,13 @@ import chao.java.tools.servicepool.ServicePool;
  * @since 2020-07-27
  */
 public class SpRPC {
+
+    /**
+     *  初始化
+     */
+    public static void init(Context context) {
+        Spa.init(context);
+    }
 
     /**
      * 获取远程(其他进程)service服务， 实现RPC通信
@@ -52,7 +62,11 @@ public class SpRPC {
      * @return 如果远程app没有安装，返回false
      */
     public static <T extends IService> boolean remoteServiceExist(Class<T> serviceClass) {
-        RemoteService remoteService = (RemoteService) getService(serviceClass);
-        return remoteService.remoteExist();
+        IService service = getService(serviceClass);
+        if (service instanceof RemoteService) {
+            RemoteService remoteService = (RemoteService) service;
+            remoteService.remoteExist();
+        }
+        return false;
     }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import chao.android.tools.rpc.annotation.RemoteServiceConfig;
-import chao.android.tools.servicepool.SPA;
+import chao.android.tools.servicepool.Spa;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceInterceptor;
 import chao.java.tools.servicepool.IServiceInterceptorCallback;
@@ -57,12 +57,12 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
 
         if (method.getDeclaringClass() == RemoteService.class
                 && "remoteExist".equals(method.getName())) {
-            callback.onInterrupt(RemoteUtil.remoteExist(packageName));
+            callback.onInterrupt(RemoteUtil.remoteExist(packageName, remoteServiceConfig.remoteComponentName()));
             return;
         }
 
         //忽略同进程下的拦截, 否则可能导致循环拦截
-        if (SPA.getContext().getPackageName().equals(packageName)) {
+        if (Spa.getContext().getPackageName().equals(packageName)) {
             callback.onContinue(method, args);
             return;
         }
@@ -90,10 +90,10 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
 
 
         if (client == null) {
-            client = new RemoteClient(originClass, componentName);
+            client = new RemoteClient(componentName);
             client.addMethod(callId, clientMethod);
             if (uselessRemotes.get(componentName.hashCode()) == null) { // 5秒之前没有唤起过这个远程service
-                if (bindRemoteService(client, remoteServiceConfig, method, args, callId, callback)) {
+                if (bindRemoteService(originClass, client, remoteServiceConfig, method, args, callId, callback)) {
                     // 非主线程时等待
                     if (!RemoteUtil.inMainThread()) {
                         client.awaitMethod(callId, remoteServiceConfig.timeout());
@@ -119,7 +119,7 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
             }
         } else {
             client.addMethod(callId, clientMethod);
-            sendMessage(client, method, args, callId);
+            sendMessage(originClass, client, method, args, callId);
             client.awaitMethod(callId, remoteServiceConfig.timeout());
         }
 
@@ -131,9 +131,9 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
 //        client.printCache();
     }
 
-    private void sendMessage(final RemoteClient client, final Method method, final Object[] args, int callId) {
+    private void sendMessage(Class<? extends IService> originClass, final RemoteClient client, final Method method, final Object[] args, int callId) {
         try {
-            client.sendMessage(method, args, callId);
+            client.sendMessage(originClass, method, args, callId);
         } catch (RemoteException e) {
             e.printStackTrace();
             clientCache.remove(client.getComponentName());
@@ -143,16 +143,16 @@ public class RemoteServiceInterceptor implements IServiceInterceptor {
     }
 
 
-    private boolean bindRemoteService(final RemoteClient client, final RemoteServiceConfig remoteServiceConfig, final Method method, final Object[] args, final int callId, final IServiceInterceptorCallback callback) {
+    private boolean bindRemoteService(final Class<? extends IService> originClass, final RemoteClient client, final RemoteServiceConfig remoteServiceConfig, final Method method, final Object[] args, final int callId, final IServiceInterceptorCallback callback) {
         Intent intent = new Intent();
         final String componentName = remoteServiceConfig.remoteComponentName();
         intent.setComponent(new ComponentName(remoteServiceConfig.remotePackageName(), componentName));
-        return SPA.getContext().bindService(intent, new ServiceConnection() {
+        return Spa.getContext().bindService(intent, new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 client.bindRemote(service);
                 clientCache.put(componentName, client);
-                sendMessage(client, method, args, callId);
+                sendMessage(originClass, client, method, args, callId);
             }
 
             @Override

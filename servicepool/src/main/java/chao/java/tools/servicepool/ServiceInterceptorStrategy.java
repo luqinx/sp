@@ -42,9 +42,15 @@ public class ServiceInterceptorStrategy implements CombineStrategy {
         ResultHolder holder = new ResultHolder();
         holder.callback = callback;
         holder.interceptorCursor = 0;
-        if (proxies.size() > 0) {
+//        if (proxies.size() > 0) {
+//            execute(proxies, holder.interceptorCursor, method, args, holder);
+//        }
+        //确保所有拦截器被执行
+        while (proxies.size() > 0 && !holder.intercept && holder.interceptorCursor < proxies.size()) {
             execute(proxies, holder.interceptorCursor, method, args, holder);
+            holder.interceptorCursor++;
         }
+
         if (callback != null && !holder.intercept) {
             callback.onContinue(method, args);
         }

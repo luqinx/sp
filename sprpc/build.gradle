@@ -30,7 +30,7 @@ abkit {
     maven {
         artifactId 'sprpc'
         groupId 'chao.android.tools'
-        versionName '1.4.0'
+        versionName '1.5.0'
         publish2Local false
     }
 }
@@ -43,8 +43,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation servicepool
-    implementation servicepool_android
+    api servicepool
+    api servicepool_android
     implementation interceptor
     implementation gson
 

@@ -9,9 +9,7 @@ dependencies {
     testImplementation "junit:junit:4.12"
     testImplementation "chao.android.tools:testsuit:0.0.1.dev1"
     implementation interceptor
-    implementation ("net.bytebuddy:byte-buddy:1.10.15") {
-    }
-//    implementation "net.bytebuddy:byte-buddy:1.9.6"
+    implementation "net.bytebuddy:byte-buddy:1.10.14"
 
     implementation gson
 }
@@ -20,13 +18,9 @@ abkit {
     maven {
         artifactId 'sp'
         groupId 'chao.java.tools'
-        versionName '1.4.0'
+        versionName '1.5.0'
         publish2Local false
     }
-}
-
-jar {
-    exclude "META-INF/versions/9/module-info.class"
 }
 
 

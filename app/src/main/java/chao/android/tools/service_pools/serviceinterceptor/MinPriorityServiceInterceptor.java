@@ -13,7 +13,7 @@ import static chao.java.tools.servicepool.ServicePool.logger;
  * @author luqin
  * @since 2020-07-12
  */
-//@Service(priority = IService.Priority.MIN_PRIORITY)
+@Service(priority = IService.Priority.MIN_PRIORITY)
 public class MinPriorityServiceInterceptor implements IServiceInterceptor {
     @Override
     public void intercept(Class<? extends IService> originClass, IService source, Method method, Object[] args, IServiceInterceptorCallback callback) {

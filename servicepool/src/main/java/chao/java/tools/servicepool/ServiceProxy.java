@@ -51,8 +51,8 @@ public class ServiceProxy<T extends IService> {
 
     ServiceProxy(Class<T> clazz) {
         serviceClass = clazz;
-        priority = SP.NORMAL_PRIORITY;
-        scope = SP.SCOPE_GLOBAL;
+        priority = Sp.NORMAL_PRIORITY;
+        scope = Sp.SCOPE_GLOBAL;
 
         Service service = serviceClass.getAnnotation(Service.class);
         if (service != null) {
@@ -92,20 +92,20 @@ public class ServiceProxy<T extends IService> {
             synchronized (this) {
                 if (strategy == null) {
                     switch (scope()) {
-                        case SP.SCOPE_GLOBAL:
+                        case Sp.SCOPE_GLOBAL:
                             strategy = new Global<>(serviceFactory);
                             break;
-                        case SP.SCOPE_ONCE:
+                        case Sp.SCOPE_ONCE:
                             strategy = new Once<>(serviceFactory);
                             break;
-                        case SP.SCOPE_WEAK:
+                        case Sp.SCOPE_WEAK:
                             strategy = new Weak<>(serviceFactory);
                             break;
-                        case SP.SCOPE_SOFT:
+                        case Sp.SCOPE_SOFT:
                             strategy = new Soft<>(serviceFactory);
                             break;
                         default:
-                            if ((scope() & SP.SCOPE_MASK) != 0) {
+                            if ((scope() & Sp.SCOPE_MASK) != 0) {
                                 throw new ServicePoolException("scope with mask 0xf0000000 is reserved for scopes.");
                             }
                             strategy = new Custom<>(scope(), serviceFactory);
@@ -145,7 +145,7 @@ public class ServiceProxy<T extends IService> {
         if (IInitService.class.isAssignableFrom(serviceClass)
                 || IPathService.class.isAssignableFrom(serviceClass)
             || CustomCacheStrategy.class.isAssignableFrom(serviceClass)) {
-            return SP.SCOPE_GLOBAL;
+            return Sp.SCOPE_GLOBAL;
         }
         return scope;
     }

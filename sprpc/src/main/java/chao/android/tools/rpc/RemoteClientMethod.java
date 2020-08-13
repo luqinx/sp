@@ -1,5 +1,7 @@
 package chao.android.tools.rpc;
 
+import android.os.Debug;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -40,7 +42,11 @@ public class RemoteClientMethod {
     }
 
     public void await(long milliseconds) throws InterruptedException {
-        countDownLatch.await(milliseconds, TimeUnit.MILLISECONDS);
+        if (Debug.isDebuggerConnected()) {
+            countDownLatch.await();
+        } else {
+            countDownLatch.await(milliseconds, TimeUnit.MILLISECONDS);
+        }
     }
 
     public void countDown() {

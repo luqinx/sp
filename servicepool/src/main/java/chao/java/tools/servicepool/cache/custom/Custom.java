@@ -2,7 +2,7 @@ package chao.java.tools.servicepool.cache.custom;
 
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceFactory;
-import chao.java.tools.servicepool.SP;
+import chao.java.tools.servicepool.Sp;
 import chao.java.tools.servicepool.cache.AbsServiceCacheStrategy;
 
 /**
@@ -30,7 +30,7 @@ public final class Custom<T extends IService> extends AbsServiceCacheStrategy<T>
     @SuppressWarnings("unchecked")
     @Override
     public T getService(Class<T> serviceClass, Class<T> originClass) {
-        CustomCacheStrategy<T> customCache =  SP.getCombineService(CustomCacheStrategy.class, new CustomCombineStrategy(customScope));
+        CustomCacheStrategy<T> customCache =  Sp.getCombineService(CustomCacheStrategy.class, new CustomCombineStrategy(customScope));
         return getProxyService(originClass, customCache.getService(factory, originClass, serviceClass));
     }
 }

@@ -1,14 +1,20 @@
 package chao.android.tools.rpc;
 
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.List;
 
-import chao.android.tools.servicepool.SPA;
+import chao.android.tools.servicepool.Spa;
+
 
 /**
  * @author luqin
@@ -55,12 +61,19 @@ public class RemoteUtil {
         return Looper.myLooper() == Looper.getMainLooper();
     }
 
-    public static boolean remoteExist(String packageName) {
-        try {
-            PackageInfo packageInfo = SPA.getContext().getPackageManager().getPackageInfo(packageName, 0);
-            return packageInfo != null;
-        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
+    public static boolean remoteExist(String packageName, String componentName) {
+        if (TextUtils.isEmpty(packageName)) {
+            return false;
+        }
+        if (packageName.equals(Spa.getContext().getPackageName())) {
+            return false;
+        }
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName(packageName, componentName));
+        PackageManager pm = Spa.getContext().getPackageManager();
+        List<ResolveInfo> resolveInfos = pm.queryIntentServices(intent, 0);
+        if (resolveInfos.size() > 0) {
+            return true;
         }
         return false;
     }

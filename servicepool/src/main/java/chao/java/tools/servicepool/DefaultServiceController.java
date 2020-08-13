@@ -140,7 +140,7 @@ public class DefaultServiceController implements ServiceController {
         ServiceProxy<? extends IService> record = fixedCache.get(serviceClass.getName());
         if (record != null) {
             return record;
-        }
+    }
 
         // 2. 尝试去history缓存去拿， 但是需要确认history缓存的originClass和serviceClass是一致的
         record = historyCache.get(serviceClass.getName());
