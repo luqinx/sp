@@ -1,5 +1,19 @@
-import chao.android.gradle.plugin.api.SettingsInject
-SettingsInject.inject(getSettings(), getGradle())
+buildscript {
+    repositories {
+        mavenLocal()
+        google()
+        jcenter()
+        maven { url "http://47.99.188.223:8081/repository/maven-public/" }
+    }
 
-include ':buildSrc', ':remoteexample', ':testremoteapi'
+    dependencies {
+        classpath 'chao.android.gradle:abkit:1.0.0.gradle6'
+    }
+}
+
+import chao.android.gradle.plugin.api.ABKit
+ABKit.inject(getSettings(), getGradle())
+
+include ':remoteexample',
+        ':testremoteapi'
 include ':autoservice'

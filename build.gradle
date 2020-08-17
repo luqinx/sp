@@ -21,8 +21,8 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
-//        classpath "chao.android.gradle:abkit:0.0.2.dev1"
+        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath "chao.android.gradle:abkit:1.0.0"
 //        classpath 'chao.android.gradle:autoservice:1.1.0'
 //        classpath project(':autoservice')
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0'
