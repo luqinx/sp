@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 
 //        System.out.println("abs instance of NoInstance:" + (abs instanceof NoOpInstance));
 //
+        Printer commonService = ServicePool.getService(CommonPrinter.class);
         commonService.print();
 //
         System.out.println(commonService);

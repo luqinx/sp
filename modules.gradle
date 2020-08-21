@@ -3,11 +3,11 @@
 module("servicepool")
         .remote("chao.java.tools:sp:1.5.0")
         .project(':servicepool')
-//        .include()
+        .include()
 module("servicepool_android")
-        .remote("chao.android.tools:spa:1.5.0")
+        .remote("chao.android.tools:spa:1.5.1")
         .project(':servicepool_android')
-//        .include()
+        .include()
 
 module("sprpc")
         .remote("chao.android.tools:sprpc:1.5.0")
@@ -15,7 +15,7 @@ module("sprpc")
         .include()
 
 module("sprouter")
-    .remote("chao.android.tools:sprouter:1.5.0")
+    .remote("chao.android.tools:sprouter:1.5.1")
     .project(":sprouter")
     .include()
 

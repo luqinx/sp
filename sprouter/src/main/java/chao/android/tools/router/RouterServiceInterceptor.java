@@ -1,5 +1,6 @@
 package chao.android.tools.router;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -51,6 +52,8 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
         int enterAnim = 0;
         int exitAnim = 0;
         int requestCode = -1;
+
+        Context context = null;
 
         RouteNavigationCallback navigationCallback = null;
 
@@ -250,9 +253,14 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 navigationCallback = (RouteNavigationCallback) arg;
             }
 
+            if (Context.class.isAssignableFrom(arg.getClass())) {
+                context = (Context) arg;
+            }
+
         }
 
         routeBuilder
+                .withContext(context)
                 .withAll(bundle)
                 .withFlag(flags)
                 .withType(type)
