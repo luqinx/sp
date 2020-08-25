@@ -4,6 +4,7 @@ import android.os.SystemClock;
 
 import chao.app.ami.Ami;
 import chao.java.tools.servicepool.IInitService;
+import chao.java.tools.servicepool.Sp;
 import chao.java.tools.servicepool.annotation.Init;
 import chao.java.tools.servicepool.annotation.Service;
 
@@ -11,7 +12,7 @@ import chao.java.tools.servicepool.annotation.Service;
  * @author luqin
  * @since 2019-08-06
  */
-@Init(dependencies = InitService1.class)
+@Init(dependencies = InitService1.class, priority = Sp.MAX_PRIORITY)
 @Service
 public class InitService2 implements IInitService {
     @Override

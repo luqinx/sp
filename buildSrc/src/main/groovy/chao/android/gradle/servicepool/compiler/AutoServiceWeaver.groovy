@@ -7,6 +7,7 @@ import org.objectweb.asm.*
 
 import java.nio.file.Files
 import java.util.concurrent.ConcurrentHashMap
+import java.util.stream.Collectors
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -112,7 +113,7 @@ class AutoServiceWeaver extends BaseWeaver {
 //        List<String> classes = Collections.singletonList(classNode.className)
         ServiceInfo serviceInfo = new ServiceInfo(classNode.className)
         serviceInfo.parse(classNode.typeServiceAnnotation)
-        serviceInfo.parse(classNode.typeInitAnnotation)
+        serviceInfo.parse(classNode.typeInitAnnotation)//如果同时存在, @Init的priority会覆盖@Service的priority属性
         if (classNode.typeInitAnnotation != null) {
             serviceInfo.setInit(true)
         } else {
@@ -224,19 +225,28 @@ class AutoServiceWeaver extends BaseWeaver {
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, Constant.SERVICE_INIT_SERVICES_ASM_NAME, "<init>", "()V", false)
 
-        HashSet<String> descriptors = new HashSet<>()
+        List<ServiceInfo> initServiceInfos = new ArrayList<>()
+
         for (String pkgName : serviceInfoMap.keySet()) {
             List<ServiceInfo> serviceInfoList = serviceInfoMap.get(pkgName)
             for (ServiceInfo serviceInfo: serviceInfoList) {
                 if (!serviceInfo.isInit() || serviceInfo.isLazy()) {
                     continue
                 }
-                descriptors.add(serviceInfo.descriptor)
+                initServiceInfos.add(serviceInfo)
             }
         }
-        descriptors.each { descriptor->
+
+        Collections.sort(initServiceInfos, new Comparator<ServiceInfo>() {
+            @Override
+            int compare(ServiceInfo s1, ServiceInfo s2) {
+                return s2.priority - s1.priority
+            }
+        })
+
+        initServiceInfos.each { initServiceInfo ->
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-            methodVisitor.visitLdcInsn(Type.getType(descriptor))
+            methodVisitor.visitLdcInsn(Type.getType(initServiceInfo.descriptor))
             methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Constant.GENERATE_INIT_SERVICE_INSTANCE_ASM_NAME, "addInitService", "(Ljava/lang/Class;)V", false)
         }
         methodVisitor.visitInsn(Opcodes.RETURN)

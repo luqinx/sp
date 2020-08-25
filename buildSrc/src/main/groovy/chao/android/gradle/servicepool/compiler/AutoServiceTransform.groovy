@@ -28,8 +28,9 @@ class AutoServiceTransform extends HunterTransform {
 
     @Override
     protected void transformFinished(File destJar) {
-        System.out.println("transformFinished" + destJar.path)
+        System.out.println("add autoservice generate jar: " + destJar.path)
         autoServiceWeaver.transformFinished(destJar)
+        System.out.println("transformFinished ")
 
 //        IOUtils.copy(new FileInputStream(destJar), new )
     }

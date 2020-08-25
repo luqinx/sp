@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 import chao.java.tools.servicepool.IInitService;
 import chao.java.tools.servicepool.ServicePool;
+import chao.java.tools.servicepool.Sp;
 
 /**
  * @author luqin
@@ -30,6 +31,9 @@ public @interface Init {
      *
      */
     boolean lazy() default true;
+
+
+    int priority() default Sp.NORMAL_PRIORITY;
 
     /**
      * 依赖组件
