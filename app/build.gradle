@@ -65,7 +65,7 @@ dependencies {
     implementation servicepool
     implementation servicepool_android
 
-    implementation project(":testpluginlib")
+    implementation project(":tests:testpluginlib")
 
     implementation "com.jakewharton:butterknife:9.0.0"
     annotationProcessor "com.jakewharton:butterknife-compiler:9.0.0"
@@ -85,7 +85,7 @@ dependencies {
     implementation sprouter
     implementation gson
 
-    implementation project(":testremoteapi")
+    implementation project(":tests:testremoteapi")
 
     implementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 }

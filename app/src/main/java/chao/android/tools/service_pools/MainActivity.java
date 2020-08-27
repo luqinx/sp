@@ -71,9 +71,6 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 //    @Service
 //    private InitService5 initService5;
 
-    @Event
-    private MyEvent myEvent2;
-
     @Service
     private AppService2 appService2;
 

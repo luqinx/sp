@@ -3,7 +3,7 @@
 module("servicepool")
         .remote("chao.java.tools:sp:1.5.2")
         .project(':servicepool')
-//        .include()
+        .include()
 module("servicepool_android")
         .remote("chao.android.tools:spa:1.5.2")
         .project(':servicepool_android')
@@ -20,20 +20,20 @@ module("sprouter")
     .include()
 
 
-module("A").project(":applib1")
+module("A").project(":tests:applib1")
         .include()
 //        .disabled()
 
-module("B").project(":applib2")
+module("B").project(":tests:applib2")
         .include()
 //        .disabled()
 
-module("pool").project(":pool").include()
+module("pool").project(":tests:pool").include()
 
 module("app").project(":app").include()
-module("appservice").project(":appservice").include()
-module("testpluginlib").project(":testpluginlib").include()
-module("pool").project(":pool").include()
+module("appservice").project(":tests:appservice").include()
+module("testpluginlib").project(":tests:testpluginlib").include()
+module("pool").project(":tests:pool").include()
 module("gson").remote("com.google.code.gson:gson:2.8.5")
 
 

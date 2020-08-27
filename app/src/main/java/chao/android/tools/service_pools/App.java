@@ -44,12 +44,24 @@ public class App extends Application {
 
     public static Context sContext;
 
+    private static Application sApp;
+
     public App() {
+    }
+
+    public static Context getContext() {
+        return sContext;
+    }
+
+    public static Application application() {
+        return sApp;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        sApp = this;
 
         sContext = getApplicationContext();
 

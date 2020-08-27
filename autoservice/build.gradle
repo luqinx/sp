@@ -14,8 +14,8 @@ abkit {
     maven {
         groupId "chao.android.gradle"
         artifactId "autoservice"
-        versionName "1.5.1"
-        publish2Local false
+        versionName "1.5.3"
+        publish2Local true
     }
 }
 

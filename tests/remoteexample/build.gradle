@@ -37,7 +37,7 @@ dependencies {
     implementation gson
     implementation sprpc
 
-    implementation project(":testremoteapi")
+    implementation project(":tests:testremoteapi")
 
 }
 

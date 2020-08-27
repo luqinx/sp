@@ -24,12 +24,6 @@ public abstract class AbsInitServiceManager extends DefaultService implements In
 
     @Override
     public void initService() {
-        Collections.sort(initServices, new Comparator<Class<? extends IInitService>>() {
-            @Override
-            public int compare(Class<? extends IInitService> aClass, Class<? extends IInitService> t1) {
-                return 0;
-            }
-        });
         for (Class<? extends IInitService> clazz: initServices) {
             //getService会唤起Service的init
             ServicePool.getService(clazz);
