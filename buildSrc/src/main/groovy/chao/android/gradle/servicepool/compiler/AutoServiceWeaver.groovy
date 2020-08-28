@@ -207,6 +207,11 @@ class AutoServiceWeaver extends BaseWeaver {
 
                 writeGenerateFactories(outputZip, pkgName, infoList)
             }
+
+            //生成一个随机文件、确保每次文件hash值不一致，否则增量编译会导致编译错误
+            String randomUUID = UUID.randomUUID().toString()
+            writeZipEntry("META-INF/resources/" + randomUUID, randomUUID.getBytes(), outputZip)
+
         } finally {
             outputZip.flush()
             outputZip.close()

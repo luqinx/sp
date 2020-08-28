@@ -1,2 +1,3 @@
+#!/usr/bin/env bash
 #/bin/sh
-./gradlew assembleDebug -xlint -xtest --stacktrace
+./gradlew :app:assembleDebug -xlint -xtest --stacktrace

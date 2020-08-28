@@ -15,7 +15,7 @@ abkit {
         groupId "chao.android.gradle"
         artifactId "autoservice"
         versionName "1.5.3"
-        publish2Local true
+        publish2Local false
     }
 }
 

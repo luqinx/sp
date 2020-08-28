@@ -11,36 +11,12 @@ import chao.android.tools.servicepool.Spa;
 import chao.app.ami.Ami;
 
 /**
- * todo 问题:
- *  application使用service注解报错， context为空
  *
  *
  * @author qinchao
  * @since 2019/4/30
  */
 public class App extends Application {
-
-//    @Service
-//    private Printer appService;
-//
-//    @Service(CommonPrinter.class)
-//    private Printer commonService;
-//
-//    @Service(Haha.class)
-//    private Printer haha;
-//
-////    @Service
-////    private InitService5 initService5;
-//
-//    @Service
-//    private TestPluginService testPluginService;
-//
-//
-////    @Service
-////    private InitService3 initService3;
-//
-//    @Service
-//    private ILogger logger;
 
     public static Context sContext;
 
@@ -68,7 +44,7 @@ public class App extends Application {
         Stopwatch stopwatch = Stopwatch.createStarted();
 
 
-        new SimpleFragment().onClick(null);
+//        new SimpleFragment().onClick(null);
 
         Spa.init(this);
         Spa.setExceptionHandler((e, message) -> {
