@@ -15,8 +15,6 @@ import chao.java.tools.servicepool.debug.Debug;
  */
 public class DefaultServiceController implements ServiceController {
 
-    private Map<Class<? extends IService>, String> pathCache = new ConcurrentHashMap<>();
-
     private Map<String, ServiceProxy<? extends IService>> historyCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
 
     private Map<String, ServiceProxy<? extends IService>> fixedCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
@@ -61,7 +59,7 @@ public class DefaultServiceController implements ServiceController {
             cacheService(subInterface.getName(), serviceProxy);
             cacheSubServices(subInterface, serviceProxy);
         }
-        Class superClass = clazz.getSuperclass();
+        Class<?> superClass = clazz.getSuperclass();
         if (superClass == Object.class || superClass == null) {
             return;
         }
@@ -209,7 +207,7 @@ public class DefaultServiceController implements ServiceController {
     @Override
     public <T extends IService> T getFixedServiceByClass(Class<T> t) {
         T instance = null;
-        ServiceProxy serviceProxy = getFixedService(t);
+        ServiceProxy<?> serviceProxy = getFixedService(t);
         if (serviceProxy != null) {
             instance = t.cast(serviceProxy.getService());
         }
@@ -219,7 +217,7 @@ public class DefaultServiceController implements ServiceController {
     @Override
     public <T extends IService> T getServiceByClass(Class<T> t) {
         T instance = null;
-        ServiceProxy serviceProxy = getService(t);
+        ServiceProxy<?> serviceProxy = getService(t);
         if (serviceProxy != null) {
             instance = t.cast(serviceProxy.getService());
         }
@@ -249,18 +247,13 @@ public class DefaultServiceController implements ServiceController {
     }
 
     @Override
-    public void recycleService(Class clazz) {
+    public void recycleService(Class<?> clazz) {
         historyCache.remove(clazz.getName());
     }
 
 
     public Class<? extends IService> getServiceByPath(String path) {
-        IPathService pathService = getPathService();
-        Class<? extends IService> service = pathService.get(path);
-        if (service != null) {
-            pathCache.put(service, path);
-        }
-        return service;
+        return getPathService().get(path);
     }
 
     public IPathService getPathService() {

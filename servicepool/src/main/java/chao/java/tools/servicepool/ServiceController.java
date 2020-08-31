@@ -15,5 +15,5 @@ public interface ServiceController {
 
     ServiceProxy<? extends IService> getProxy(Class<? extends IService> clazz);
 
-    void recycleService(Class clazz);
+    void recycleService(Class<?> clazz);
 }
