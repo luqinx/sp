@@ -2,10 +2,6 @@ apply plugin: 'com.android.library'
 
 android {
 
-    compileSdkVersion 28
-
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 28
@@ -30,7 +26,7 @@ abkit {
     maven {
         artifactId 'sprpc'
         groupId 'chao.android.tools'
-        versionName '1.5.1'
+        versionName '1.5.3'
         publish2Local false
     }
 }
