@@ -1,5 +1,6 @@
 package chao.java.tools.servicepool;
 
+import java.lang.reflect.Modifier;
 import java.util.Map;
 
 import chao.java.tools.servicepool.combine.CombineStrategy;
@@ -18,18 +19,44 @@ public class ServicePool {
 
     /**
      * 低优先级
+     *
+     * Deprecated replaced by {@link Priority#MIN}
      */
+    @Deprecated
     public static final int MIN_PRIORITY = 0;
 
     /**
      * 普通优先级, 默认
+     *
+     * Deprecated replaced by {@link Priority#NORMAL}
      */
+    @Deprecated
     public static final int NORMAL_PRIORITY = 3;
 
     /**
      * 高优先级
+     *
+     * Deprecated replaced by {@link Priority#MAX}
      */
+    @Deprecated
     public static final int MAX_PRIORITY = 5;
+
+    public interface Priority {
+        /**
+         * 低优先级
+         */
+        int MIN = 0;
+
+        /**
+         * 普通优先级, 默认
+         */
+        int NORMAL = 3;
+
+        /**
+         * 高优先级
+         */
+        int MAX = 5;
+    }
 
 
 
@@ -38,28 +65,67 @@ public class ServicePool {
     /**
      *  全局缓存, 创建后不会被回收，直到进程结束
      *
+     * Deprecated: replaced by {@link Scope#GLOBAL}
+     *
      */
-    public static final int SCOPE_GLOBAL = SCOPE_MASK;
+    @Deprecated
+    public static final int SCOPE_GLOBAL = Scope.GLOBAL;
 
     /**
      *  临时缓存， 只要不被gc回收，服务对象一直存在
      *  如果被gc回收, 则重新创建
+     *
+     *  Deprecated: replaced by {@link Scope#WEAK}
      */
-    public static final int SCOPE_WEAK = SCOPE_MASK | 1;
+    @Deprecated
+    public static final int SCOPE_WEAK = Scope.WEAK;
 
     /**
      *  临时缓存， 只要不被gc回收，服务对象一直存在
      *  如果被gc回收, 则重新创建
+     *
+     * Deprecated: replaced by {@link Scope#SOFT}
      */
-    public static final int SCOPE_SOFT = SCOPE_MASK | 2;
+    @Deprecated
+    public static final int SCOPE_SOFT = Scope.SOFT;
 
     /**
      *  不会缓存， 每次获取都会重新创建
      *
+     * Deprecated: replaced by {@link Scope#NORMAL}
      *  默认Scope
      */
-    public static final int SCOPE_ONCE = SCOPE_MASK | 3;
+    @Deprecated
+    public static final int SCOPE_ONCE = Scope.NORMAL;
 
+
+    public interface Scope {
+        /**
+         *  全局缓存, 创建后不会被回收，直到进程结束
+         *
+         */
+        int GLOBAL = SCOPE_MASK;
+
+        /**
+         *  临时缓存， 只要不被gc回收，服务对象一直存在
+         *  如果被gc回收, 则重新创建
+         */
+        int WEAK = SCOPE_MASK | 1;
+
+        /**
+         *  临时缓存， 只要不被gc回收，服务对象一直存在
+         *  如果被gc回收, 则重新创建
+         */
+        int SOFT = SCOPE_MASK | 2;
+
+        /**
+         *  不会缓存， 每次获取都会重新创建
+         *
+         *  默认Scope
+         */
+        int NORMAL = SCOPE_MASK | 3;
+
+    }
 
 
 
@@ -152,13 +218,16 @@ public class ServicePool {
     /**
      * 获取service实例对象
      *
-     * @param serviceClass  可以是interface，也可以是class
+     * @param serviceClass  可以是interface
      * @param <T>   service实例对象类型
      * @return  service实例对象, 如果没有获取到具体的实现，
      *          会通过 {@link NoOpInstanceFactory} 返回一个 {@link NoOpInstance} Mock实例
      */
     public static <T extends IService> T getService(Class<T> serviceClass) {
         T instance = null;
+        if (!serviceClass.isInterface() && !Modifier.isAbstract(serviceClass.getModifiers())) {
+            throw new ServicePoolException("no-interface/no-abstract class should call method getFixedService.");
+        }
         try {
             checkLoader();
             instance = controller.getServiceByClass(serviceClass);
@@ -182,6 +251,9 @@ public class ServicePool {
      * @return  service实例对象
      */
     public static <T extends IService> T getService(Class<T> tClass, T defaultService) {
+        if (!tClass.isInterface() && !Modifier.isAbstract(tClass.getModifiers())) {
+            throw new ServicePoolException("no-interface/no-abstract class should call method getFixedService.");
+        }
         try {
             checkLoader();
             return controller.getServiceByClass(tClass, defaultService);

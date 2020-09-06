@@ -27,7 +27,7 @@ buildscript {
     }
     dependencies {
         ...
-        classpath 'chao.android.gradle:autoservice:1.5.0'
+        classpath 'chao.android.gradle:autoservice:1.5.3'
     }
 }
 ```
@@ -43,8 +43,8 @@ apply plugin: 'sp.autoservice'
 其他Module下按需添加依赖
 ```
 dependencies {
-    implementation 'chao.java.tools:sp:1.5.0' //servicepool核心库, 是java库
-    implementation 'chao.android.tools:spa:1.5.0' // servicepool的Android支持
+    implementation 'chao.java.tools:sp:1.5.3' //servicepool核心库, 是java库
+    implementation 'chao.android.tools:spa:1.5.3' // servicepool的Android支持
 }
 ```
 

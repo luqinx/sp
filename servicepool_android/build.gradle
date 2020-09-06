@@ -28,8 +28,8 @@ abkit {
     maven {
         artifactId 'spa'
         groupId 'chao.android.tools'
-        versionName '1.5.3'
-        publish2Local false
+        versionName '1.5.4'
+        publish2Local true
     }
 }
 

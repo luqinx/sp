@@ -18,8 +18,8 @@ abkit {
     maven {
         artifactId 'sp'
         groupId 'chao.java.tools'
-        versionName '1.5.3'
-        publish2Local false
+        versionName '1.5.4'
+        publish2Local true
     }
 }
 

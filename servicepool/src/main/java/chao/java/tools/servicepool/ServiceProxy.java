@@ -2,6 +2,7 @@ package chao.java.tools.servicepool;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import chao.java.tools.servicepool.annotation.Init;
 import chao.java.tools.servicepool.annotation.Service;
@@ -176,7 +177,7 @@ public class ServiceProxy<T extends IService> {
 
         ServiceProxy proxy = (ServiceProxy) o;
 
-        return serviceClass != null ? serviceClass.equals(proxy.serviceClass) : proxy.serviceClass == null;
+        return Objects.equals(serviceClass, proxy.serviceClass);
     }
 
     @Override
