@@ -41,6 +41,8 @@ public class ServicePool {
     @Deprecated
     public static final int MAX_PRIORITY = 5;
 
+    private static final String TAG = "sp";
+
     public interface Priority {
         /**
          * 低优先级
@@ -174,12 +176,15 @@ public class ServicePool {
         controller = new DefaultServiceController();
 
         noOpFactory = new NoOpInstanceFactory();
-        long start = System.currentTimeMillis();
-        ServiceLoader<IService> loader = ServiceLoader.load(IService.class);
-        long end = System.currentTimeMillis();
 
+        long start = System.currentTimeMillis();
+        IServiceLoader serviceLoader = controller.getServiceByClass(IServiceLoader.class);
+        if (serviceLoader == null) {
+            serviceLoader = new BuildInServiceLoader();
+        }
+        controller.addServices(serviceLoader.getServices());
+        long end = System.currentTimeMillis();
         logger.log("service loader spent:" + (end - start));
-        controller.addServices(loader.getServices());
 
         //todo temp for online test.
         for (Throwable t: Debug.throwables()) {
@@ -226,7 +231,9 @@ public class ServicePool {
     public static <T extends IService> T getService(Class<T> serviceClass) {
         T instance = null;
         if (!serviceClass.isInterface() && !Modifier.isAbstract(serviceClass.getModifiers())) {
-            throw new ServicePoolException("no-interface/no-abstract class should call method getFixedService.");
+//            throw new ServicePoolException("no-interface/no-abstract class should call method getFixedService.");
+            logger.e(TAG, "no-interface/no-abstract class should call method getFixedService.");
+            return getFixedService(serviceClass); //兼容老版本, 本应该直接抛异常
         }
         try {
             checkLoader();
@@ -252,7 +259,10 @@ public class ServicePool {
      */
     public static <T extends IService> T getService(Class<T> tClass, T defaultService) {
         if (!tClass.isInterface() && !Modifier.isAbstract(tClass.getModifiers())) {
-            throw new ServicePoolException("no-interface/no-abstract class should call method getFixedService.");
+//            throw new ServicePoolException("no-interface/no-abstract class should call method getFixedService.");
+            logger.e(TAG, "no-interface/no-abstract class should call method getFixedService.");
+            return getFixedService(tClass, defaultService); //兼容老版本, 本应该直接抛异常
+
         }
         try {
             checkLoader();
@@ -275,6 +285,9 @@ public class ServicePool {
      * @return  返回serviceClass类的服务实例
      */
     public static <T extends IService> T getFixedService(Class<T> serviceClass) {
+        if (serviceClass.isInterface() || Modifier.isAbstract(serviceClass.getModifiers())) {
+            throw new ServicePoolException("interface/abstract class should call method getService.");
+        }
         T instance = null;
         try {
             checkLoader();
@@ -286,6 +299,25 @@ public class ServicePool {
         }
         if (instance == null) {
             return noOpFactory.newInstance(serviceClass);
+        }
+        return instance;
+    }
+
+    public static <T extends IService> T getFixedService(Class<T> serviceClass, T defaultService) {
+        if (serviceClass.isInterface() || Modifier.isAbstract(serviceClass.getModifiers())) {
+            throw new ServicePoolException("interface/abstract class should call method getService.");
+        }
+        T instance = null;
+        try {
+            checkLoader();
+            instance = controller.getFixedServiceByClass(serviceClass);
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, String.valueOf(serviceClass));
+            }
+        }
+        if (instance == null) {
+            return defaultService;
         }
         return instance;
     }

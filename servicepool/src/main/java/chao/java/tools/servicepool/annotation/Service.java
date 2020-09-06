@@ -1,20 +1,17 @@
 package chao.java.tools.servicepool.annotation;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.ServicePool;
 
 /**
  * 标记一个类是一个服务类Service
  *
- * 所有的Service会在编译期通过插件添加到 META-INFO/services/chao.java.tools.servicepool.IService 文件中
- * 通过 {@link chao.java.tools.servicepool.ServiceLoader} 加载,
+ * 通过 {@link chao.java.tools.servicepool.IServiceLoader} 加载,
  * 并通过 {@link chao.java.tools.servicepool.ServiceController} 缓存。
  *
  * RetentionPolicy.RUNTIME 说明:

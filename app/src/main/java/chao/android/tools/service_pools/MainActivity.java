@@ -138,9 +138,9 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 
         RouteInterceptor global1 = ServicePool.getService(RouteContinueInterceptor5.class);
         RouteInterceptor global2 = ServicePool.getService(RouteInterceptor.class);
-        if (ServicePool.getService(RouteContinueInterceptor5.class) != ServicePool.getService(RouteInterceptor.class)) {
-            System.out.println(global1);
-            System.out.println(global2);
+        if (ServicePool.getFixedService(RouteContinueInterceptor5.class) != ServicePool.getService(RouteInterceptor.class)) {
+            System.out.println("global 1: " + global1);
+            System.out.println("global 2:" + global2);
             throw new RuntimeException();
         }
 

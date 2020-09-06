@@ -120,8 +120,8 @@ public class DefaultServiceController implements ServiceController {
                 }
                 newRecord.setOriginClass(serviceClass);
 
-                ServiceProxy<? extends IService> fixedRecord = fixedCache.get(serviceClass.getName());
-                if (fixedRecord != null && fixedRecord.getOriginClass() == serviceClass) {
+                ServiceProxy<? extends IService> fixedRecord = fixedCache.get(newRecord.getServiceClass().getName());
+                if (fixedRecord != null && fixedRecord.getOriginClass() == newRecord.getServiceClass()) {
                     newRecord = fixedRecord; //如果proxy已经通过fixed创建， 直接使用fixed proxy, 避免创建重复proxy
                 }
 
