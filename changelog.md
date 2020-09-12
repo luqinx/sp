@@ -1,3 +1,12 @@
+#changelog
+
+1.5.5
+1. 优化sp初始化机制，提升初始化效率
+2. 严格区分getService, getFixedService
+3. autoservice兼容gradle6.0
+4. Android组件初始化增加按优先级顺序初始化
+5. 修复一些bug
+
 1.5.0
 1. scope增加Soft, 对应Weak
 2. 命名规范, SP -> Sp, SPA -> Spa

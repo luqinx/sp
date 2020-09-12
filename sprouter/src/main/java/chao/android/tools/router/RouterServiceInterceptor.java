@@ -81,22 +81,34 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
 
         for (int i = 0; i < parameterAnnotations.length; i++) {
 
-            Annotation[] typeAnnotations = parameterAnnotations[i];
-            if (typeAnnotations.length == 0) {
-                continue;
-            }
-            Annotation annotation = typeAnnotations[0];
-            Class<?> argType = paramTypes[i];
-
             Object arg = args[i];
             if (arg == null) {
                 continue;
             }
 
+            Class<?> argType = paramTypes[i];
             if (Bundle.class.isAssignableFrom(argType)) {
                 bundle = (Bundle) arg;
                 continue;
             }
+
+            if (RouteNavigationCallback.class.isAssignableFrom(arg.getClass())) {
+                navigationCallback = (RouteNavigationCallback) arg;
+                continue;
+            }
+
+            if (Context.class.isAssignableFrom(arg.getClass())) {
+                context = (Context) arg;
+                continue;
+            }
+
+            Annotation[] typeAnnotations = parameterAnnotations[i];
+            if (typeAnnotations.length == 0) {
+                continue;
+            }
+            Annotation annotation = typeAnnotations[0];
+
+
 
             if (annotation instanceof RouteAction) {
                 if (arg instanceof String) {
@@ -246,15 +258,6 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 } else {
                     Spa.logger.e(TAG, "error type of the parameter @RouteRequestCode, except int, but " + arg.getClass());
                 }
-                continue;
-            }
-
-            if (RouteNavigationCallback.class.isAssignableFrom(arg.getClass())) {
-                navigationCallback = (RouteNavigationCallback) arg;
-            }
-
-            if (Context.class.isAssignableFrom(arg.getClass())) {
-                context = (Context) arg;
             }
 
         }

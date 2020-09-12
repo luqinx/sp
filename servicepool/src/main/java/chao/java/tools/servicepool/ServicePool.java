@@ -322,6 +322,9 @@ public class ServicePool {
         return instance;
     }
 
+    /**
+     *  通过path获取service
+     */
     public static <T extends IService> T getService(String path) {
         Class<? extends IService> clazz = controller.getServiceByPath(path);
         if (clazz == null) {
@@ -329,6 +332,10 @@ public class ServicePool {
         }
         return (T) getFixedService(clazz);
     }
+
+//    public static <T extends IService> Class<T> getServiceClass(String path) {
+//        return (Class<T>) controller.getServiceByPath(path);
+//    }
 
 
     public static void registerPaths(Map<String, Class<? extends IService>> serviceMaps) {
