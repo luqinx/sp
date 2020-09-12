@@ -25,7 +25,7 @@ buildscript {
     }
     dependencies {
         ...
-        classpath 'chao.android.gradle:autoservice:1.5.4'
+        classpath 'chao.android.gradle:autoservice:1.5.5'
     }
 }
 ```
@@ -41,8 +41,8 @@ apply plugin: 'sp.autoservice'
 ** 其他Module下按需添加依赖 **
 ```
 dependencies {
-    implementation 'chao.java.tools:sp:1.5.4' //servicepool核心库, 是java库, 非android环境用这个就可以了
-    implementation 'chao.android.tools:spa:1.5.4' // servicepool的Android支持(spa), 只依赖spa也是可以的
+    implementation 'chao.java.tools:sp:1.5.5' //servicepool核心库, 是java库, 非android环境用这个就可以了
+    implementation 'chao.android.tools:spa:1.5.5' // servicepool的Android支持(spa), 只依赖spa也是可以的
 }
 ```
 
@@ -77,7 +77,7 @@ ServicePool使用懒加载思想,所有服务Service对象都是在真正使用�
    Spa.init(this); //初始化耗时10ms左右, 设备不同可能会有些差异, 我测试的设备是小米mix3
 ```
 
-Spa的更多使用细节，请参考博客[Android端简单易用的SPI框架 - SPA]()
+Spa的更多使用细节，请参考博客[Android端简单易用的SPI框架 - SPA](https://juejin.im/post/6844904048143908872)
 
 
 
