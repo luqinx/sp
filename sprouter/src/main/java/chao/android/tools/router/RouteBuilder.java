@@ -52,7 +52,7 @@ public class RouteBuilder {
         if (TextUtils.isEmpty(this.path)) {
             throw new IllegalArgumentException("route path should not be empty.");
         }
-        routeManager = ServicePool.getService(RouteManager.class);
+        routeManager = ServicePool.getFixedService(RouteManager.class);
     }
 
     public void navigation() {
