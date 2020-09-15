@@ -77,7 +77,7 @@ ServicePool使用懒加载思想,所有服务Service对象都是在真正使用�
    Spa.init(this); //初始化耗时10ms左右, 设备不同可能会有些差异, 我测试的设备是小米mix3
 ```
 
-Spa的更多使用细节，请参考博客[Android端简单易用的SPI框架 - SPA](https://juejin.im/post/6871924980708278285)
+Spa的更多使用细节，请参考博客[Android端简单易用的SPI框架 - SPA](https://juejin.im/post/6872335132229894158)
 
 
 
