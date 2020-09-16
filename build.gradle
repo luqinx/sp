@@ -3,11 +3,12 @@
 apply plugin: "abkit"
 
 abkit {
-    abVersion {
+    abVersion { // 统一管理Android的版本号
         compileSdkVersion 29
         buildToolsVersion "29.0.3"
         minSdkVersion 21
         targetSdkVersion 29
+        force = true // force为true表示强制所有模块使用这里的版本号，false会以各个模块定义版本号为准，没有定义才会取这里的版本号
     }
 }
 
@@ -22,7 +23,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.1'
-        classpath "chao.android.gradle:abkit:1.0.0"
+        classpath "chao.android.gradle:abkit:1.0.2"
 //        classpath 'chao.android.gradle:autoservice:1.1.0'
 //        classpath project(':autoservice')
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0'

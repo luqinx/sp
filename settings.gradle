@@ -7,13 +7,12 @@ buildscript {
     }
 
     dependencies {
-        classpath 'chao.android.gradle:abkit:1.0.0.gradle6'
+        classpath 'chao.android.gradle:abkit:1.0.2'
     }
 }
 
+/** 使用ABKit将依赖管理转移到modules.gradle **/
+/** ABKit可以将模块管理统一聚合到modules.gradle中  **/
 import chao.android.gradle.plugin.api.ABKit
 ABKit.inject(getSettings(), getGradle())
 
-include ':tests:remoteexample',
-        ':tests:testremoteapi'
-include ':autoservice'
