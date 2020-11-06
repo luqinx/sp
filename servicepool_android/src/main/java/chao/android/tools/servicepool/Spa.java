@@ -37,13 +37,17 @@ public class Spa extends ServicePool {
                 return;
             }
             sContext = context.getApplicationContext();
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    loadInitService();
-                }
-            });
+            if (Looper.myLooper() != Looper.getMainLooper()) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadInitService();
+                    }
+                });
+            } else {
+                loadInitService();
+            }
             checkLoader();
             sInited = true;
         }

@@ -19,8 +19,6 @@ import chao.java.tools.servicepool.annotation.Service;
  */
 public class RouteBuilder {
 
-    private static final int ROUTE_DEFAULT_REQUEST_CODE = 0xf000;
-
     private RouteManager routeManager;
 
     Context context;
@@ -43,7 +41,7 @@ public class RouteBuilder {
 
     int exitAnim = -1;
 
-    int requestCode = ROUTE_DEFAULT_REQUEST_CODE;
+    int requestCode = -1;
 
 
     public RouteBuilder(String path) {
@@ -64,9 +62,6 @@ public class RouteBuilder {
     }
 
     public void navigation(int requestCode, RouteNavigationCallback callback) {
-        if (requestCode == ROUTE_DEFAULT_REQUEST_CODE) {
-            throw new IllegalArgumentException(ROUTE_DEFAULT_REQUEST_CODE + " is route inner request code.");
-        }
         this.requestCode = requestCode;
         routeManager.navigation(this, callback);
     }

@@ -15,6 +15,7 @@ abkit {
 buildscript {
 
     repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         maven { url "http://47.99.188.223:8081/repository/maven-public/" }
 
         google()
@@ -22,7 +23,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.0.2'
         classpath "chao.android.gradle:abkit:1.0.2"
 //        classpath 'chao.android.gradle:autoservice:1.1.0'
 //        classpath project(':autoservice')
@@ -34,6 +35,7 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
         maven { url "http://47.99.188.223:8081/repository/maven-public/" }
         google()
