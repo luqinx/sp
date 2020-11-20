@@ -52,6 +52,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
         int enterAnim = 0;
         int exitAnim = 0;
         int requestCode = -1;
+        int customFlags = 0;
 
         Context context = null;
 
@@ -65,6 +66,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
             flags = routeConfig.flags();
             path = routeConfig.path();
             requestCode = routeConfig.requestCode();
+            customFlags = routeConfig.customFlags();
         }
         if (TextUtils.isEmpty(path)) {
             throw new RouteException("path should not be null.");
@@ -226,8 +228,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
 
             }
 
-            RouteEnterAnim enterAnimConfig = argType.getAnnotation(RouteEnterAnim.class);
-            if (enterAnimConfig != null) {
+            if (annotation instanceof RouteEnterAnim) {
                 if (arg.getClass() == int.class) {
                     enterAnim = (int) arg;
                 } else if (Integer.class.isAssignableFrom(arg.getClass())){
@@ -238,8 +239,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 continue;
             }
 
-            RouteExitAnim exitAnimConfig = argType.getAnnotation(RouteExitAnim.class);
-            if (exitAnimConfig != null) {
+            if (annotation instanceof RouteExitAnim) {
                 if (arg.getClass() == int.class) {
                     exitAnim = (int) arg;
                 } else if (Integer.class.isAssignableFrom(arg.getClass())){
@@ -249,8 +249,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 }
                 continue;
             }
-            RouteRequestCode requestCodeConfig = argType.getAnnotation(RouteRequestCode.class);
-            if(requestCodeConfig != null) {
+            if(annotation instanceof RouteRequestCode) {
                 if (arg.getClass() == int.class) {
                     requestCode = (int) arg;
                 } else if (Integer.class.isAssignableFrom(arg.getClass())) {
@@ -269,6 +268,7 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
                 .withType(type)
                 .withData(dataUri)
                 .withAction(action)
+                .withCustomFlags(customFlags)
                 .withTransition(enterAnim, exitAnim)
                 .navigation(requestCode, navigationCallback);
 

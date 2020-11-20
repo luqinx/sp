@@ -21,7 +21,7 @@ abkit {
     maven {
         artifactId 'sprouter'
         groupId 'chao.android.tools'
-        versionName '1.5.6'
+        versionName '1.5.9'
         publish2Local false
     }
 }

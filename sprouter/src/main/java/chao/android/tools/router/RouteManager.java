@@ -105,6 +105,7 @@ public class RouteManager implements IService {
 
     private void _navigationActivity(RouteBuilder route, Class<? extends Activity> activity, RouteNavigationCallback callback) {
         Intent intent = new Intent();
+        route.extras.putString(SpRouter.ROUTE_PATH_KEY, route.path);
         intent.putExtras(route.extras);
         intent.setFlags(route.flags);
         if (route.type != null && route.uri != null) {

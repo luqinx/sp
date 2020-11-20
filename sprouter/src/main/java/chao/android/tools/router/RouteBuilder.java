@@ -3,6 +3,7 @@ package chao.android.tools.router;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
@@ -17,17 +18,17 @@ import chao.java.tools.servicepool.annotation.Service;
  * @author luqin
  * @since 2019-07-25
  */
-public class RouteBuilder {
+public class RouteBuilder implements Serializable {
 
-    private RouteManager routeManager;
+    private final transient RouteManager routeManager;
 
-    Context context;
+    public transient Context context;
 
     public String action;
 
     public final String path;
 
-    public Bundle extras;
+    public transient Bundle extras;
 
     public Uri uri;
 
@@ -37,11 +38,13 @@ public class RouteBuilder {
 
     public long interceptorTimeout = 100L; // 拦截超时, 单位: 秒
 
-    int enterAnim = -1;
+    public int enterAnim = -1;
 
-    int exitAnim = -1;
+    public int exitAnim = -1;
 
-    int requestCode = -1;
+    public int requestCode = -1;
+
+    public int customFlags = 0;
 
 
     public RouteBuilder(String path) {
@@ -133,7 +136,10 @@ public class RouteBuilder {
         return this;
     }
 
-
+    public RouteBuilder withCustomFlags(int customFlags) {
+        this.customFlags = customFlags;
+        return this;
+    }
 
     
     public RouteBuilder withBoolean(String key, boolean bArg) {
@@ -291,4 +297,5 @@ public class RouteBuilder {
     public void withIntegerList(String key, ArrayList<Integer> arg) {
         extras.putIntegerArrayList(key, arg);
     }
+
 }

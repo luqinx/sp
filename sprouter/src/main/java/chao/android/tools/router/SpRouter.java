@@ -26,6 +26,8 @@ public class SpRouter {
 
     public static final String ROUTER_KEY_PREFIX = "SpRouter##";
 
+    public static final String ROUTE_PATH_KEY = ROUTER_KEY_PREFIX + "path";
+
     static final Gson gson = new Gson();
 
     /**
@@ -64,6 +66,17 @@ public class SpRouter {
         return gson.fromJson(element, type);
     }
 
+    public static String getRoutePath(Activity activity) {
+        if (activity == null) {
+            return null;
+        }
+        Intent intent = activity.getIntent();
+        if (intent == null) {
+            return null;
+        }
+        return intent.getStringExtra(ROUTE_PATH_KEY);
+    }
+
 
     private static JsonElement getExtraInner(Activity activity, String key) {
         Intent intent = activity.getIntent();
@@ -81,7 +94,6 @@ public class SpRouter {
     /**
      *  推荐使用{@link #getService} 的方式
      */
-    @Deprecated
     public static RouteBuilder build(String path) {
         return new RouteBuilder(path);
     }
