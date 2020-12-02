@@ -21,7 +21,7 @@ abkit {
     maven {
         artifactId 'sprouter'
         groupId 'chao.android.tools'
-        versionName '1.5.9'
+        versionName '1.5.10'
         publish2Local false
     }
 }
@@ -34,8 +34,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    api servicepool
-    api servicepool_android
+    api spa
     implementation gson
     implementation interceptor
 

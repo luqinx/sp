@@ -6,7 +6,7 @@ include ':tests:remoteexample',   //module.gradle兼容settings.gradle的api
         ':tests:testremoteapi'
 include ':autoservice'
 
-name("servicepool") //首先定义名称，每个模块直接依赖这个名称即可 --> implementation servicepool
+name("sp") //首先定义名称，每个模块直接依赖这个名称即可 --> implementation servicepool
         .remote("chao.java.tools:sp:1.5.5") // 定义远程aar, 即使其他组件或aar包依赖了其他的版本的sp, sp最终的版本号一定会是这里指定的版本号
         .project(':servicepool')    //定义project
 //        .include() //include表示使用project, 不调用include表示使用remote远程仓库对应的aar
@@ -14,7 +14,7 @@ name("servicepool") //首先定义名称，每个模块直接依赖这个名称�
 //        .enabledByProperty("p1")   // 通过gradle.properties, local.properties等属性文件中的属性是否为true|1来启用一个组件
 //        .disabledByProperty("p2")  // 通过gradle.properties, local.properties等属性文件中的属性是否为true|1来禁用一个组件
 
-name("servicepool_android")
+name("spa")
         .remote("chao.android.tools:spa:1.5.6")
         .project(':servicepool_android')
 //        .include()
@@ -25,7 +25,7 @@ name("sprpc")
         .include()
 
 name("sprouter")
-    .remote("chao.android.tools:sprouter:1.5.6")
+    .remote("chao.android.tools:sprouter:1.5.10")
     .project(":sprouter")
     .include()
 
