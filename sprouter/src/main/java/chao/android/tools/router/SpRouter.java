@@ -28,6 +28,8 @@ public class SpRouter {
 
     public static final String ROUTE_PATH_KEY = ROUTER_KEY_PREFIX + "path";
 
+    public static final String ROUTE_BUILD_PARAM = ROUTER_KEY_PREFIX + "RouteBuilderParam";
+
     static final Gson gson = new Gson();
 
     /**
@@ -56,7 +58,6 @@ public class SpRouter {
         }
         return routerService;
     }
-
 
     public static <T> T getExtra(Activity activity, String key, Type type) {
         JsonElement element = getExtraInner(activity, key);

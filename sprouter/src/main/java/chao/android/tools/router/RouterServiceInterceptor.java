@@ -28,6 +28,7 @@ import chao.java.tools.servicepool.IServiceInterceptorCallback;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Service;
 
+import static chao.android.tools.router.SpRouter.ROUTE_BUILD_PARAM;
 import static chao.android.tools.router.SpRouter.TAG;
 import static chao.android.tools.router.SpRouter.gson;
 
@@ -101,6 +102,11 @@ public class RouterServiceInterceptor implements IServiceInterceptor {
 
             if (Context.class.isAssignableFrom(arg.getClass())) {
                 context = (Context) arg;
+                continue;
+            }
+
+            if (RouteBuilder.class.isAssignableFrom(arg.getClass())) {
+                routeBuilder.withParcelable(ROUTE_BUILD_PARAM, (Parcelable) arg);
                 continue;
             }
 

@@ -18,9 +18,9 @@ import chao.java.tools.servicepool.annotation.Service;
  * @author luqin
  * @since 2019-07-25
  */
-public class RouteBuilder implements Serializable {
+public class RouteBuilder implements Parcelable {
 
-    private final transient RouteManager routeManager;
+    private final transient RouteManager routeManager = ServicePool.getFixedService(RouteManager.class);
 
     public transient Context context;
 
@@ -28,7 +28,7 @@ public class RouteBuilder implements Serializable {
 
     public final String path;
 
-    public transient Bundle extras;
+    public Bundle extras;
 
     public Uri uri;
 
@@ -53,8 +53,49 @@ public class RouteBuilder implements Serializable {
         if (TextUtils.isEmpty(this.path)) {
             throw new IllegalArgumentException("route path should not be empty.");
         }
-        routeManager = ServicePool.getFixedService(RouteManager.class);
     }
+
+
+    protected RouteBuilder(Parcel in) {
+        action = in.readString();
+        path = in.readString();
+        extras = in.readBundle(getClass().getClassLoader());
+        uri = in.readParcelable(Uri.class.getClassLoader());
+        type = in.readString();
+        flags = in.readInt();
+        interceptorTimeout = in.readLong();
+        enterAnim = in.readInt();
+        exitAnim = in.readInt();
+        requestCode = in.readInt();
+        customFlags = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(action);
+        dest.writeString(path);
+        dest.writeBundle(extras);
+        dest.writeParcelable(uri, flags);
+        dest.writeString(type);
+        dest.writeInt(flags);
+        dest.writeLong(interceptorTimeout);
+        dest.writeInt(enterAnim);
+        dest.writeInt(exitAnim);
+        dest.writeInt(requestCode);
+        dest.writeInt(customFlags);
+    }
+
+    public static final Creator<RouteBuilder> CREATOR = new Creator<RouteBuilder>() {
+        @Override
+        public RouteBuilder createFromParcel(Parcel in) {
+            return new RouteBuilder(in);
+        }
+
+        @Override
+        public RouteBuilder[] newArray(int size) {
+            return new RouteBuilder[size];
+        }
+    };
 
     public void navigation() {
         navigation(null);
@@ -296,6 +337,11 @@ public class RouteBuilder implements Serializable {
 
     public void withIntegerList(String key, ArrayList<Integer> arg) {
         extras.putIntegerArrayList(key, arg);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
 }
