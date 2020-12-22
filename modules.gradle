@@ -25,7 +25,7 @@ name("sprpc")
         .include()
 
 name("sprouter")
-    .remote("chao.android.tools:sprouter:1.5.10")
+    .remote("chao.android.tools:sprouter:1.5.11")
     .project(":sprouter")
     .include()
 
