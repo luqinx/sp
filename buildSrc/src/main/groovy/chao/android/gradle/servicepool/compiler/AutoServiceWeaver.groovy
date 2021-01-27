@@ -12,6 +12,7 @@ import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import org.objectweb.asm.Opcodes
 
 /**
  *

@@ -115,6 +115,16 @@ public class ExtendClassWriter extends ClassWriter {
 //        System.out.println("" + interfaceName + " implementation " + classReader.getClassName());
         ClassReader classInfo = classReader;
 
+        if (classReader == null) {
+            System.err.println("AutoService: classReader is null, interfaceName is " + interfaceName);
+            return false;
+        }
+
+        if (classReader.getClassName() == null) {
+            System.err.println("AutoService: classReader.getClassName is null, interfaceName is " + interfaceName);
+            return false;
+        }
+
         if (classReader.getClassName().equals(Constant.SERVICE_ASM_NAME)) {
             return false;
         }
@@ -192,6 +202,8 @@ public class ExtendClassWriter extends ClassWriter {
         try {
             if (inputStream != null) {
                 return new ClassReader(inputStream);
+            } else {
+                throw new IllegalStateException("AutoService: cannot getClassReader, className ---> " + className);
             }
         } catch (IOException e) {
             e.printStackTrace();
