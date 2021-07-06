@@ -10,6 +10,4 @@
 /build
 /captures
 .externalNativeBuild
-/abkit/
-.project
-.settings
+

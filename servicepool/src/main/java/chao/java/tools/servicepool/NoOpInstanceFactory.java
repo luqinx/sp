@@ -59,11 +59,10 @@ public class NoOpInstanceFactory {
                 if (mInstantiator == null) {
                     mInstantiator = ServicePool.getService(NoOpInstantiator.class, new DefaultNoOpInstantiator());
                 }
-//                Class<?> noOp = mInstantiator.make(clazz, constructor, params, noOpCount);
-//                t = clazz.cast(noOp.getConstructor(NoOpConstructorArg.class).newInstance(sConstructorArg));
-//                noOpCache.put(clazz, (NoOpInstance) t);
-//                return t;
-                return null;
+                Class<?> noOp = mInstantiator.make(clazz, constructor, params, noOpCount);
+                t = clazz.cast(noOp.getConstructor(NoOpConstructorArg.class).newInstance(sConstructorArg));
+                noOpCache.put(clazz, (NoOpInstance) t);
+                return t;
             }
         } catch(Throwable e){
             System.out.println("no op failed : " + clazz.getName());

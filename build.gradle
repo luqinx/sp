@@ -16,15 +16,7 @@ buildscript {
 
     repositories {
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
-//        maven { url "http://47.99.188.223:8081/repository/maven-public/" }
-
-        maven {
-            url "https://maven.tuya-inc.top/nexus/content/repositories/snapshots"
-        }
-        maven {
-            url "https://maven.tuya-inc.top/nexus/content/repositories/releases"
-        }
-
+        maven { url "http://47.99.188.223:8081/repository/maven-public/" }
 
         google()
         jcenter()
@@ -32,9 +24,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.4'
-        classpath "com.tuya.smart:abkit:0.0.8-SNAPSHOT"
-        classpath 'com.tuya.smart.upload:tyupload:0.3.0-SNAPSHOT'
-
+        classpath "chao.android.gradle:abkit:1.0.2"
 //        classpath 'chao.android.gradle:autoservice:1.1.0'
 //        classpath project(':autoservice')
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0'
@@ -45,9 +35,7 @@ buildscript {
 
 allprojects {
     repositories {
-        maven {
-            url "https://maven.tuya-inc.top/nexus/content/repositories/releases"
-        }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
         maven { url "http://47.99.188.223:8081/repository/maven-public/" }
         google()

@@ -10,12 +10,12 @@ import chao.java.tools.servicepool.annotation.Service;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.atomic.AtomicInteger;
-//import net.bytebuddy.ByteBuddy;
-//import net.bytebuddy.description.modifier.Visibility;
-//import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
-//import net.bytebuddy.implementation.MethodCall;
-//import net.bytebuddy.implementation.MethodDelegation;
-//import net.bytebuddy.matcher.ElementMatchers;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.modifier.Visibility;
+import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
+import net.bytebuddy.implementation.MethodCall;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * @author qinchao
@@ -27,17 +27,17 @@ public class AndroidNoOpInstantiator extends DefaultService implements NoOpInsta
 
     @Override
     public <T> Class<?> make(Class<T> clazz, Constructor<?> constructor, Object[] params, AtomicInteger noOpCount) {
-//        return new ByteBuddy()
-//            .subclass(clazz, ConstructorStrategy.Default.NO_CONSTRUCTORS)
-//            .name(clazz.getPackage().getName() + ".NoOp" + clazz.getSimpleName() + "_" + noOpCount.incrementAndGet())
-//            .implement(NoOpInstance.class, IService.class)
-//            .defineConstructor(Visibility.PUBLIC).withParameters(NoOpConstructorArg.class)
-//            .intercept(MethodCall.invoke(constructor).with(params))
-//            .method(ElementMatchers.any()).intercept(MethodDelegation.to(NoOpInterceptor.class))
-//            .make(AndroidLazyStrategy.INSTANCE)
-//            .load(Spa.getContext().getClassLoader())
-//            .getLoaded();
-        return null;
+//        AndroidLazyStrategy.INSTANCE.makeDexDir();
+        return new ByteBuddy()
+            .subclass(clazz, ConstructorStrategy.Default.NO_CONSTRUCTORS)
+            .name(clazz.getPackage().getName() + ".NoOp" + clazz.getSimpleName() + "_" + noOpCount.incrementAndGet())
+            .implement(NoOpInstance.class, IService.class)
+            .defineConstructor(Visibility.PUBLIC).withParameters(NoOpConstructorArg.class)
+            .intercept(MethodCall.invoke(constructor).with(params))
+            .method(ElementMatchers.any()).intercept(MethodDelegation.to(NoOpInterceptor.class))
+            .make(AndroidLazyStrategy.INSTANCE)
+            .load(Spa.getContext().getClassLoader())
+            .getLoaded();
     }
 
 }

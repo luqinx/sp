@@ -15,10 +15,3 @@ abkit {
         versionName "1.0.0"
     }
 }
-
-apply plugin: 'upload'
-upInfo{
-    version = "1.0.0-SNAPSHOT"
-    artifactId = "empty"
-    groupId = "chao.java.tools"
-}
