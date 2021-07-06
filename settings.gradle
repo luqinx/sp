@@ -3,13 +3,16 @@ buildscript {
         mavenLocal()
         google()
         jcenter()
-        maven { url "http://47.99.188.223:8081/repository/maven-public/" }
+        maven { url "https://maven.tuya-inc.top/nexus/content/repositories/snapshots" }
     }
 
     dependencies {
-        classpath 'chao.android.gradle:abkit:1.0.2'
+        classpath 'com.tuya.smart:abkit:0.0.8-SNAPSHOT'
     }
 }
+
+include ':abkit'
+include ':empty'
 
 /** 使用ABKit将依赖管理转移到modules.gradle **/
 /** ABKit可以将模块管理统一聚合到modules.gradle中  **/

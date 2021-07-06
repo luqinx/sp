@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
         haha.print();
         a.getInt();
 
-        main.print();
+//        main.print();
 
 
         RouteInterceptor global1 = ServicePool.getService(RouteContinueInterceptor5.class);
