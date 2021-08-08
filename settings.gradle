@@ -4,7 +4,7 @@ buildscript {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
-        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
+//        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
     }
 
     dependencies {

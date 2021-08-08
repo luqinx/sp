@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
 
+artifactId = "spa"
+
 android {
     compileSdkVersion 28
 
