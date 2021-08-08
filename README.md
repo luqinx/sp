@@ -9,7 +9,7 @@
 allprojects {
     repositories {
         ...
-        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
+        maven { url 'https://jitpack.io' }
     }
 }
 ```
@@ -21,7 +21,7 @@ buildscript {
 
     repositories {
         ...
-        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
         ...

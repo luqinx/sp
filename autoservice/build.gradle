@@ -12,9 +12,9 @@ dependencies {
 
 abkit {
     maven {
-        groupId "chao.android.gradle"
+        groupId "com.github.luqinx"
         artifactId "autoservice"
-        versionName "1.5.8"
+        versionName "1.6.0"
         publish2Local false
     }
 }

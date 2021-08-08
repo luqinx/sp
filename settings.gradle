@@ -3,11 +3,12 @@ buildscript {
         mavenLocal()
         google()
         jcenter()
-        maven { url "http://47.99.188.223:8081/repository/maven-public/" }
+        maven { url 'https://jitpack.io' }
+        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
     }
 
     dependencies {
-        classpath 'chao.android.gradle:abkit:1.0.2'
+        classpath 'com.github.luqinx:abkit:1.1.1'
     }
 }
 
