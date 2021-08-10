@@ -14,7 +14,7 @@ abkit {
     maven {
         groupId "com.github.luqinx"
         artifactId "autoservice"
-        versionName "1.6.0"
+        versionName "1.6.1"
         publish2Local false
     }
 }

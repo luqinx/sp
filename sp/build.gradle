@@ -2,12 +2,10 @@ apply plugin: 'java'
 
 apply plugin: 'jacoco'
 
-artifactId = "sp"
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation "junit:junit:4.12"
-    testImplementation "chao.android.tools:testsuit:0.0.1.dev1"
+//    testImplementation "chao.android.tools:testsuit:0.0.1.dev1"
     implementation interceptor
     implementation "net.bytebuddy:byte-buddy:1.10.14"
 

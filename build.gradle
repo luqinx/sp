@@ -21,12 +21,12 @@ buildscript {
         google()
         jcenter()
         mavenLocal()
-//        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
+        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.4'
         classpath "com.github.luqinx:abkit:1.1.1"
-//        classpath 'com.github.luqinx:autoservice:1.6.0'
+        classpath 'com.github.luqinx:autoservice:1.6.1'
 //        classpath project(':autoservice')
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0'
         // NOTE: Do not place your application dependencies here; they belong
@@ -41,7 +41,7 @@ allprojects {
         google()
         jcenter()
         mavenLocal()
-//        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
+        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
     }
 }
 

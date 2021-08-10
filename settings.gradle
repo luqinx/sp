@@ -16,3 +16,5 @@ buildscript {
 /** ABKit可以将模块管理统一聚合到modules.gradle中  **/
 import chao.android.gradle.plugin.api.ABKit
 ABKit.inject(getSettings(), getGradle())
+
+include ':sp', ':spa'

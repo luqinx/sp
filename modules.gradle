@@ -8,7 +8,7 @@ include ':autoservice'
 
 module("sp") //首先定义名称，每个模块直接依赖这个名称即可 --> implementation servicepool
         .remote("com.github.luqinx:sp:1.6.0") // 定义远程aar, 即使其他组件或aar包依赖了其他的版本的sp, sp最终的版本号一定会是这里指定的版本号
-        .project(':servicepool')    //定义project
+        .project(':sp')    //定义project
         .include() //include表示使用project, 不调用include表示使用remote远程仓库对应的aar
 //        .disabled() //禁用这个模块， 在这里禁用，引用servicepool的模块不需要在dependencies里将"implementation servicepool"删除
 //        .enabledByProperty("p1")   // 通过gradle.properties, local.properties等属性文件中的属性是否为true|1来启用一个组件
@@ -16,7 +16,7 @@ module("sp") //首先定义名称，每个模块直接依赖这个名称即可 -
 
 module("spa")
         .remote("com.github.luqinx:spa:1.6.0")
-        .project(':servicepool_android')
+        .project(':spa')
         .include()
 
 module("sprpc")
