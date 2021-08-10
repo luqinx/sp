@@ -7,27 +7,27 @@ include ':tests:remoteexample',   //module.gradle兼容settings.gradle的api
 include ':autoservice'
 
 module("sp") //首先定义名称，每个模块直接依赖这个名称即可 --> implementation servicepool
-        .remote("com.github.luqinx:sp:1.6.0") // 定义远程aar, 即使其他组件或aar包依赖了其他的版本的sp, sp最终的版本号一定会是这里指定的版本号
+        .remote("com.github.luqinx:sp:1.6.1") // 定义远程aar, 即使其他组件或aar包依赖了其他的版本的sp, sp最终的版本号一定会是这里指定的版本号
         .project(':sp')    //定义project
-        .include() //include表示使用project, 不调用include表示使用remote远程仓库对应的aar
+//        .include() //include表示使用project, 不调用include表示使用remote远程仓库对应的aar
 //        .disabled() //禁用这个模块， 在这里禁用，引用servicepool的模块不需要在dependencies里将"implementation servicepool"删除
 //        .enabledByProperty("p1")   // 通过gradle.properties, local.properties等属性文件中的属性是否为true|1来启用一个组件
 //        .disabledByProperty("p2")  // 通过gradle.properties, local.properties等属性文件中的属性是否为true|1来禁用一个组件
 
 module("spa")
-        .remote("com.github.luqinx:spa:1.6.0")
+        .remote("com.github.luqinx:spa:1.6.1")
         .project(':spa')
-        .include()
+//        .include()
 
 module("sprpc")
-        .remote("com.github.luqinx:sprpc:1.6.0")
+        .remote("com.github.luqinx:sprpc:1.6.1")
         .project(":sprpc")
-        .include()
+//        .include()
 
 module("sprouter")
-    .remote("com.github.luqinx:sprouter:1.6.0")
+    .remote("com.github.luqinx:sprouter:1.6.1")
     .project(":sprouter")
-    .include()
+//    .include()
 
 
 
