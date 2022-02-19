@@ -1,5 +1,8 @@
-#ServicePool
+# ServicePool
 
+[![GitHub license](https://img.shields.io/github/license/luqinx/sp)](https://github.com/luqinx/sp/blob/master/LICENSE)
+[![build release](https://img.shields.io/badge/release-1.7.0-brightgreen)](https://search.maven.org/search?q=io.github.luqinx)
+[![掘金](https://img.shields.io/badge/docs-%E6%8E%98%E9%87%91-orange)](https://juejin.cn/post/6995144994180825119)
 
 ### ServicePool接入方法
 
