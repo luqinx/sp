@@ -27,7 +27,7 @@ buildscript {
     }
     dependencies {
         ...
-        classpath 'io.github.luqinx:autoservice:1.0.1'
+        classpath 'io.github.luqinx:autoservice:1.7.0'
     }
 }
 ```
@@ -43,9 +43,9 @@ apply plugin: 'sp.autoservice'
 ** 其他Module下按需添加依赖 **
 ```
 dependencies {
-    implementation 'io.github.luqinx:sp:1.0.1' //servicepool核心库, 是java库, 非android环境用这个就可以了
-    implementation 'io.github.luqinx:spa:1.0.1' // servicepool的Android支持(spa), 只依赖spa也是可以的
-    implementation 'io.github.luqinx:sprouter:1.0.1' // 基于spa的页面路由
+    implementation 'io.github.luqinx:sp:1.7.0' //servicepool核心库, 是java库, 非android环境用这个就可以了
+    implementation 'io.github.luqinx:spa:1.7.0' // servicepool的Android支持(spa), 只依赖spa也是可以的
+    implementation 'io.github.luqinx:sprouter:1.7.0' // 基于spa的页面路由
 }
 ```
 
