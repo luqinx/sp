@@ -1,0 +1,153 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+
+final String USER_HOME = System.getProperty("user.home")
+
+def LOCAL_URL = "file://$USER_HOME/.m2/repository/"
+
+def NEXUS_URL = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+def SNAPSHOT_URL = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+
+def RELEASE = !VERSION_NAME.endsWith("-SNAPSHOT")
+def PUBLISH_LOCAL = VERSION_NAME.endsWith("-LOCAL")
+def MAVEN_LOCAL_PATH = RELEASE ? NEXUS_URL : SNAPSHOT_URL
+
+def UPLOAD_PATH = PUBLISH_LOCAL ? LOCAL_URL : MAVEN_LOCAL_PATH
+
+
+Properties props = new Properties()
+File localFile = new File(project.rootDir, "local.properties")
+if (localFile.exists()) {
+    props.load(new FileInputStream(localFile))
+}
+
+def ACCOUNT = props.get("nexusUserName")
+def PASSWORD = props.get("nexusPassword")
+
+
+//def ADMIN_ACCOUNT = props.get("adminUserName")
+//def ADMIN_PASSWORD = props.get("adminPassword")
+
+def ADMIN_ACCOUNT = ACCOUNT
+def ADMIN_PASSWORD = PASSWORD
+
+
+uploadArchives.doFirst {
+    project.getConfigurations().all { config ->
+        config.getDependencies().all { dependency->
+            if (RELEASE && dependency.version && dependency.version.endsWith("-SNAPSHOT")) {
+                throw new RuntimeException("发布正式版本不能使用snapshot依赖: " + dependency.group + ":" + dependency.name + ":" + dependency.version)
+            }
+        }
+    }
+}
+
+if (project.hasProperty("android")) { // Android libraries
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    task javadoc(type: Javadoc) {
+        // https://github.com/novoda/bintray-release/issues/71
+        excludes = ['**/*.kt'] // < ---- Exclude all kotlin files from javadoc file.
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        options.encoding = "utf-8"
+        options.charSet = "utf-8"
+    }
+} else { // Java libraries
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+}
+
+// 强制 Java/JavaDoc 等的编码为 UTF-8
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType(Javadoc) {
+    options.encoding = "UTF-8"
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+// add javadoc/source jar tasks as artifacts
+artifacts {
+//    archives javadocJar
+    archives sourcesJar
+}
+
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+//脚本：将Lib打成aar包上传至maven私有库
+uploadArchives {
+    def PUBLISH_VERSION = VERSION_NAME
+    repositories {
+        mavenDeployer {
+
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+
+            //非release版本自动追加-SNAPSHOT后缀
+            def PUBLISH_ACCOUNT = ADMIN_ACCOUNT ? ADMIN_ACCOUNT : ACCOUNT
+            def PUBLISH_PASSWORD = ADMIN_PASSWORD ? ADMIN_PASSWORD : PASSWORD
+
+            repository(url: UPLOAD_PATH) {
+                authentication(userName: PUBLISH_ACCOUNT, password: PUBLISH_PASSWORD)
+            }
+
+            // 这里是配置我们maven库需要的pom.xml文件的各个内容,具体意思我们在主目录gradle.properties中解释
+            pom.project {
+
+                groupId GROUP_ID
+                artifactId ARTIFACT_ID
+                version PUBLISH_VERSION
+
+                name ARTIFACT_ID
+                packaging POM_PACKAGING
+                description POM_DESCRIPTION
+                url POM_URL
+
+                scm {
+                    url POM_SCM_URL
+                    connection POM_SCM_CONNECTION
+                    developerConnection POM_SCM_DEV_CONNECTION
+                }
+
+                licenses {
+                    license {
+                        name POM_LICENCE_NAME
+                        url POM_LICENCE_URL
+                        distribution POM_LICENCE_DIST
+                    }
+                }
+
+                developers {
+                    developer {
+                        id POM_DEVELOPER_ID
+                        name POM_DEVELOPER_NAME
+                        email POM_DEVELOPER_EMAIL
+                    }
+                }
+            }
+        }
+    }
+
+    doFirst {
+        println("准备打包上传...")
+        println("版本名称: ${GROUP_ID}:${ARTIFACT_ID}:${PUBLISH_VERSION}" )
+        println("发布类型:" + (RELEASE ? "release" : "snapshot"))
+        println("本地仓库:" + PUBLISH_LOCAL)
+    }
+}

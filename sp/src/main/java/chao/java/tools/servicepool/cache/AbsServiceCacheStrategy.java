@@ -1,15 +1,14 @@
 package chao.java.tools.servicepool.cache;
 
-import java.lang.reflect.Method;
-
-import chao.android.tools.interceptor.Interceptor;
-import chao.android.tools.interceptor.OnInvoke;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.IServiceInterceptor;
 import chao.java.tools.servicepool.IServiceInterceptorCallback;
 import chao.java.tools.servicepool.ServiceInterceptorStrategy;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.combine.CombineService;
+import com.luqinx.interceptor.Interceptor;
+import com.luqinx.interceptor.OnInvoke;
+import java.lang.reflect.Method;
 
 public abstract class AbsServiceCacheStrategy<T extends IService> implements ServiceCacheStrategy<T> {
 

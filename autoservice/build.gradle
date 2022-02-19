@@ -1,4 +1,7 @@
 apply plugin: 'groovy'
+apply plugin: 'maven'
+
+apply from: '../maven.gradle'
 
 dependencies {
     implementation gradleApi()
@@ -10,20 +13,11 @@ dependencies {
     implementation 'org.ow2.asm:asm-commons:6.0'
 }
 
-abkit {
-    maven {
-        groupId "com.github.luqinx"
-        artifactId "autoservice"
-        versionName "1.6.1"
-        publish2Local false
-    }
-}
-
-
 repositories {
-    google()
-    jcenter()
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    maven { url "https://maven.aliyun.com/repository/central"}
     mavenCentral()
+    google()
 }
 
 sourceCompatibility = '1.8'

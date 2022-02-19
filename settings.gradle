@@ -1,14 +1,13 @@
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
         google()
-        jcenter()
-        maven { url 'https://jitpack.io' }
-//        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
 
     dependencies {
-        classpath 'com.github.luqinx:abkit:1.1.1'
+        classpath 'io.github.luqinx:abkit:0.0.1'
     }
 }
 
@@ -16,5 +15,3 @@ buildscript {
 /** ABKit可以将模块管理统一聚合到modules.gradle中  **/
 import chao.android.gradle.plugin.api.ABKit
 ABKit.inject(getSettings(), getGradle())
-
-include ':sp', ':spa'

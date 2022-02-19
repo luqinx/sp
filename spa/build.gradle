@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
+
+apply from: '../maven.gradle'
+
 
 android {
     compileSdkVersion 28
-
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 28
@@ -25,15 +25,6 @@ android {
 
 }
 
-abkit {
-    maven {
-        artifactId 'spa'
-        groupId 'chao.android.tools'
-        versionName '1.5.6'
-        publish2Local false
-    }
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -45,20 +36,4 @@ dependencies {
     implementation ("net.bytebuddy:byte-buddy-android:1.10.14")
 //    implementation "net.bytebuddy:byte-buddy-android:1.9.6"
     implementation gson
-}
-
-
-// jitpack.io
-afterEvaluate {
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                from components.release
-                groupId = 'com.github.luqinx'
-                artifactId = 'spa'
-                version = '1.6.1'
-            }
-        }
-    }
 }

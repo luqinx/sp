@@ -16,17 +16,15 @@ buildscript {
 
     repositories {
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
-        maven { url 'https://jitpack.io' }
-
+        maven { url "https://maven.aliyun.com/repository/central"}
+        mavenCentral()
         google()
-        jcenter()
         mavenLocal()
-        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.4'
-        classpath "com.github.luqinx:abkit:1.1.1"
-        classpath 'com.github.luqinx:autoservice:1.6.1'
+        classpath "io.github.luqinx:abkit:0.0.1"
+//        classpath 'io.github.luqinx:autoservice:1.0.1'
 //        classpath project(':autoservice')
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0'
         // NOTE: Do not place your application dependencies here; they belong
@@ -36,12 +34,11 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
+//        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+        maven { url "https://maven.aliyun.com/repository/central"}
         google()
-        jcenter()
         mavenLocal()
-        maven { url "http://47.99.188.223:8081/repository/maven-public/"}
     }
 }
 

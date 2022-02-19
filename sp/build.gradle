@@ -1,6 +1,9 @@
 apply plugin: 'java'
-
+apply plugin: 'maven'
 apply plugin: 'jacoco'
+
+apply from: '../maven.gradle'
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -12,14 +15,14 @@ dependencies {
     implementation gson
 }
 
-abkit {
-    maven {
-        artifactId 'sp'
-        groupId 'chao.java.tools'
-        versionName '1.5.5'
-        publish2Local false
-    }
-}
+//abkit {
+//    maven {
+//        artifactId 'sp'
+//        groupId 'chao.java.tools'
+//        versionName '1.5.5'
+//        publish2Local false
+//    }
+//}
 
 
 sourceCompatibility = "7"

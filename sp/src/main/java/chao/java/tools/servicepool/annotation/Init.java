@@ -27,7 +27,7 @@ public @interface Init {
      * 懒加载模式会在组件第一次被调用的时候初始化，否则
      * 在ServicePool.init()函数中执行初始化。
      *
-     * {@link ServicePool#init()}
+     * {@link ServicePool#loadInitService()}
      *
      */
     boolean lazy() default true;

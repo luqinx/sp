@@ -1,12 +1,11 @@
 package chao.android.tools.rpc;
 
 import android.content.Context;
-
-import chao.android.tools.interceptor.Interceptor;
 import chao.android.tools.servicepool.Spa;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.InnerProxy;
 import chao.java.tools.servicepool.ServicePool;
+import com.luqinx.interceptor.Interceptor;
 
 /**
  * @author luqin

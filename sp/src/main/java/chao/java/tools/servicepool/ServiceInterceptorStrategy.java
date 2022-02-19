@@ -28,8 +28,7 @@ public class ServiceInterceptorStrategy implements CombineStrategy {
      *
      * @param serviceClass  service类 {@link IServiceInterceptor}
      *
-     * @param method    将执行的方法
-     *                  {@link IServiceInterceptor#intercept)}
+     * @param method    将执行的方法 {@link IServiceInterceptor#intercept(Class, IService, Method, Object[], IServiceInterceptorCallback)} )}
      *
      * @param args      执行方法的参数
      *                  (Object, Method, Object[], IServiceInterceptorCallback)

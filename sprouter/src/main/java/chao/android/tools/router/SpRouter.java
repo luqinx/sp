@@ -3,18 +3,15 @@ package chao.android.tools.router;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-
-import java.lang.reflect.Type;
-
-import chao.android.tools.interceptor.Interceptor;
 import chao.android.tools.servicepool.Spa;
 import chao.java.tools.servicepool.IService;
 import chao.java.tools.servicepool.InnerProxy;
 import chao.java.tools.servicepool.ServicePool;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.luqinx.interceptor.Interceptor;
+import java.lang.reflect.Type;
 
 /**
  * @author luqin

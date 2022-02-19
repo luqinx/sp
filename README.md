@@ -1,8 +1,9 @@
 #ServicePool
 
-[![](https://jitpack.io/v/luqinx/sp.svg)](https://jitpack.io/#luqinx/sp)
 
 ### ServicePool接入方法
+
+spa已迁移至mavenCentral, groupId已修正为io.github.luqinx, 包名还保持原来的包名
 
 在项目根目录的build.gradle中引入 
 
@@ -10,7 +11,7 @@
 allprojects {
     repositories {
         ...
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
     }
 }
 ```
@@ -22,11 +23,11 @@ buildscript {
 
     repositories {
         ...
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
     }
     dependencies {
         ...
-        classpath 'com.github.luqinx:autoservice:1.5.5'
+        classpath 'io.github.luqinx:autoservice:1.0.1'
     }
 }
 ```
@@ -42,8 +43,9 @@ apply plugin: 'sp.autoservice'
 ** 其他Module下按需添加依赖 **
 ```
 dependencies {
-    implementation 'com.github.luqinx:sp:1.6.1' //servicepool核心库, 是java库, 非android环境用这个就可以了
-    implementation 'com.github.luqinx:spa:1.6.1' // servicepool的Android支持(spa), 只依赖spa也是可以的
+    implementation 'io.github.luqinx:sp:1.0.1' //servicepool核心库, 是java库, 非android环境用这个就可以了
+    implementation 'io.github.luqinx:spa:1.0.1' // servicepool的Android支持(spa), 只依赖spa也是可以的
+    implementation 'io.github.luqinx:sprouter:1.0.1' // 基于spa的页面路由
 }
 ```
 

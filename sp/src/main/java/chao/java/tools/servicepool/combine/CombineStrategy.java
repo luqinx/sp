@@ -17,9 +17,6 @@ public interface CombineStrategy extends IService {
      *
      * 可以通过过滤器过滤当前策略对哪些service生效
      *
-     * @param serviceClass
-     * @param method
-     * @param args
      */
     boolean filter(Class serviceClass, Method method, Object[] args);
 

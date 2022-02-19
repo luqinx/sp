@@ -1,12 +1,12 @@
 package chao.java.tools.servicepool;
 
+import com.luqinx.interceptor.Interceptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import chao.android.tools.interceptor.Interceptor;
 
 /**
  * @author qinchao
