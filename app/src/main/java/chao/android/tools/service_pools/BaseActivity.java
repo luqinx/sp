@@ -2,7 +2,7 @@ package chao.android.tools.service_pools;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;

@@ -1,7 +1,7 @@
 /** modules.gradle是ABKit插件提供的能力, 如果您喜欢这种组件管理方式,可以到https://github.com/luqinx/abkit了解他 **/
 /** ABKit管理模块的方式和Gradle本身的模块管理方式完全兼容, 接入的话不用担心改造成本 **/
 
-include ':app'
+//include ':app'
 include ':tests:remoteexample',   //module.gradle兼容settings.gradle的api
         ':tests:testremoteapi'
 include ':autoservice'
