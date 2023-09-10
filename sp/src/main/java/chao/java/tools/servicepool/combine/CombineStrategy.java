@@ -13,7 +13,10 @@ import chao.java.tools.servicepool.ServiceProxy;
 public interface CombineStrategy extends IService {
     /**
      *
-     * 过滤器
+     * @param serviceClass class
+     * @param method method
+     * @param args args
+     * @return 过滤器
      *
      * 可以通过过滤器过滤当前策略对哪些service生效
      *

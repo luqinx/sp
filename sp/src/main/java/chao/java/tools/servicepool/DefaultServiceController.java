@@ -15,14 +15,14 @@ import chao.java.tools.servicepool.debug.Debug;
  */
 public class DefaultServiceController implements ServiceController {
 
-    private Map<String, ServiceProxy<? extends IService>> historyCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
+    private final Map<String, ServiceProxy<? extends IService>> historyCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
 
-    private Map<String, ServiceProxy<? extends IService>> fixedCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
+    private final Map<String, ServiceProxy<? extends IService>> fixedCache = new ConcurrentHashMap<>(); //todo 没有考虑多classloader的场景
 
 
-    private List<IServiceFactories> factoriesList = new ArrayList<>(1);
+    private final List<IServiceFactories> factoriesList = new ArrayList<>(1);
 
-    private CombineManager combineManager;
+    private final CombineManager combineManager;
 
     private final Object serviceLock = new Object();
 
@@ -102,22 +102,28 @@ public class DefaultServiceController implements ServiceController {
                 return record;
             }
 
+            System.out.println("factory list: " + factoriesList);
             //目前只有一个ServiceFactories
             for (IServiceFactories factories : factoriesList) {
                 String name = serviceClass.getName();
                 int last = name.lastIndexOf('.');
+                System.out.println("service name: " + name);
                 if (last == -1) {
                     continue;
                 }
                 String pkgName = name.substring(0, last);
                 IServiceFactory factory = factories.getServiceFactory(pkgName);
+                System.out.println("factory : " + factory);
                 if (factory == null) {
                     continue;
                 }
+                System.out.println("factory name: " + factory.getClass().getName());
+
                 newRecord = factory.createServiceProxy(serviceClass);
                 if (newRecord == null) {
                     continue;
                 }
+                System.out.println("newRecord: " + newRecord);
                 newRecord.setOriginClass(serviceClass);
 
                 ServiceProxy<? extends IService> fixedRecord = fixedCache.get(newRecord.getServiceClass().getName());

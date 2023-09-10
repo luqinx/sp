@@ -14,7 +14,7 @@ class AutoServiceVisitor extends ClassVisitor implements Constant{
 
 
     AutoServiceVisitor(ClassVisitor cv) {
-        super(Opcodes.ASM6, cv);
+        super(Opcodes.ASM7, cv);
     }
 
     @Override

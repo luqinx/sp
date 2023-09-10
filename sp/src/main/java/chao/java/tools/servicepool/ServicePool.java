@@ -131,7 +131,7 @@ public class ServicePool {
 
 
 
-    protected static DefaultServiceController controller;
+    protected static volatile DefaultServiceController controller;
 
     private volatile static boolean loaded = false;
 
@@ -228,12 +228,39 @@ public class ServicePool {
      * @return  service实例对象, 如果没有获取到具体的实现，
      *          会通过 {@link NoOpInstanceFactory} 返回一个 {@link NoOpInstance} Mock实例
      */
-    public static <T extends IService> T getService(Class<T> serviceClass) {
+    public static <T extends IService> T getServiceOrNull(Class<T> serviceClass) {
         T instance = null;
         if (!serviceClass.isInterface() && !Modifier.isAbstract(serviceClass.getModifiers())) {
 //            throw new ServicePoolException("no-interface/no-abstract class should call method getFixedService.");
             logger.e(TAG, "no-interface/no-abstract class should call method getFixedService.");
-            return getFixedService(serviceClass); //兼容老版本, 本应该直接抛异常
+            return getFixedServiceOrNull(serviceClass); //兼容老版本, 本应该直接抛异常
+        }
+        try {
+            checkLoader();
+            instance = controller.getServiceByClass(serviceClass);
+        } catch (Throwable e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onException(e, String.valueOf(serviceClass));
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * 获取service实例对象
+     *
+     * @param serviceClass  可以是interface
+     * @param <T>   service实例对象类型
+     * @return  service实例对象, 如果没有获取到具体的实现，
+     *          会通过 {@link NoOpInstanceFactory} 返回一个 {@link NoOpInstance} Mock实例
+     */
+    public static <T extends IService> T getService(Class<T> serviceClass) {
+        System.out.println("getService: " + serviceClass.getName());
+        T instance = null;
+        if (!serviceClass.isInterface() && !Modifier.isAbstract(serviceClass.getModifiers())) {
+//            throw new ServicePoolException("no-interface/no-abstract class should call method getFixedService.");
+            logger.e(TAG, "no-interface/no-abstract class should call method getFixedService.");
+            return getFixedServiceOrNull(serviceClass); //兼容老版本, 本应该直接抛异常
         }
         try {
             checkLoader();
@@ -253,6 +280,7 @@ public class ServicePool {
      * 指定返回service对象类型, 获取service实例对象
      * 说明: 在一个接口有多个实现类的场景下, 通过指定tClass来明确使用哪个实现
      *
+     * @param tClass target class
      * @param defaultService 如果没有获取到实现类返回defaultService
      * @param <T>   service实例对象类型
      * @return  service实例对象
@@ -284,7 +312,7 @@ public class ServicePool {
      * @param <T> service实例对象类型
      * @return  返回serviceClass类的服务实例
      */
-    public static <T extends IService> T getFixedService(Class<T> serviceClass) {
+    public static <T extends IService> T getFixedServiceOrNull(Class<T> serviceClass) {
         if (serviceClass.isInterface() || Modifier.isAbstract(serviceClass.getModifiers())) {
             throw new ServicePoolException("interface/abstract class should call method getService.");
         }
@@ -296,9 +324,6 @@ public class ServicePool {
             if (exceptionHandler != null) {
                 exceptionHandler.onException(e, String.valueOf(serviceClass));
             }
-        }
-        if (instance == null) {
-            return noOpFactory.newInstance(serviceClass);
         }
         return instance;
     }
@@ -323,14 +348,15 @@ public class ServicePool {
     }
 
     /**
-     *  通过path获取service
+     * @param path router path
+     * @return  通过path获取service
      */
     public static <T extends IService> T getService(String path) {
         Class<? extends IService> clazz = controller.getServiceByPath(path);
         if (clazz == null) {
             return null;
         }
-        return (T) getFixedService(clazz);
+        return (T) getFixedServiceOrNull(clazz);
     }
 
 //    public static <T extends IService> Class<T> getServiceClass(String path) {

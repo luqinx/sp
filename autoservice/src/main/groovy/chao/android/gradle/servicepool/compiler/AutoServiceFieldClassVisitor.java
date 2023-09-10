@@ -30,7 +30,7 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
     private boolean clinitProcessed = false;
 
     public AutoServiceFieldClassVisitor(ClassVisitor classVisitor, AutoServiceAnnotationDetect detect) {
-        super(Opcodes.ASM6, classVisitor);
+        super(Opcodes.ASM7, classVisitor);
         this.fields = detect.getFieldServiceAnnotations();
         this.hasStaticField = detect.isHasStaticField();
         this.eventInterfaces = detect.getEventInterfaces();
@@ -100,7 +100,7 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
 
 
         public InitMethodVisitor(MethodVisitor mv) {
-            super(Opcodes.ASM6, mv);
+            super(Opcodes.ASM7, mv);
         }
 
         @Override
@@ -190,7 +190,7 @@ public class AutoServiceFieldClassVisitor extends ClassVisitor implements Consta
 
 
         public ClinitMethodVisitor(MethodVisitor mv) {
-            super(Opcodes.ASM6, mv);
+            super(Opcodes.ASM7, mv);
         }
 
         @Override

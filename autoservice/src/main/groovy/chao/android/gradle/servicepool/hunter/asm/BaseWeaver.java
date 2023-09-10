@@ -1,11 +1,6 @@
 package chao.android.gradle.servicepool.hunter.asm;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-
+import chao.android.gradle.servicepool.compiler.Constant;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -19,9 +14,11 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
-import chao.android.gradle.servicepool.Logger;
-import chao.android.gradle.servicepool.compiler.Constant;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
 
 /**
  * Created by quinn on 07/09/2018
@@ -61,7 +58,8 @@ public abstract class BaseWeaver implements IWeaver{
                 ZipEntry outEntry = new ZipEntry(entry.getName());
                 byte[] newEntryContent;
                 // seperator of entry name is always '/', even in windows
-                if (!isWeavableClass(outEntry.getName().replace("/", "."))) {
+                boolean isWeavableClass = isWeavableClass(outEntry.getName().replaceAll("/", "."));
+                if (!isWeavableClass) {
                     newEntryContent = IOUtils.toByteArray(originalFile);
                 } else {
                     newEntryContent = weaveSingleClassToByteArray(outputZip.hashCode(), originalFile);
@@ -100,7 +98,6 @@ public abstract class BaseWeaver implements IWeaver{
     /**
      * 收尾
      * @param jarId  jar识别id
-     * @param inputZip
      * @param outputZip  输出zip
      */
     protected void weaveJarFinished(int jarId, ZipFile inputZip, ZipOutputStream outputZip) {
@@ -158,7 +155,11 @@ public abstract class BaseWeaver implements IWeaver{
 
     @Override
     public boolean isWeavableClass(String fullQualifiedClassName){
-        return fullQualifiedClassName.endsWith(".class") && !fullQualifiedClassName.contains("R$") && !fullQualifiedClassName.contains("R.class") && !fullQualifiedClassName.contains("BuildConfig.class");
+        return fullQualifiedClassName.endsWith(".class")
+            && !fullQualifiedClassName.contains("R$")
+            && !fullQualifiedClassName.contains("R.class")
+            && !fullQualifiedClassName.contains("BuildConfig.class")
+            && !fullQualifiedClassName.startsWith("android");
     }
 
     public boolean weaverJarExcluded(String jarName) {

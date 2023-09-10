@@ -12,7 +12,7 @@ class AutoServiceEventVisitor extends ClassVisitor {
 
 
     AutoServiceEventVisitor(ClassVisitor cv) {
-        super(Opcodes.ASM6, cv)
+        super(Opcodes.ASM7, cv)
     }
 
     @Override

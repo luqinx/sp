@@ -132,16 +132,10 @@ public class ServiceProxy<T extends IService> {
         return serviceClass;
     }
 
-    /**
-     *
-     */
     public int priority() {
         return priority;
     }
 
-    /**
-     *
-     */
     public int scope() {
         if (IInitService.class.isAssignableFrom(serviceClass)
                 || IPathService.class.isAssignableFrom(serviceClass)

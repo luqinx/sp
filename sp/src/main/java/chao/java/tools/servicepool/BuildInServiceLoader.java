@@ -1,6 +1,5 @@
 package chao.java.tools.servicepool;
 
-import java.awt.SystemColor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,6 @@ public class BuildInServiceLoader implements IServiceLoader {
             services.add(Class.forName("chao.java.tools.servicepool.gen.PathServicesInstance").asSubclass(IService.class));
             services.add(Class.forName("chao.java.tools.servicepool.gen.ServiceFactoriesInstance").asSubclass(IService.class));
             services.add(Class.forName("chao.java.tools.servicepool.gen.InitServiceManagerInstance").asSubclass(IService.class));
-            services.add(Class.forName("chao.android.tools.servicepool.AndroidNoOpInstantiator").asSubclass(IService.class));
         } catch (ClassNotFoundException e) {
             throw new ServicePoolException("build in services not found.", e);
         }

@@ -1,13 +1,8 @@
 package chao.android.tools.service_pools;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-
-import com.google.common.base.Stopwatch;
-
-import java.util.concurrent.TimeUnit;
-
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import chao.android.tools.router.SpRouter;
 import chao.android.tools.service_pools.abs.Abs;
 import chao.android.tools.service_pools.event.EventSample;
@@ -20,18 +15,16 @@ import chao.android.tools.service_pools.init.InitSyncSampleFragment;
 import chao.android.tools.service_pools.path.PathService;
 import chao.android.tools.service_pools.path.PathService2;
 import chao.android.tools.service_pools.path.RepeatePathService;
-import chao.android.tools.service_pools.route.interceptor.RouteContinueInterceptor5;
 import chao.android.tools.service_pools.rpc.RPCSampleFragment;
-import chao.android.tools.service_pools.test.Haha;
 import chao.android.tools.service_pools.xxxxx.ASMStaticClass;
-import chao.android.tools.router.RouteInterceptor;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.java.tools.servicepool.IService;
-import chao.java.tools.servicepool.NoOpInstance;
 import chao.java.tools.servicepool.ServicePool;
 import chao.java.tools.servicepool.annotation.Event;
 import chao.java.tools.servicepool.annotation.Service;
+import com.google.common.base.Stopwatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author qinchao
@@ -40,18 +33,12 @@ import chao.java.tools.servicepool.annotation.Service;
 public class MainActivity extends AppCompatActivity implements HisEvent {
 
     private static final Class[] classes = {
-            Printer.class, CommonPrinter.class, Haha.class, A.class, SecondActivity.SecondPrinter.class,
+            Printer.class, CommonPrinter.class, A.class, SecondActivity.SecondPrinter.class,
             AppService.class, AppService2.class, InnerService.class, PathService.class, Abs.class
     };
 
     @Service
     private Printer appService;
-
-    @Service(CommonPrinter.class)
-    private Printer commonService;
-
-    @Service(Haha.class)
-    private Printer haha;
 
     EventSample eventSample = new EventSample();
 
@@ -62,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 //    @Service
 //    private TestPluginService testPluginService;
 
-    @Service(SecondActivity.SecondPrinter.class)
-    private Printer main;
 
 //    @Service
 //    private static Printer sPrinter;
@@ -85,9 +70,6 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 
     @Service(path = "/app/path2")
     private static PathService2 pathService2;
-
-    @Service
-    private Abs abs;
 
     public MainActivity() {
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -130,19 +112,7 @@ public class MainActivity extends AppCompatActivity implements HisEvent {
 ////        appService = ServicePool.getService(AppService.class);
         appService.print();
 //
-        haha.print();
         a.getInt();
-
-        main.print();
-
-
-        RouteInterceptor global1 = ServicePool.getService(RouteContinueInterceptor5.class);
-        RouteInterceptor global2 = ServicePool.getService(RouteInterceptor.class);
-        if (ServicePool.getFixedService(RouteContinueInterceptor5.class) != ServicePool.getService(RouteInterceptor.class)) {
-            System.out.println("global 1: " + global1);
-            System.out.println("global 2:" + global2);
-            throw new RuntimeException();
-        }
 
 
         //测试Scope为global

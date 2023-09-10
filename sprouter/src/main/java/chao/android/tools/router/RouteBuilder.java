@@ -6,13 +6,9 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-
+import chao.java.tools.servicepool.ServicePool;
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import chao.java.tools.servicepool.IService;
-import chao.java.tools.servicepool.ServicePool;
-import chao.java.tools.servicepool.annotation.Service;
 
 /**
  * @author luqin
@@ -20,7 +16,7 @@ import chao.java.tools.servicepool.annotation.Service;
  */
 public class RouteBuilder implements Parcelable {
 
-    private final transient RouteManager routeManager = ServicePool.getFixedService(RouteManager.class);
+    private final transient RouteManager routeManager = ServicePool.getFixedServiceOrNull(RouteManager.class);
 
     public transient Context context;
 

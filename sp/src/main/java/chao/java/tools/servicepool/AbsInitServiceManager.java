@@ -1,8 +1,6 @@
 package chao.java.tools.servicepool;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -26,7 +24,7 @@ public abstract class AbsInitServiceManager extends DefaultService implements In
     public void initService() {
         for (Class<? extends IInitService> clazz: initServices) {
             //getService会唤起Service的init
-            ServicePool.getFixedService(clazz);
+            ServicePool.getFixedServiceOrNull(clazz);
         }
     }
 

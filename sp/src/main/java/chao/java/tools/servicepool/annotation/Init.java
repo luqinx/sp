@@ -17,12 +17,12 @@ import chao.java.tools.servicepool.Sp;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Init {
     /**
-     * 是否异步初始化
+     * @return 是否异步初始化
      */
     boolean async() default false;
 
     /**
-     * 是否懒加载模式， 默认懒加载
+     * @return 是否懒加载模式， 默认懒加载
      *
      * 懒加载模式会在组件第一次被调用的时候初始化，否则
      * 在ServicePool.init()函数中执行初始化。
@@ -36,7 +36,7 @@ public @interface Init {
     int priority() default Sp.NORMAL_PRIORITY;
 
     /**
-     * 依赖组件
+     * @return 依赖组件
      *
      * 如果有依赖组件,依赖组件先初始化后,本组件才开始初始化
      */

@@ -9,7 +9,6 @@ import chao.java.tools.servicepool.annotation.Service;
 @Service
 public class CommonPrinter implements Printer {
 
-    @Override
     public void print() {
         System.out.println("I'm a common Printer.");
     }

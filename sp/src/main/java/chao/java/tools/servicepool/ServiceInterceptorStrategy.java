@@ -33,7 +33,7 @@ public class ServiceInterceptorStrategy implements CombineStrategy {
      * @param args      执行方法的参数
      *                  (Object, Method, Object[], IServiceInterceptorCallback)
      *
-     * @return
+     * @return result
      */
     @Override
     public Object invoke(List<ServiceProxy> proxies, Class serviceClass, Method method, Object[] args) {

@@ -50,7 +50,7 @@ public @interface Service {
     Class<?> value() default Void.class;
 
     /**
-     *  当inherited为true时, 被Service标记的类的子类也会被当做一个Service
+     *  @return 当inherited为true时, 被Service标记的类的子类也会被当做一个Service
      */
     boolean inherited() default false;
 

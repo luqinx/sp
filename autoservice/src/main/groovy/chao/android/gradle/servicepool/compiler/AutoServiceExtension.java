@@ -29,7 +29,7 @@ public class AutoServiceExtension {
         excludes.add("io.reactivex.");
         excludes.add("org.apache.");
 
-        inheritedOn = true; //默认打开
+        inheritedOn = false; //默认打开
     }
 
     public List<String> excludes() {

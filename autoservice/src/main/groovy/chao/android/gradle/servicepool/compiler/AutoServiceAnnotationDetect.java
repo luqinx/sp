@@ -52,7 +52,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
     private ExtendClassWriter ecw;
 
     public AutoServiceAnnotationDetect(ExtendClassWriter ecw) {
-        super(ASM6, null);
+        super(ASM7, null);
         fieldServiceAnnotations = new HashMap<>();
         fieldEventAnnotations = new HashMap<>();
         eventInterfaces = new ArrayList<>();
@@ -60,7 +60,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
     }
 
     public AutoServiceAnnotationDetect(String className, AutoServiceAnnotationDetect copy) {
-        super(ASM6, null);
+        super(ASM7, null);
         this.className = className;
         this.hasStaticField = copy.hasStaticField;
         this.hasEventAnnotation = copy.hasEventAnnotation;
@@ -174,7 +174,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
     private class ServiceAnnotationValueDetect extends AnnotationVisitor {
 
         public ServiceAnnotationValueDetect(AnnotationVisitor av) {
-            super(ASM6, av);
+            super(ASM7, av);
         }
 
         @Override
@@ -194,7 +194,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
     private class ServiceAnnotationsValueDetect extends AnnotationVisitor {
 
         public ServiceAnnotationsValueDetect(AnnotationVisitor av) {
-            super(ASM6, av);
+            super(ASM7, av);
         }
 
         @Override
@@ -205,7 +205,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
 
         private class ServiceAnnotationsAnnotationDetect extends AnnotationVisitor {
             public ServiceAnnotationsAnnotationDetect(AnnotationVisitor av) {
-                super(ASM6, av);
+                super(ASM7, av);
             }
 
             @Override
@@ -220,7 +220,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         private List<Type> dependencies;
 
         public InitAnnotationValueDetect(AnnotationVisitor av) {
-            super(ASM6, av);
+            super(ASM7, av);
         }
 
         @Override
@@ -247,7 +247,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         private class InitArrayAnnotationDetect extends AnnotationVisitor {
 
             public InitArrayAnnotationDetect(AnnotationVisitor av) {
-                super(ASM6, av);
+                super(ASM7, av);
             }
 
             @Override
@@ -263,7 +263,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         private AutoServiceField field;
 
         public AutoServiceAnnotationFieldDetect(FieldVisitor fv, AutoServiceField field) {
-            super(ASM6, fv);
+            super(ASM7, fv);
             this.field = field;
         }
 
@@ -290,7 +290,7 @@ public class AutoServiceAnnotationDetect extends ClassVisitor implements Constan
         private class AutoServiceFieldAnnotationDetect extends AnnotationVisitor {
 
             public AutoServiceFieldAnnotationDetect(AnnotationVisitor av) {
-                super(ASM6, av);
+                super(ASM7, av);
             }
 
             @Override

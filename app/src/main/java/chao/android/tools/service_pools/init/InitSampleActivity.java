@@ -1,7 +1,7 @@
 package chao.android.tools.service_pools.init;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import chao.android.tools.service_pools.R;
 import chao.android.tools.service_pools.test.InitService5;

@@ -38,8 +38,6 @@
         <activity android:name=".SecondActivity">
         </activity>
 
-        <activity android:name=".route.TestRouteActivity"/>
-
         <activity android:name=".route.TestRouteTargetActivity"/>
 
         <activity android:name=".inherited.InheritedInheritedActivity1"/>

@@ -1,35 +1,37 @@
 apply plugin: 'com.android.application'
 apply plugin: 'sp.autoservice'
-apply plugin: 'com.jakewharton.butterknife'
 
 
 android {
     signingConfigs {
         release {
-            storeFile file('/Users/qinchao/android/chao.keystore')
-            storePassword 'qch123!!'
-            keyAlias = 'chao'
-            keyPassword 'qch123!!'
+            storeFile file('../release.keystore')
+            storePassword 'Qc204315!'
+            keyAlias 'luqinx'
+            keyPassword 'Qc204315!'
         }
     }
-    compileSdkVersion 28
+    compileSdkVersion 33
     defaultConfig {
         applicationId "chao.android.tools.service_pools"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
 
         debug {
+            signingConfig signingConfigs.release
             debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
+            signingConfig signingConfigs.release
             debuggable true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -56,24 +58,21 @@ autoservice {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
     implementation ami
     implementation spa
 
     implementation project(":tests:testpluginlib")
 
-    implementation "com.jakewharton:butterknife:9.0.0"
-    annotationProcessor "com.jakewharton:butterknife-compiler:9.0.0"
-
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.annotation:annotation:1.0.0'
 
     implementation guava
 
